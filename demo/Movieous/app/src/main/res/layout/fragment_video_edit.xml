@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
+    android:keepScreenOn="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/item_fragment_title" />
+
+    <RelativeLayout
+        android:id="@+id/preview_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <video.movieous.engine.view.UTextureView
+            android:id="@+id/preview"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
+            android:id="@+id/pause_playback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="#0000"
+            android:src="@drawable/btn_pause" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp200"
+        android:orientation="vertical">
+
+        <!-- 滤镜/贴纸等页面 -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/video_edit_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+        <!-- 底部按钮 -->
+        <include layout="@layout/view_edit_bottom" />
+
+    </LinearLayout>
+
+</LinearLayout>

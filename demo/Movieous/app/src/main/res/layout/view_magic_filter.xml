@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/menu_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@color/transparent"
+            android:minWidth="@dimen/dp5"
+            android:minHeight="@dimen/dp5"
+            android:paddingStart="@dimen/dp20"
+            android:paddingTop="@dimen/dp10"
+            android:paddingEnd="@dimen/dp20"
+            android:paddingBottom="@dimen/dp10"
+            android:src="@drawable/menu_back"
+            tools:ignore="RtlHardcoded" />
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@+id/tab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            tl:tl_divider_width="1dp"
+            tl:tl_iconVisible="false"
+            tl:tl_indicator_height="0dp"
+            tl:tl_indicator_width="0dp"
+            tl:tl_tab_width="80dp"
+            tl:tl_textsize="14sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/magic_filter_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <include layout="@layout/item_magic_filter_seekbar" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp5" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/magic_filter_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/dp5" />
+</LinearLayout>

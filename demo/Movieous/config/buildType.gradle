@@ -1,0 +1,39 @@
+android {
+
+    signingConfigs {
+        config {
+            keyAlias 'movieous'
+            keyPassword 'movieous'
+            storeFile file('../movieous.keystore')
+            storePassword 'movieous'
+            v2SigningEnabled false
+        }
+    }
+
+    buildTypes {
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+
+        def LOG_ENABLE = "LOG_ENABLE"
+        def DEBUG_ENABLE = "DEBUG_ENABLE"
+
+        debug {
+            debuggable true
+            signingConfig signingConfigs.config
+            buildConfigField BOOLEAN, LOG_ENABLE, TRUE
+            buildConfigField BOOLEAN, DEBUG_ENABLE, TRUE
+        }
+
+        release {
+            debuggable false
+            signingConfig signingConfigs.config
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField BOOLEAN, LOG_ENABLE, FALSE
+            buildConfigField BOOLEAN, DEBUG_ENABLE, FALSE
+        }
+    }
+}

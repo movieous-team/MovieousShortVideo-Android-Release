@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <Button
+            android:id="@+id/camera_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频录制"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/video_trim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频剪辑"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/video_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频编辑"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/image_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="图片合成"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/camera_movie_record"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频合拍"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/view_record"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View 录制"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,175 @@
+<resources>
+    <string name="app_name">Movieous</string>
+
+    <string name="about">关于</string>
+    <string name="back_pressed_message">退出当前操作吗?</string>
+    <string name="loading_text">加载中&#8230;</string>
+    <string name="no_network">请检查网络后点击重新加载</string>
+    <string name="data_error">数据获取失败~</string>
+    <string name="movieous_slogan">让音视频技术触手可及</string>
+    <string name="title_transition_make">过场字幕</string>
+    <string name="video_tail_tip_time">%s · 上海</string>
+    <string name="transition_maker_edit">编辑</string>
+    <string name="transition_maker_confirm">确定</string>
+    <string name="merge_title_tail_tip">正在处理片头/片尾……</string>
+
+    <string name="title_live">直播</string>
+    <string name="title_shortvideo">短视频</string>
+
+    <string name="speed_super_slow">极慢"</string>
+    <string name="speed_slow">慢"</string>
+    <string name="speed_normal">正常"</string>
+    <string name="speed_fast">快"</string>
+    <string name="speed_super_fast">极快"</string>
+    <string name="if_edit_video">是否编辑视频</string>
+    <string name="dlg_yes">是</string>
+    <string name="dlg_no">否</string>
+    <string name="background_music">背景音乐</string>
+    <string name="preview_beauty_reset">恢复默认</string>
+
+    <!-- 滤镜页面按钮 -->
+    <string name="btn_preview_beauty">美颜</string>
+    <string name="btn_preview_makeup">美妆</string>
+    <string name="btn_preview_filter">滤镜</string>
+
+    <!-- FU 滤镜 -->
+    <string name="sense_time_filter">ST 特效</string>
+    <string name="fu_normal_filter">道具</string>
+    <string name="fu_ar_filter">AR 面具</string>
+    <string name="fu_face_wrap_filter">哈哈镜</string>
+    <string name="fu_face_change_filter">换脸</string>
+    <string name="fu_background_filter">背景分割</string>
+    <string name="fu_music_filter">特效滤镜</string>
+    <string name="expression_filter">表情识别</string>
+
+    <!-- 美颜 -->
+    <string name="beauty_blur">磨皮</string>
+    <string name="beauty_thick_face">瘦脸</string>
+    <string name="beauty_big_eye">大眼</string>
+    <string-array name="preview_beauty">
+        <item>磨皮</item>
+        <item>肤色</item>
+        <item>瘦脸</item>
+        <item>削脸</item>
+        <item>小脸</item>
+        <item>下巴</item>
+        <item>法令纹</item>
+        <item>额头</item>
+        <item>大眼</item>
+        <item>眼距</item>
+        <item>眼角</item>
+        <item>卧蚕</item>
+        <item>眼袋</item>
+        <item>亮眼</item>
+        <item>瘦鼻</item>
+        <item>鼻翼</item>
+        <item>长鼻</item>
+        <item>嘴型</item>
+        <item>美牙</item>
+    </string-array>
+
+    <!-- 美妆 -->
+    <string-array name="preview_makeup">
+        <item>口红</item>
+        <item>腮红</item>
+        <item>阴影</item>
+        <item>眉毛</item>
+        <item>眼影</item>
+        <item>眼线</item>
+        <item>睫毛</item>
+        <item>双眼皮</item>
+        <item>瞳孔</item>
+    </string-array>
+
+    <string name="makeup_clear">一键清除</string>
+
+    <string-array name="magic_filter">
+        <item>滤镜特效</item>
+        <item>时间特效</item>
+    </string-array>
+
+    <string name="start_record_tip">单击快门按钮，开始录制</string>
+    <string name="divide_video">分段</string>
+    <string name="add_text">文字特效</string>
+    <string name="add_stick">贴纸</string>
+    <string name="add_music">音乐</string>
+    <string name="origin_voice">原声</string>
+    <string name="mute">静音</string>
+    <string name="select_music">音乐</string>
+    <string name="select_clip">选择</string>
+    <string name="cut_clip">截取</string>
+    <string name="next_step">下一步</string>
+    <string name="select_clip_tip">已选取 %1$d 秒</string>
+    <string name="make_cover">生成封面</string>
+    <string name="title_show_cover">显示封面</string>
+
+    <string name="armesh_ex">AR面具高精度版</string>
+    <string name="future_warrior">张嘴试试</string>
+    <string name="jet_mask">鼓腮帮子</string>
+    <string name="sdx2">皱眉试试</string>
+    <string name="luhantongkuan_ztt_fu">眨一眨眼</string>
+    <string name="qingqing_ztt_fu">嘟嘴试试</string>
+    <string name="xiaobianzi_zh_fu">微笑触发</string>
+    <string name="xiaoxueshen_ztt_fu">吹气触发</string>
+    <string name="hez_ztt_fu">张嘴试试</string>
+    <string name="ctrl_rain">控雨</string>
+    <string name="ctrl_snow">控雪</string>
+    <string name="ctrl_flower">控花</string>
+    <string name="fu_lm_koreaheart">单手手指比心</string>
+    <string name="fu_zh_baoquan">双手抱拳</string>
+    <string name="fu_zh_hezxiong">双手合十</string>
+    <string name="fu_ztt_live520">双手比心</string>
+    <string name="ssd_thread_thumb">竖个拇指</string>
+    <string name="ssd_thread_six">比个六</string>
+    <string name="ssd_thread_cute">双拳靠近脸颊卖萌</string>
+
+    <string name="origin">Origin</string>
+    <string name="delta">Delta</string>
+    <string name="electric">Electric</string>
+    <string name="slowlived">Slowlived</string>
+    <string name="tokyo">Tokyo</string>
+    <string name="warm">Warm</string>
+    <string name="origin_beauty">原图</string>
+    <string name="ziran">自然</string>
+    <string name="danya">淡雅</string>
+    <string name="fennen">粉嫩</string>
+    <string name="qingxin">清新</string>
+    <string name="hongrun">红润</string>
+
+    <string name="save_file_tip">正在处理视频，请稍候...</string>
+    <string name="select_media_file_tip">选择视频</string>
+    <string name="video_file_title">片头</string>
+    <string name="video_file_tail">片尾</string>
+    <string name="select_music_file_tip">请选择音乐文件</string>
+    <string name="save_file_failed_tip">保存失败，错误码：</string>
+    <string name="audio_volume_title">声音调节</string>
+    <string name="beauty_adjust_title">美颜调节</string>
+    <string name="effect_title">特效</string>
+    <string name="cover_title">封面</string>
+    <string name="video_combination_title">视频组合</string>
+    <string name="mv_title">MV 效果</string>
+    <string name="video_subsection_title">视频切割</string>
+    <string name="video_front_back_merge_title">前后拼接</string>
+    <string name="video_title_tail_title">片头片尾</string>
+    <string name="speed_adjust_title">变速</string>
+
+    <string name="select_frame_tip">请先选择帧</string>
+    <string name="change_speed_error_tip">变帧率模式下，无法在拍摄过程中进行变速！</string>
+    <string name="merge_clip_fail_tip">合并录制片段失败, 错误码:</string>
+    <string name="edit_author">创作</string>
+    <string name="edit_video_time_address">时间 · 地点</string>
+    <string name="format_date_pattern">yyyy 年 MM 月 dd 日</string>
+
+    <string name="upload">上传</string>
+    <string name="cancel_upload">取消上传</string>
+    <string name="permission_tip">"此功能需要 %s 权限，否则无法正常使用，是否打开设置?"</string>
+
+    <string name="undo">撤销</string>
+    <string name="filter_fx_tip">选择位置后，按住使用特效</string>
+
+    <string name="coming_soon_hint">即将推出，敬请期待</string>
+
+    <string name="video_title">标题</string>
+    <string name="video_time_addr">时间地点</string>
+    <string name="video_text_effect">字幕</string>
+</resources>

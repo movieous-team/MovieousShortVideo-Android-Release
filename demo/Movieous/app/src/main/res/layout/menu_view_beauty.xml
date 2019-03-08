@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:orientation="vertical">
+
+    <include layout="@layout/item_menu_title" />
+
+    <!-- 磨皮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:text="@string/beauty_blur"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <SeekBar
+            android:id="@+id/value_progress_blur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp10"
+            android:layout_marginEnd="@dimen/dp10"
+            android:gravity="center_vertical"
+            android:maxHeight="@dimen/dp2"
+            android:minHeight="@dimen/dp2"
+            android:padding="@dimen/dp10"
+            android:progress="60"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <!-- 瘦脸 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:text="@string/beauty_thick_face"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <SeekBar
+            android:id="@+id/value_progress_face"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp10"
+            android:layout_marginEnd="@dimen/dp10"
+            android:gravity="center_vertical"
+            android:maxHeight="@dimen/dp2"
+            android:minHeight="@dimen/dp2"
+            android:padding="@dimen/dp10"
+            android:progress="70"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <!-- 大眼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:text="@string/beauty_big_eye"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <SeekBar
+            android:id="@+id/value_progress_eye"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp10"
+            android:layout_marginEnd="@dimen/dp10"
+            android:gravity="center_vertical"
+            android:maxHeight="@dimen/dp2"
+            android:minHeight="@dimen/dp2"
+            android:padding="@dimen/dp10"
+            android:progress="80"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:visibility="visible" />
+    </LinearLayout>
+
+</LinearLayout>

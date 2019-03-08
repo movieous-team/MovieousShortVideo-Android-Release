@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context=".ui.fragment.VideoRecordFragment">
+
+    <!-- 预览视图 -->
+    <video.movieous.engine.view.UTextureView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 顶部视图 -->
+    <include layout="@layout/view_preview_top" />
+
+    <!-- 滤镜/贴纸等页面 -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp200"
+        android:layout_gravity="bottom"
+        android:clickable="true" />
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:id="@+id/layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.flyco.tablayout.SegmentTabLayout
+            android:id="@+id/tab_speed_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dp60"
+            tl:tl_bar_color="@color/app_color_panel"
+            tl:tl_bar_stroke_width="0dp"
+            tl:tl_divider_width="0dp"
+            tl:tl_indicator_anim_enable="true"
+            tl:tl_indicator_bounce_enable="false"
+            tl:tl_indicator_color="@color/color_lighter_gray"
+            tl:tl_indicator_corner_radius="4dp"
+            tl:tl_tab_width="50dp"
+            tl:tl_textSelectColor="@color/black"
+            tl:tl_textUnselectColor="@color/color_lighter_gray" />
+
+        <!-- 显示倒计时 -->
+        <TextView
+            android:id="@+id/tv_countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/yellow"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- 贴纸 -->
+            <Button
+                android:id="@+id/btn_stickers"
+                android:layout_width="@dimen/dp30"
+                android:layout_height="@dimen/dp30"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/button_margin_horizontal"
+                android:background="@drawable/face_magic"
+                android:padding="@dimen/dp30" />
+
+            <!-- 快门 -->
+            <com.movieous.media.view.ShutterButton
+                android:id="@+id/btn_shutter"
+                android:layout_width="@dimen/record_width_height_normal"
+                android:layout_height="@dimen/record_width_height_normal"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/bottom_layout_margin"
+                android:layout_marginBottom="@dimen/bottom_layout_margin" />
+
+            <!-- 删除 -->
+            <Button
+                android:id="@+id/btn_delete_clip"
+                android:layout_width="@dimen/button_preview_width_height"
+                android:layout_height="@dimen/button_preview_width_height"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/button_preview_margin"
+                android:layout_toEndOf="@id/btn_merge_clip"
+                android:background="@drawable/ic_camera_record_delete_light"
+                android:visibility="gone" />
+
+            <!-- 保存 -->
+            <Button
+                android:id="@+id/btn_merge_clip"
+                android:layout_width="@dimen/button_preview_width_height"
+                android:layout_height="@dimen/button_preview_width_height"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/button_preview_margin"
+                android:layout_toEndOf="@+id/btn_shutter"
+                android:background="@drawable/ic_camera_record_done_light"
+                android:visibility="gone" />
+
+            <!-- 编辑 -->
+            <Button
+                android:id="@+id/btn_video_edit"
+                android:layout_width="@dimen/filters_width_height"
+                android:layout_height="@dimen/filters_width_height"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/button_margin_horizontal"
+                android:background="@drawable/video_select"
+                android:padding="@dimen/dp20" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <!-- 对焦视图 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false">
+
+        <com.movieous.media.view.CameraFocusIndicator
+            android:id="@+id/focus_indicator"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+    </FrameLayout>
+
+    <com.movieous.media.view.TimeDownView
+        android:id="@+id/tv_time_down_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="1"
+        android:textColor="@color/white"
+        android:textSize="100sp"
+        android:visibility="gone" />
+
+</FrameLayout>

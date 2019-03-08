@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/sequence_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <com.movieous.media.view.TileView
+            android:id="@+id/thumb_list"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true" />
+
+        <com.movieous.media.view.FilterSeekView
+            android:id="@+id/filter_seek_view"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp5" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/effect_tip_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/filter_fx_tip"
+            android:textColor="@color/color60PercentWhite"
+            android:textSize="@dimen/textSize_small" />
+
+        <Button
+            android:id="@+id/undo_btn"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/shape_btn_default"
+            android:text="@string/undo"
+            android:textColor="@color/ccffffff"
+            android:textSize="@dimen/textSize_small_10"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</LinearLayout>

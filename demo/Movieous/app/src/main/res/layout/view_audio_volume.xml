@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical">
+
+    <include layout="@layout/item_menu_title" />
+
+    <!-- 原声 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp20"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/origin_voice"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <SeekBar
+            android:id="@+id/seekbar_origin_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxHeight="@dimen/dp2"
+            android:minHeight="@dimen/dp2"
+            android:padding="@dimen/dp10"
+            android:progress="60"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_btn_default"
+            android:gravity="center_vertical|center"
+            android:minWidth="@dimen/dp5"
+            android:minHeight="@dimen/dp5"
+            android:paddingLeft="@dimen/dp10"
+            android:paddingTop="@dimen/dp5"
+            android:paddingRight="@dimen/dp10"
+            android:paddingBottom="@dimen/dp5"
+            android:text="@string/mute"
+            android:textColor="@color/color_white" />
+    </LinearLayout>
+
+    <!-- 音乐 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:text="@string/add_music"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <SeekBar
+            android:id="@+id/seekbar_music_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxHeight="@dimen/dp2"
+            android:minHeight="@dimen/dp2"
+            android:padding="@dimen/dp10"
+            android:progress="80"
+            android:progressDrawable="@drawable/po_seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_select_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_btn_default"
+            android:minWidth="@dimen/dp5"
+            android:minHeight="@dimen/dp5"
+            android:paddingLeft="@dimen/dp10"
+            android:paddingTop="@dimen/dp5"
+            android:paddingRight="@dimen/dp10"
+            android:paddingBottom="@dimen/dp5"
+            android:text="@string/select_music"
+            android:textColor="@color/color_white" />
+    </LinearLayout>
+
+</LinearLayout>

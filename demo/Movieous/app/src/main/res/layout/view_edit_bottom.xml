@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_bottom_video_edit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
+    android:background="@android:color/transparent"
+    android:gravity="bottom"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/main_menu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:padding="@dimen/dp5"
+        android:src="@drawable/divid_video_selector" />
+
+    <ImageButton
+        android:id="@+id/add_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:padding="@dimen/dp5"
+        android:src="@drawable/text_effect_selector" />
+
+    <ImageButton
+        android:id="@+id/face_stick"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:padding="@dimen/dp5"
+        android:src="@drawable/sticker_selector" />
+
+    <ImageButton
+        android:id="@+id/btn_select_music"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/transparent"
+        android:padding="@dimen/dp5"
+        android:src="@drawable/add_music_selector" />
+
+</LinearLayout>

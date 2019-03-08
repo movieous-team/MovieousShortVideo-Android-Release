@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:minHeight="@dimen/dp180"
+    android:orientation="vertical">
+
+    <!-- 标题栏 -->
+    <include layout="@layout/item_menu_title" />
+
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/color_division_line"
+        android:visibility="gone"/>
+
+    <!-- 内容栏 -->
+    <LinearLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/color_gray_translucent"
+        android:gravity="top"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</LinearLayout>

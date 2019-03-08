@@ -1,3 +1,6 @@
+# Mac
+.DS_Store
+
 # Built application files
 *.apk
 *.ap_
@@ -38,9 +41,11 @@ captures/
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/assetWizardSettings.xml
+.idea/misc.xml
 .idea/dictionaries
 .idea/libraries
 .idea/caches
+.idea/
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.

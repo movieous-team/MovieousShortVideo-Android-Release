@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/dp10"
+    android:background="@color/app_color_panel"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/music_list_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="1" />
+
+    <com.hhl.recyclerviewindicator.LinePageIndicator
+        android:id="@+id/music_page_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        app:selectedColor="@color/white"
+        app:unselectedColor="@color/color_gray" />
+
+</LinearLayout>

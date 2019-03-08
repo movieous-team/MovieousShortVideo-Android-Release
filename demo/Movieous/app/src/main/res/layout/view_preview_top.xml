@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_margin="15dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+
+                <ImageView
+                    android:id="@+id/close_window"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:gravity="center"
+                    android:padding="@dimen/dp10"
+                    android:src="@drawable/close_white" />
+
+                <TextView
+                    android:id="@+id/btn_select_music"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:drawableStart="@drawable/music_white"
+                    android:drawablePadding="7dp"
+                    android:gravity="center"
+                    android:padding="@dimen/dp10"
+                    android:text="@string/background_music"
+                    android:textColor="@color/color_white" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:padding="1dp">
+
+            <ImageView
+                android:id="@+id/switch_camera"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="@dimen/dp10"
+                android:src="@drawable/btn_switch_camera" />
+
+            <ImageView
+                android:id="@+id/record_speed"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="@dimen/dp10"
+                android:src="@drawable/quick_slow" />
+
+            <ImageView
+                android:id="@+id/face_beauty"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="@dimen/dp10"
+                android:src="@drawable/beauty" />
+
+            <ImageView
+                android:id="@+id/count_down"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="@dimen/dp10"
+                android:src="@drawable/count_down" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

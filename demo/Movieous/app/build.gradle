@@ -1,0 +1,107 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply from: '../config/buildType.gradle'
+
+android {
+
+    defaultConfig {
+        applicationId "com.movieous.media"
+        compileSdkVersion rootProject.ext.android.compileSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
+        }
+
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
+        multiDexEnabled true
+
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+
+        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "movieous_v${variant.versionName}_${variant.name}.apk"
+        }
+    }
+
+    sourceSets {
+        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/bundle', "src/main/poster"]
+        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/filters/res', 'src/main/makeup/res']
+    }
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dexOptions {
+        jumboMode true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation files('libs/ushortvideo-2.0.1.jar')
+    // ufile 文件上传 SDK
+    implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
+
+    implementation project(path: ':recyclerkit')
+    implementation project(path: ':gridpagersnaphelper')
+    implementation project(path: ':recyclerviewindicator')
+    implementation project(path: ':FlycoTabLayout_Lib')
+    implementation project(path: ':faceunity')
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    // Support库
+    implementation rootProject.ext.supportLibs
+    // 网络请求库
+    implementation rootProject.ext.networkLibs
+    // RxJava2
+    implementation rootProject.ext.rxJavaLibs
+    implementation rootProject.ext.otherLibs
+    // APT dependencies
+    kapt rootProject.ext.annotationProcessorLibs
+    // kotlin 支持库
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Butterknife
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+    // GlideOkHttp
+    implementation(rootProject.ext.glideOkhttp) {
+        exclude group: 'glide-parent'
+    }
+    implementation project(':multiple-status-view')
+    // 运行时权限
+    implementation 'pub.devrel:easypermissions:1.2.0'
+    // 播放器
+    implementation 'com.shuyu:GSYVideoPlayer:6.0.2'
+    // Gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation 'com.github.iknow4:android-utils-sdk:1.1.2'
+    // 视频/图片文件选择库
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.zhihu.android:matisse:0.5.2-beta4'
+
+}
