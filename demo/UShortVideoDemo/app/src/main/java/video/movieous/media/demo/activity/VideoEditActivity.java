@@ -260,14 +260,14 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void startRecording() {
         mRecordButton.setText("停止");
         if (mVideoEditManager != null) {
-            mVideoEditManager.startRecording();
+            mVideoEditManager.startRecord();
         }
     }
 
     private void stopRecording() {
         mRecordButton.setText("录制");
         if (mVideoEditManager != null) {
-            mVideoEditManager.stopRecording();
+            mVideoEditManager.stopRecord();
         }
     }
 
