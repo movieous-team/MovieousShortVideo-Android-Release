@@ -15,14 +15,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import video.movieous.engine.UVideoSaveListener;
-import video.movieous.engine.core.env.FitViewHelper;
+import video.movieous.engine.media.util.MediaUtil;
+import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.media.demo.utils.UriUtil;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
-import video.movieous.engine.view.UTextureView;
 
 /**
  * VideoEditActivity
@@ -33,7 +33,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     public static final String VIDEO_PATH = "video_path";
 
     private static final String OUT_FILE = "/sdcard/movieous/shortvideo/video_edit_test.mp4";
-    private static final String MV_FILE = "/sdcard/movieous/shortvideo/mv/mv_overlay.mp4"; //"android.resource://video.movieous.media.demo/" + R.raw.mv_overlay;
 
     private UTextureView mRenderView;
     private ImageView mPreviewImage;
@@ -46,7 +45,11 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private USticker mSticker;
     private USticker mTextSticker;
     private long mStartTime;
+    private int mVideoWidth;
+    private int mVideoHeight;
+    private long mVideoDuration;
     private boolean mTouchingTextureView;
+    private boolean mIsOverlayVideoAdded = true;
     protected VideoEditorState mEditorState = VideoEditorState.Idle;
 
     protected enum VideoEditorState {
@@ -116,7 +119,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         mTvTip = $(R.id.tv_tip);
         mPlayButton = $(R.id.pause_playback);
         mSaveButton = $(R.id.save);
-        mRenderView.setScaleType(FitViewHelper.ScaleType.CENTER_CROP);
 
         $(R.id.capture).setOnClickListener(view -> mVideoEditManager.captureVideoFrame(bitmap -> runOnUiThread(() -> mPreviewImage.setImageBitmap(bitmap))));
 
@@ -161,9 +163,10 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
                 case MotionEvent.ACTION_DOWN:
                     mTouchingTextureView = true;
                     startPlayback();
-                    mSticker = new USticker(USticker.StickerType.TEXT);
-                    mSticker.init()
-                            .setText("哈哈哈哈", 20, Color.RED)
+                    mSticker = new USticker();
+                    mSticker.init(USticker.StickerType.TEXT, mVideoWidth / 4, mVideoWidth / 4 / 4)
+                            .setText("哈哈哈哈", Color.RED)
+                            //视频图像的左上角为坐标原点
                             .setPosition(Math.round(event.getX() * mSticker.getWidth() * 1f / mRenderView.getWidth()),
                                     Math.round(event.getY() * mSticker.getHeight() * 1f / mRenderView.getHeight()))
                             .setAngle(45);
@@ -202,16 +205,8 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         $(R.id.add_text).setOnClickListener(view -> demoText());
 
         // MV
-        $(R.id.add_mv_file).setTag(0);
-        $(R.id.add_mv_file).setEnabled(false);
         $(R.id.add_mv_file).setOnClickListener(view -> {
-            if ((Integer) view.getTag() == 0) {
-                view.setTag(1);
-                //mVideoEditManager.setOverlayVideoFile(MV_FILE);
-            } else {
-                view.setTag(0);
-               // mVideoEditManager.setOverlayVideoFile(null);
-            }
+            demoMv();
         });
 
     }
@@ -281,6 +276,12 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     @Override
     protected void getVideoFile(String file) {
         mVideoFile = file;
+        MediaUtil.Metadata metadata = UMediaUtil.getMetadata(file);
+        boolean needRotation = metadata.rotation / 90 % 2 != 0;
+        mVideoWidth = needRotation ? metadata.height : metadata.width;
+        mVideoHeight = needRotation ? metadata.width : metadata.height;
+        mVideoDuration = metadata.duration;
+        Log.i(TAG, "video w = " + mVideoWidth + ", h = " + mVideoHeight + ", rotation = " + metadata.rotation + ", duration = " + mVideoDuration);
         initVideoEditManager();
         startPlayback();
     }
@@ -288,26 +289,48 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void demoText() {
         startPlayback();
         if (mTextSticker == null) {
-            addText();
+            addTextSticker();
         } else {
-            removeText();
+            removeTextSticker();
         }
     }
 
-    private void addText() {
-        mTextSticker = new USticker(USticker.StickerType.TEXT);
-        mTextSticker.init()
-                .setText("这是一个美丽的传说", 20, Color.RED)
+    private void addTextSticker() {
+        mTextSticker = new USticker();
+        String stickerText = "这是一个美丽的传说";
+        int stickerW = mVideoWidth / 2;
+        int stickerH = stickerW / stickerText.length();
+        mTextSticker.init(USticker.StickerType.TEXT, stickerW, stickerH)
+                .setText(stickerText, Color.RED)
                 .setDuration(0, (int) UMediaUtil.getMetadata(mVideoFile).duration)
-                .setPosition(50, 500);
+                .setPosition(mVideoWidth / 2 - stickerW / 2, mVideoHeight - stickerH - 20);     //视频图像的左上角为坐标原点
         mVideoEditManager.addSticker(mTextSticker);
     }
 
-    private void removeText() {
+    private void removeTextSticker() {
         mVideoEditManager.removeSticker(mTextSticker);
         mTextSticker = null;
     }
 
+    private void demoMv() {
+        if (mIsOverlayVideoAdded) {
+            addMv();
+        } else {
+            removeMv();
+        }
+    }
+
+    private void addMv() {
+        String mvFile = ""; // 替换为您的 MV 文件路径
+        String maskFile = ""; // 替换为您的 MV alpha 文件路径
+        mVideoEditManager.setOverlayVideoFile(mvFile, maskFile);
+        mIsOverlayVideoAdded = false;
+    }
+
+    private void removeMv() {
+        mVideoEditManager.setOverlayVideoFile(null, null);
+        mIsOverlayVideoAdded = true;
+    }
 
     private void cancelSave() {
         mVideoEditManager.cancelSave();

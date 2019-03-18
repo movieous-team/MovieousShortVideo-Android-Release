@@ -41,6 +41,7 @@ import okhttp3.internal.Util;
 import org.jetbrains.annotations.NotNull;
 import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoFrameListener;
+import video.movieous.engine.media.util.MediaUtil;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
@@ -73,6 +74,8 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
     private int mCurrentLayout;
     private String mVideoPath;
+    private int mVideoWidth;
+    private int mVideoHeight;
     private RecyclerAdapter mMainAdapter;
     private SparseArray<List<RecyclerAdapter.ViewModel>> mViewModels = new SparseArray<>();
     private Map<Integer, Double> mRecordSpeed;
@@ -94,7 +97,11 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
     public synchronized static VideoEditFragment getInstance(String videoPath) {
         VideoEditFragment fragment = new VideoEditFragment();
+        MediaUtil.Metadata metadata = UMediaUtil.getMetadata(videoPath);
         fragment.mVideoPath = videoPath;
+        boolean needRotation = metadata.rotation / 90 % 2 != 0;
+        fragment.mVideoWidth = needRotation ? metadata.height : metadata.width;
+        fragment.mVideoHeight = needRotation ? metadata.width : metadata.height;
         return fragment;
     }
 
@@ -731,11 +738,14 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     // 标题
     private void onClickVideoTitle(View view) {
         if (mTitleSticker == null) {
-            mTitleSticker = new USticker(USticker.StickerType.TEXT);
-            mTitleSticker.init()
-                    .setText("Movieous", 20, Color.WHITE)
+            mTitleSticker = new USticker();
+            String stickerText = "Movieous";
+            int stickerWidth = mVideoWidth / 3;
+            int stickerHeight = stickerWidth / stickerText.length();
+            mTitleSticker.init(USticker.StickerType.TEXT, stickerWidth, stickerHeight)
+                    .setText(stickerText, Color.WHITE)
                     .setDuration(0, (int) getVideoDuration())
-                    .setPosition(100, 350);
+                    .setPosition(mVideoWidth / 2 - stickerWidth / 2, mVideoHeight / 2);
         }
         if (view.getTag() == null) {
             view.setTag(1);
@@ -750,11 +760,14 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     // 时间地点
     private void onClickVideoTimeAddr(View view) {
         if (mTimeAddrSticker == null) {
-            mTimeAddrSticker = new USticker(USticker.StickerType.TEXT);
-            mTimeAddrSticker.init()
-                    .setText("十月 18 · 上海", 15, Color.WHITE)
+            mTimeAddrSticker = new USticker();
+            String stickerText = "十月 18 · 上海";
+            int stickerWidth = mVideoWidth / 2;
+            int stickerHeight = stickerWidth / stickerText.length();
+            mTimeAddrSticker.init(USticker.StickerType.TEXT, stickerWidth, stickerHeight)
+                    .setText(stickerText, Color.WHITE)
                     .setDuration(0, (int) getVideoDuration())
-                    .setPosition(100, 500);
+                    .setPosition(mVideoWidth / 2 - stickerWidth / 2, mVideoHeight / 2 + 100);
         }
         if (view.getTag() == null) {
             view.setTag(1);

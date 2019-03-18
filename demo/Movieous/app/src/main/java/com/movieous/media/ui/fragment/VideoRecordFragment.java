@@ -450,8 +450,8 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
 
     // 初始化 UVideoRecordManager
     private void initVideoRecordManager() {
-        mVideoRecorder = new UVideoRecordManager();
-        mVideoRecorder.init(mPreview)
+        mVideoRecorder = new UVideoRecordManager()
+                .init(mPreview)
                 .setRecordListener(this)
                 .setFocusListener(this)
                 .setVideoFrameListener(this);

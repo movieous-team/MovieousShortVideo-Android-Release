@@ -10,9 +10,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-/**
- * Created by huangwei on 2018/9/9.
- */
 public class UriUtil {
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
