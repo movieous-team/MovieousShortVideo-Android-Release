@@ -12,8 +12,11 @@ import android.view.WindowManager;
 import com.movieous.media.R;
 import com.movieous.media.base.BaseActivity;
 import com.movieous.media.mvp.model.VideoDataUtil;
+import com.movieous.media.mvp.model.entity.MediaParam;
 import com.movieous.media.mvp.model.entity.VideoListItem;
 import com.movieous.media.ui.adapter.VideoDetailsAdapter;
+import com.movieous.media.utils.SharePrefUtils;
+import com.movieous.media.view.CustomSettingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
 import org.jetbrains.annotations.Nullable;
@@ -118,6 +121,12 @@ public class VideoPlayActivity extends BaseActivity {
 
     @Override
     public void start() {
+    }
+
+    public void onShowSettingDialog(View view) {
+        MediaParam setting = SharePrefUtils.getParam(this);
+        CustomSettingDialog dialog = new CustomSettingDialog(this, setting);
+        dialog.showDialog();
     }
 
     public void onCreateShortVideo(View view) {

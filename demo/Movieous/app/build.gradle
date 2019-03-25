@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.2.jar')
+    implementation files('libs/ushortvideo-2.0.3.jar')
     // ufile 文件上传 SDK
     implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 
@@ -66,7 +66,11 @@ dependencies {
     implementation project(path: ':gridpagersnaphelper')
     implementation project(path: ':recyclerviewindicator')
     implementation project(path: ':FlycoTabLayout_Lib')
+
+    // faceunity 特效库
     implementation project(path: ':faceunity')
+    // sensetime 特效库
+    implementation project(path: ':STMobileJNI')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

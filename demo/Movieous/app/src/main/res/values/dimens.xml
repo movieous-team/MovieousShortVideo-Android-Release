@@ -46,6 +46,10 @@
 
     <!-- 显示图片的size -->
     <dimen name="preview_item_size">60dp</dimen>
+    <dimen name="dialog_horizontal_margin">8dp</dimen>
+
+    <dimen name="transcoding_setting_left_width">48dp</dimen>
+    <dimen name="transcoding_setting_right_width">32dp</dimen>
 
     <!--设置PopupView的尺寸-->
     <dimen name="setting_image_size">20dp</dimen>

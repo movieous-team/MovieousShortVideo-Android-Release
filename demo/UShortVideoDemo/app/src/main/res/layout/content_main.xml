@@ -17,7 +17,7 @@
         android:padding="20dp">
 
         <Button
-            android:id="@+id/camera_filter"
+            android:id="@+id/camera_record"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="视频录制"
@@ -31,14 +31,14 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/video_filter"
+            android:id="@+id/video_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="视频编辑"
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/image_filter"
+            android:id="@+id/image_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="图片合成"
@@ -56,6 +56,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="View 录制"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/screen_record"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="屏幕录制"
             android:textSize="15sp" />
 
     </LinearLayout>

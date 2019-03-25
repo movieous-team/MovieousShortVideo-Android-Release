@@ -10,12 +10,10 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.media.util.MediaUtil;
+import video.movieous.engine.view.UPaintView;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
@@ -31,7 +29,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private static final String TAG = "VideoEditActivity";
     private static final int REQUEST_CODE_CHOOSE_MUSIC = 2;
     public static final String VIDEO_PATH = "video_path";
-
     private static final String OUT_FILE = "/sdcard/movieous/shortvideo/video_edit_test.mp4";
 
     private UTextureView mRenderView;
@@ -44,6 +41,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private UVideoEditManager mVideoEditManager;
     private USticker mSticker;
     private USticker mTextSticker;
+    private UPaintView mPaintView;
     private long mStartTime;
     private int mVideoWidth;
     private int mVideoHeight;
@@ -187,27 +185,17 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
             return true;
         });
 
-        // 背景音乐演示
-        $(R.id.add_music).setOnClickListener(v -> {
-            Intent intent = new Intent();
-            if (Build.VERSION.SDK_INT < 19) {
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("audio/*");
-            } else {
-                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("audio/*");
-            }
-            startActivityForResult(Intent.createChooser(intent, "请选择音乐文件："), REQUEST_CODE_CHOOSE_MUSIC);
-        });
+        // 背景音乐
+        $(R.id.add_music).setOnClickListener(v -> startMusicActivity());
 
-        // 文字
+        // 文字特效
         $(R.id.add_text).setOnClickListener(view -> demoText());
 
-        // MV
-        $(R.id.add_mv_file).setOnClickListener(view -> {
-            demoMv();
-        });
+        // MV 特效
+        $(R.id.add_mv_file).setOnClickListener(view -> demoMv());
+
+        // 涂鸦
+        $(R.id.add_paintview).setOnClickListener(view -> demoGraffitiPaint());
 
     }
 
@@ -266,6 +254,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         }
     }
 
+    // 合成录制片段
     private void combineClip() {
         if (mVideoEditManager != null) {
             mStartTime = System.currentTimeMillis();
@@ -286,6 +275,21 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         startPlayback();
     }
 
+    // 背景音乐选择
+    private void startMusicActivity() {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT < 19) {
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("audio/*");
+        } else {
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("audio/*");
+        }
+        startActivityForResult(Intent.createChooser(intent, "请选择音乐文件："), REQUEST_CODE_CHOOSE_MUSIC);
+    }
+
+    // 文字特效
     private void demoText() {
         startPlayback();
         if (mTextSticker == null) {
@@ -312,6 +316,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         mTextSticker = null;
     }
 
+    // MV 特效
     private void demoMv() {
         if (mIsOverlayVideoAdded) {
             addMv();
@@ -321,8 +326,8 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     }
 
     private void addMv() {
-        String mvFile = ""; // 替换为您的 MV 文件路径
-        String maskFile = ""; // 替换为您的 MV alpha 文件路径
+        String mvFile = "/sdcard/movieous/shortvideo/mvs/rei.mp4";
+        String maskFile = "/sdcard/movieous/shortvideo/mvs/rei_alpha.mp4";
         mVideoEditManager.setOverlayVideoFile(mvFile, maskFile);
         mIsOverlayVideoAdded = false;
     }
@@ -330,6 +335,26 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void removeMv() {
         mVideoEditManager.setOverlayVideoFile(null, null);
         mIsOverlayVideoAdded = true;
+    }
+
+    // 涂鸦
+    private void demoGraffitiPaint() {
+        Toast.makeText(this, "可以涂鸦了，再次点击取消涂鸦", Toast.LENGTH_LONG).show();
+        if (mPaintView == null) {
+            addPaintView();
+        } else {
+            removePaintView();
+        }
+    }
+
+    private void addPaintView() {
+        mPaintView = new UPaintView(this, mRenderView.getWidth(), mRenderView.getHeight());
+        mVideoEditManager.addPaintView(mPaintView);
+    }
+
+    private void removePaintView() {
+        mVideoEditManager.removePaintView(mPaintView);
+        mPaintView = null;
     }
 
     private void cancelSave() {

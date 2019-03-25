@@ -18,7 +18,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
-import com.faceunity.entity.Filter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -27,17 +26,18 @@ import com.hhl.recyclerviewindicator.LinePageIndicator;
 import com.movieous.media.Constants;
 import com.movieous.media.R;
 import com.movieous.media.api.vendor.fusdk.FuSDKManager;
+import com.movieous.media.api.vendor.stsdk.StSDKManager;
 import com.movieous.media.mvp.contract.MusicSelectedListener;
 import com.movieous.media.mvp.contract.OnSeekBarChangeListener;
-import com.movieous.media.mvp.model.entity.*;
+import com.movieous.media.mvp.model.entity.BeautyParamEnum;
+import com.movieous.media.mvp.model.entity.TabEntity;
+import com.movieous.media.mvp.model.entity.UFilter;
 import com.movieous.media.ui.activity.PlaybackActivity;
 import com.movieous.media.utils.ScreenUtils;
-import com.movieous.media.utils.Utils;
 import com.movieous.media.view.*;
 import io.inchtime.recyclerkit.RecyclerAdapter;
 import io.inchtime.recyclerkit.RecyclerKit;
 import kotlin.Unit;
-import okhttp3.internal.Util;
 import org.jetbrains.annotations.NotNull;
 import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoFrameListener;
@@ -47,6 +47,7 @@ import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
 import video.movieous.shortvideo.UVideoPlayListener;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -256,7 +257,9 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
             } else if (isTimeRangeFilter()) {
                 setPlayTime(position, getVideoDuration());
             }
-            mVendorSdkManager.changeMusicFilterTime(-1);
+            if (mFilterSdkManager != null) {
+                mFilterSdkManager.changeMusicFilterTime(-1);
+            }
         });
     }
 
@@ -281,7 +284,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     }
 
     @Override
-    protected void setSeekViewStart(MagicFilterItem filterItem) {
+    protected void setSeekViewStart(UFilter filterItem) {
         mFilterSeekView.addingFilter(filterItem);
     }
 
@@ -533,27 +536,35 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
     // 美颜滤镜
     private void bindBeautyFilter(RecyclerAdapter.ViewHolder viewHolder) {
+        boolean isVendorFu = isFuFilterSDK();
         setMenuTitle(viewHolder, R.string.btn_preview_filter);
         RecyclerView recyclerView = viewHolder.findView(R.id.beauty_filter_recyclerView);
         RecyclerAdapter adapter = RecyclerKit.INSTANCE.adapter(mActivity, 1)
                 .recyclerView(recyclerView)
                 .withLinearLayout(LinearLayoutManager.HORIZONTAL, false)
                 .modelViewBind((pIndex, pViewModel, pViewHolder) -> {
-                    Filter item = (Filter) pViewModel.getValue();
-                    ((ImageView) pViewHolder.findView(R.id.icon)).setImageResource(item.resId());
-                    TextView textView = pViewHolder.findView(R.id.name);
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText(item.description());
+                    UFilter item = (UFilter) pViewModel.getValue();
+                    if (isVendorFu) {
+                        ((ImageView) pViewHolder.findView(R.id.icon)).setImageResource(item.getResId());
+                        TextView textView = pViewHolder.findView(R.id.name);
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText(item.getDescription());
+                    } else {
+                        ((ImageView) pViewHolder.findView(R.id.icon)).setImageBitmap(item.getIcon());
+                        TextView textView = pViewHolder.findView(R.id.name);
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText(item.getName());
+                    }
                     return Unit.INSTANCE;
                 })
                 .modelViewClick((pIndex, pViewModel, view) -> {
-                    onBeautyFilterChanged((Filter) pViewModel.getValue());
+                    onBeautyFilterChanged((UFilter) pViewModel.getValue());
                     return Unit.INSTANCE;
                 })
                 .build();
-        List<Filter> items = BeautyFilterEnum.Companion.getFiltersByFilterType(Filter.FILTER_TYPE_BEAUTY_FILTER);
+        List<UFilter> items = isVendorFu ? FuSDKManager.getFilterList() : StSDKManager.getFilterList(mActivity);
         List<RecyclerAdapter.ViewModel> models = new ArrayList<>();
-        for (Filter item : items) {
+        for (UFilter item : items) {
             models.add(new RecyclerAdapter.ViewModel(R.layout.item_filter_view, 1, RecyclerAdapter.ModelType.LEADING, item, false));
         }
         adapter.setModels(models);
@@ -649,16 +660,17 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 .modelViewLongClick((pIndex, pViewModel) -> {
                     mIsLongClick = true;
                     recyclerView.setTag(pIndex);
-                    MagicFilterItem filterItem = (MagicFilterItem) pViewModel.getValue();
+                    UFilter filterItem = (UFilter) pViewModel.getValue();
                     filterItem.setStart(1f);
                     filterItem.setEnabled(true);
                     onMagicFilterChanged(filterItem);
                     return Unit.INSTANCE;
                 })
                 .build();
-        ArrayList<MagicFilterItem> items = FuSDKManager.getMagicFilterList(Effect.EFFECT_TYPE_MUSIC_FILTER);
+        int douyinIndex = isFuFilterSDK() ? Effect.EFFECT_TYPE_MUSIC_FILTER : 1;
+        ArrayList<UFilter> items = mFilterSdkManager.getMagicFilterList(douyinIndex);
         List<RecyclerAdapter.ViewModel> models = new ArrayList<>();
-        for (MagicFilterItem item : items) {
+        for (UFilter item : items) {
             models.add(new RecyclerAdapter.ViewModel(R.layout.item_filter_view, 1, RecyclerAdapter.ModelType.LEADING, item, false));
         }
         adapter.setModels(models);
@@ -673,7 +685,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                     int position = (int) recyclerView.getTag();
                     Log.i(TAG, "ACTION_UP: stop filter: " + position);
                     mIsLongClick = false;
-                    MagicFilterItem filterItem = (MagicFilterItem) ((RecyclerAdapter) recyclerView.getAdapter()).getViewModels().get(position).getValue();
+                    UFilter filterItem = (UFilter) ((RecyclerAdapter) recyclerView.getAdapter()).getViewModels().get(position).getValue();
                     filterItem.setEnabled(false);
                     onMagicFilterChanged(filterItem);
                     viewHolder.findView(R.id.undo_btn).setVisibility(View.VISIBLE);
@@ -700,9 +712,13 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     }
 
     private void bindMagicFilterItem(RecyclerAdapter.ViewModel viewModel, RecyclerAdapter.ViewHolder viewHolder) {
-        MagicFilterItem item = (MagicFilterItem) viewModel.getValue();
+        UFilter item = (UFilter) viewModel.getValue();
         ImageView imageView = viewHolder.findView(R.id.icon);
-        imageView.setImageResource(item.getResId());
+        if (isFuFilterSDK()) {
+            imageView.setImageResource(item.getResId());
+        } else {
+            imageView.setImageBitmap(item.getIcon());
+        }
         TextView textView = viewHolder.findView(R.id.name);
         textView.setVisibility(View.VISIBLE);
         textView.setText(item.getName());
@@ -854,9 +870,11 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
     // 显示贴纸列表
     private void showStickerFilterFragment() {
+        mVideoEditManager.setOutputBuffer(mFilterSdkManager.getRGBABuffer());
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         if (mStickerFilterFragment == null) {
             mStickerFilterFragment = new StickerFilterFragment();
+            mStickerFilterFragment.setFilterSdkManager(mFilterSdkManager);
             mStickerFilterFragment.setOnFilterChangedListener(this);
             ft.add(R.id.fragment_container, mStickerFilterFragment);
         } else {
@@ -909,30 +927,60 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     private void saveVideoFile() {
         stopPlayback();
         showProcessingDialog();
-        mVendorSdkManager.destroy();
-        mVendorSdkManager = null;
-        FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
-        fuSDKManager.setPreviewMode(false);
-        UVideoFrameListener listener = new UVideoFrameListener() {
-            @Override
-            public void onSurfaceCreated() {
-                FURenderer fuFilterEngine = fuSDKManager.getSaveFilterEngine();
-                fuFilterEngine.loadItems();
-                if (mCurrentFilter != null) {
-                    fuSDKManager.changeFilter(mCurrentFilter);
+        UVideoFrameListener listener;
+        ByteBuffer byteBuffer = mFilterSdkManager.getRGBABuffer();
+        mFilterSdkManager.destroy();
+        mFilterSdkManager = null;
+        if (isFuFilterSDK()) {
+            FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
+            fuSDKManager.setPreviewMode(false);
+            listener = new UVideoFrameListener() {
+                @Override
+                public void onSurfaceCreated() {
+                    FURenderer fuFilterEngine = fuSDKManager.getSaveFilterEngine();
+                    fuFilterEngine.loadItems();
+                    if (mCurrentFilter != null) {
+                        fuSDKManager.changeFilter(mCurrentFilter);
+                    }
                 }
-            }
 
-            @Override
-            public void onSurfaceDestroyed() {
-                fuSDKManager.destroy();
-            }
+                @Override
+                public void onSurfaceDestroyed() {
+                    fuSDKManager.destroy();
+                }
 
-            @Override
-            public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                return (mCurrentFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
-            }
-        };
+                @Override
+                public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                    return (mCurrentFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
+                }
+            };
+        } else {
+            listener = new UVideoFrameListener() {
+                @Override
+                public void onSurfaceCreated() {
+                    initVendorSDKManager();
+                    mFilterSdkManager.setRGBABuffer(byteBuffer);
+                    mFilterSdkManager.onSurfaceCreated();
+                    if (mCurrentFilter != null) {
+                        mFilterSdkManager.changeFilter(mCurrentFilter);
+                    }
+                }
+
+                @Override
+                public void onSurfaceDestroyed() {
+                    mFilterSdkManager.destroy();
+                    mFilterSdkManager = null;
+                }
+
+                @Override
+                public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                    if (mCurrentFilter == null) return texId;
+                    int outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
+                    return outTexId;
+                }
+            };
+        }
+        mVideoEditManager.setOutputBuffer(byteBuffer);
         mVideoEditManager.save(Constants.EDIT_FILE_PATH, listener);
     }
 

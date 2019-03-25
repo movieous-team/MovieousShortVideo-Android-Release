@@ -4,8 +4,7 @@ import android.util.Log;
 import android.widget.ImageButton;
 import butterknife.BindView;
 import com.movieous.media.R;
-import com.movieous.media.mvp.model.entity.FilterVendor;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
 import org.jetbrains.annotations.NotNull;
 import video.movieous.shortvideo.UVideoEditManager;
 
@@ -28,9 +27,9 @@ public abstract class VideoEditPreviewFragment extends PreviewFragment {
     private int mColorIndex;
 
     // 特效信息集合
-    private volatile ArrayList<MagicFilterItem> mMagicFilterList = new ArrayList<>();
+    private volatile ArrayList<UFilter> mMagicFilterList = new ArrayList<>();
 
-    protected abstract void setSeekViewStart(MagicFilterItem filterItem);
+    protected abstract void setSeekViewStart(UFilter filterItem);
 
     protected abstract void setSeekViewEnd(long duration);
 
@@ -39,59 +38,57 @@ public abstract class VideoEditPreviewFragment extends PreviewFragment {
     // TODO 暂时分段特效与贴纸滤镜不能共存，需要确认是否有共存的需求，需要 fu 确认
     @Override
     public int onDrawFrame(int texId, int texWidth, int texHeight) {
-        if (mVendorSdkManager != null && isTimeRangeFilter()) {
-            MagicFilterItem filterItem = getMagicFilterByPosition(mVideoEditManager.getCurrentPosition());
+        if (mFilterSdkManager != null && isTimeRangeFilter()) {
+            UFilter filterItem = getMagicFilterByPosition(mVideoEditManager.getCurrentPosition());
             if (filterItem != null) {
-                mVendorSdkManager.changeFilter(filterItem);
+                mFilterSdkManager.changeFilter(filterItem);
             } else if (isTimeRangeFilter()) {
-                mVendorSdkManager.clearAllFilters();
+                mFilterSdkManager.clearAllFilters();
             }
         }
         return super.onDrawFrame(texId, texWidth, texHeight);
     }
 
     @Override
-    public synchronized void onMagicFilterChanged(@NotNull MagicFilterItem filter) {
-        if (filter == null || mVendorSdkManager == null) {
+    public synchronized void onMagicFilterChanged(@NotNull UFilter filter) {
+        if (filter == null || mFilterSdkManager == null) {
             return;
         }
         Log.i(TAG, "onMagicFilterChanged: filter change: " + filter.getName());
         mCurrentFilter = filter;
-        mVendorSdkManager.clearAllFilters();
+        mFilterSdkManager.clearAllFilters();
         boolean isEnabled = filter.getEnabled();
-        if (filter.getVendor() == FilterVendor.FU) { // fu
+        if (isEnabled) {
+            mFilterSdkManager.changeFilter(filter);
+        }
+        if (isTimeRangeFilter()) {
             if (isEnabled) {
-                mVendorSdkManager.changeFilter(filter);
-            }
-            if (isTimeRangeFilter()) {
-                if (isEnabled) {
-                    int position = mVideoEditManager.getCurrentPosition();
-                    Log.i(TAG, "filter start = " + position);
-                    filter.setStart(position);
-                    filter.setEnd(mVideoDuration);
-                    filter.setColor(getRectColor());
-                    mMagicFilterList.add(filter);
-                    startPlayback();
-                    setSeekViewStart(filter);
-                } else {
-                    pausePlayback();
-                    if (filter.getDuration() < 100) {
-                        Log.i(TAG, "filter duration is too short, remove filter");
-                        mMagicFilterList.remove(filter);
-                    } else {
-                        int position = mVideoEditManager.getCurrentPosition();
-                        if (position < filter.getStart()) {
-                            Log.i(TAG, "filter end = " + position);
-                        } else {
-                            filter.setEnd(mVideoEditManager.getCurrentPosition());
-                        }
-                        setSeekViewEnd(mVideoDuration);
-                    }
-                }
-                setLongTouchState(isEnabled);
-            } else if (mEditorState == VideoEditorState.Paused) {
+                int position = mVideoEditManager.getCurrentPosition();
+                Log.i(TAG, "filter start = " + position);
+                filter.setStart(position);
+                filter.setEnd(mVideoDuration);
+                filter.setColor(getRectColor());
+                mMagicFilterList.add(filter);
                 startPlayback();
+                setSeekViewStart(filter);
+            } else {
+                pausePlayback();
+                if (filter.getDuration() < 100) {
+                    Log.i(TAG, "filter duration is too short, remove filter");
+                    mMagicFilterList.remove(filter);
+                } else {
+                    int position = mVideoEditManager.getCurrentPosition();
+                    if (position < filter.getStart()) {
+                        Log.i(TAG, "filter end = " + position);
+                    } else {
+                        filter.setEnd(mVideoEditManager.getCurrentPosition());
+                    }
+                    setSeekViewEnd(mVideoDuration);
+                }
             }
+            setLongTouchState(isEnabled);
+        } else if (mEditorState == VideoEditorState.Paused) {
+            startPlayback();
         }
     }
 
@@ -147,8 +144,8 @@ public abstract class VideoEditPreviewFragment extends PreviewFragment {
         }
     }
 
-    private synchronized MagicFilterItem getMagicFilterByPosition(long position) {
-        for (MagicFilterItem filterItem : mMagicFilterList) {
+    private synchronized UFilter getMagicFilterByPosition(long position) {
+        for (UFilter filterItem : mMagicFilterList) {
             if ((filterItem.getStart() <= position && position <= filterItem.getEnd())) {
                 //Log.i(TAG, "getMagicFilterByPosition: " + filterItem.getName());
                 return filterItem;

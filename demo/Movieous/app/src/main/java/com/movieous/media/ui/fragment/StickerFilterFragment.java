@@ -11,8 +11,9 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.movieous.media.Constants;
 import com.movieous.media.R;
-import com.movieous.media.api.vendor.fusdk.FuSDKManager;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.contract.FilterSdkManager;
+import com.movieous.media.mvp.model.entity.FilterVendor;
+import com.movieous.media.mvp.model.entity.UFilter;
 import com.movieous.media.mvp.model.entity.TabEntity;
 import io.inchtime.recyclerkit.RecyclerAdapter;
 import io.inchtime.recyclerkit.RecyclerKit;
@@ -25,6 +26,7 @@ import java.util.List;
  * 贴纸选择页面
  */
 public class StickerFilterFragment extends BaseFilterFragment implements OnTabSelectListener {
+
     @BindView(R.id.sticker_filter_recycler)
     RecyclerView mStickerRecyclerView;
     @BindView(R.id.sticker_tab)
@@ -33,6 +35,7 @@ public class StickerFilterFragment extends BaseFilterFragment implements OnTabSe
     private RecyclerAdapter mStickerAdapter;
     private SparseArray<List<RecyclerAdapter.ViewModel>> mViewModels = new SparseArray<>();
     private ImageView mCurrentFilterIcon;
+    private FilterSdkManager mFilterSdkManager;
 
     @Override
     public int getLayoutId() {
@@ -60,8 +63,12 @@ public class StickerFilterFragment extends BaseFilterFragment implements OnTabSe
     public void onTabReselect(int position) {
     }
 
+    public void setFilterSdkManager(FilterSdkManager filterSdkManager) {
+        mFilterSdkManager = filterSdkManager;
+    }
+
     private void initTab() {
-        String[] mTabTitles = FuSDKManager.getFilterTypeName();
+        String[] mTabTitles = mFilterSdkManager.getFilterTypeName();
         ArrayList<CustomTabEntity> tabEntities = new ArrayList<>();
         for (int i = 0; i < mTabTitles.length; i++) {
             tabEntities.add(new TabEntity(mTabTitles[i], 0, 0));
@@ -75,10 +82,13 @@ public class StickerFilterFragment extends BaseFilterFragment implements OnTabSe
                 .recyclerView(mStickerRecyclerView)
                 .withGridLayout(GridLayoutManager.VERTICAL, false)
                 .modelViewBind((index, viewModel, viewHolder) -> {
-                    MagicFilterItem item = (MagicFilterItem) viewModel.getValue();
+                    UFilter item = (UFilter) viewModel.getValue();
                     ImageView imageView = viewHolder.findView(R.id.icon);
-                    imageView.setImageResource(item.getResId());
-                    //mViewHolds.put(index, viewHolder);
+                    if (item.getVendor() == FilterVendor.FACEUNITY) {
+                        imageView.setImageResource(item.getResId());
+                    } else {
+                        imageView.setImageBitmap(item.getIcon());
+                    }
                     return Unit.INSTANCE;
                 })
                 .modelViewClick((pIndex, pViewModel, view) -> {
@@ -86,7 +96,7 @@ public class StickerFilterFragment extends BaseFilterFragment implements OnTabSe
                     ImageView imageView = view.findViewById(R.id.icon);
                     imageView.setBackgroundResource(R.drawable.control_filter_select);
                     mCurrentFilterIcon = imageView;
-                    onMagicFilterChanged((MagicFilterItem) pViewModel.getValue());
+                    onMagicFilterChanged((UFilter) pViewModel.getValue());
                     return Unit.INSTANCE;
                 })
                 .emptyViewBind((emptyViewHolder -> Unit.INSTANCE))
@@ -99,8 +109,8 @@ public class StickerFilterFragment extends BaseFilterFragment implements OnTabSe
         List<RecyclerAdapter.ViewModel> models = mViewModels.get(typeIndex);
         if (models == null) {
             models = new ArrayList<>();
-            List<MagicFilterItem> items = FuSDKManager.getMagicFilterList(typeIndex + 1);
-            for (MagicFilterItem item : items) {
+            List<UFilter> items = mFilterSdkManager.getMagicFilterList(typeIndex + 1);
+            for (UFilter item : items) {
                 models.add(new RecyclerAdapter.ViewModel(R.layout.item_filter_view, 1, RecyclerAdapter.ModelType.LEADING, item, false));
             }
             mViewModels.put(typeIndex, models);

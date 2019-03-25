@@ -31,17 +31,17 @@ public class MainActivity extends BaseActivity {
         EZPermission.permissions(Permission.CAMERA, Permission.STORAGE, Permission.MICROPHONE)
                 .apply(this, null);
 
-        $(R.id.image_filter).setOnClickListener(view -> {
+        $(R.id.image_video).setOnClickListener(view -> {
             Intent intent = new Intent(this, ImageMovieActivity.class);
             startActivity(intent);
         });
 
-        $(R.id.video_filter).setOnClickListener(view -> {
+        $(R.id.video_edit).setOnClickListener(view -> {
             Intent intent = new Intent(this, VideoEditActivity.class);
             startActivity(intent);
         });
 
-        $(R.id.camera_filter).setOnClickListener(view -> {
+        $(R.id.camera_record).setOnClickListener(view -> {
             Intent intent = new Intent(this, VideoRecordActivity.class);
             startActivity(intent);
         });
@@ -58,6 +58,11 @@ public class MainActivity extends BaseActivity {
 
         $(R.id.view_record).setOnClickListener(view -> {
             Intent intent = new Intent(this, ViewRecordActivity.class);
+            startActivity(intent);
+        });
+
+        $(R.id.screen_record).setOnClickListener(view -> {
+            Intent intent = new Intent(this, ScreenRecordActivity.class);
             startActivity(intent);
         });
 

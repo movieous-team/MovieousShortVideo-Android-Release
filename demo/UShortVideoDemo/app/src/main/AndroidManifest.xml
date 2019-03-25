@@ -77,6 +77,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Fullscreen" />
 
+        <!-- 屏幕录制 -->
+        <activity
+            android:name=".activity.ScreenRecordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Fullscreen" />
+
     </application>
 
 </manifest>

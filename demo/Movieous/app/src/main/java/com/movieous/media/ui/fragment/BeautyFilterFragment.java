@@ -122,7 +122,7 @@ public class BeautyFilterFragment extends BaseFilterFragment implements SeekBar.
             RecyclerView recyclerView = mLayoutFilter.findViewById(R.id.beauty_filter_recyclerView);
             LinearLayoutManager mFilterLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(mFilterLayoutManager);
-            mBeautyFilterAdapter = new BeautyFilterAdapter(this);
+            mBeautyFilterAdapter = new BeautyFilterAdapter(mActivity, this);
             mBeautyFilterAdapter.setFilterType(Filter.FILTER_TYPE_BEAUTY_FILTER);
             recyclerView.setAdapter(mBeautyFilterAdapter);
         }

@@ -6,44 +6,63 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
 import com.faceunity.entity.Filter;
 import com.movieous.media.mvp.contract.FilterSdkManager;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
 import com.movieous.media.mvp.model.entity.FilterVendor;
-import com.movieous.media.mvp.model.entity.FuFilterEnum;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FuSDKManager implements FilterSdkManager {
-    private boolean mIsPreviewMode = true;
+    private static final String TAG = "FuSDKManager";
 
+    private boolean mIsPreviewMode = true;
     private FURenderer mPreviewFilterEngine;
     private FURenderer mSaveFilterEngine;
     private Context mContext;
     private Effect mCurrentEffect;
     private boolean mReInit;
 
+    public static void initFuSDKEnv(Context context) {
+        Log.i(TAG, "init faceunity sdk env");
+        FURenderer.initFURenderer(context.getApplicationContext());
+    }
+
     public FuSDKManager(Context context) {
         mContext = context;
     }
 
-    public static String[] getFilterTypeName() {
+    public String[] getFilterTypeName() {
         return new String[]{
                 "普通", "AR", "换脸", "表情", "背景替换", "手势", "哈哈镜", "3D", "人像", "抖音",
         };
     }
 
-    public static ArrayList<MagicFilterItem> getMagicFilterList(int type) {
+    public static List<UFilter> getFilterList() {
+        List<UFilter> filterItemList = new ArrayList<>();
+        ArrayList<Filter> beautyFilterList = BeautyFilterEnum.Companion.getFiltersByFilterType(Filter.FILTER_TYPE_BEAUTY_FILTER);
+        for (Filter filter : beautyFilterList) {
+            UFilter item = new UFilter(filter.filterName(), filter.description());
+            item.setResId(filter.resId());
+            filterItemList.add(item);
+        }
+        return filterItemList;
+    }
+
+    public ArrayList<UFilter> getMagicFilterList(int type) {
         ArrayList<Effect> mEffects = FuFilterEnum.Companion.getEffectsByEffectType(type);
-        ArrayList<MagicFilterItem> items = new ArrayList<>();
+        ArrayList<UFilter> items = new ArrayList<>();
         for (Effect effect : mEffects) {
-            MagicFilterItem item = new MagicFilterItem(effect.bundleName(), effect.path());
-            item.setVendor(FilterVendor.FU);
+            UFilter item = new UFilter(effect.bundleName(), effect.path());
+            item.setVendor(FilterVendor.FACEUNITY);
             item.setResId(effect.resId());
             item.setMaxFace(effect.maxFace());
             item.setType(effect.effectType());
@@ -124,20 +143,22 @@ public class FuSDKManager implements FilterSdkManager {
 
     @Override
     public void onSurfaceChanged(int width, int height) {
-        if (mReInit) {
-            onSurfaceCreated();
-        }
+        Log.i(TAG, "onSurfaceChanged");
     }
 
     @Override
     public synchronized int onDrawFrame(int texId, int width, int height) {
+        if (mReInit) {
+            mReInit = false;
+            onSurfaceCreated();
+        }
         return mIsPreviewMode ?
                 getPreviewFilterEngine().onDrawFrame(texId, width, height) :
                 getSaveFilterEngine().onDrawFrame(texId, width, height);
     }
 
     @Override
-    public void changeFilter(@NotNull MagicFilterItem filter) {
+    public void changeFilter(@NotNull UFilter filter) {
         Effect effect = new Effect(filter.getName(), filter.getResId(), filter.getPath(), filter.getMaxFace(), filter.getType(), filter.getDescription());
         if (mCurrentEffect != null && mCurrentEffect.bundleName().equals(effect.bundleName())) {
             //return;
@@ -189,11 +210,12 @@ public class FuSDKManager implements FilterSdkManager {
     }
 
     @Override
-    public void changeBeautyFilter(@NotNull Filter filterName) {
+    public void changeBeautyFilter(@NotNull UFilter filterItem) {
+        Filter filter = new Filter(filterItem.getName(), filterItem.getResId(), filterItem.getDescription(), Filter.FILTER_TYPE_BEAUTY_FILTER);
         if (mIsPreviewMode) {
-            getPreviewFilterEngine().onFilterNameSelected(filterName);
+            getPreviewFilterEngine().onFilterNameSelected(filter);
         } else {
-            getSaveFilterEngine().onFilterNameSelected(filterName);
+            getSaveFilterEngine().onFilterNameSelected(filter);
         }
     }
 
@@ -278,5 +300,14 @@ public class FuSDKManager implements FilterSdkManager {
     @Override
     public boolean needReInit() {
         return mReInit;
+    }
+
+    @Override
+    public ByteBuffer getRGBABuffer() {
+        return null;
+    }
+
+    @Override
+    public void setRGBABuffer(@NotNull ByteBuffer buffer) {
     }
 }

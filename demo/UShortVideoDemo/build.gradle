@@ -29,8 +29,8 @@ task clean(type: Delete) {
 
 ext {
     // App version
-    versionCode = 202
-    versionName = '2.0.2'
+    versionCode = 203
+    versionName = '2.0.3'
 
     // Sdk and tools
     minSdkVersion = 18
@@ -42,6 +42,6 @@ ext {
     supportLibraryVersion = '27+'
 
     // Sdk version
-    sdkVersionCode = 202
-    sdkVersionName = '2.0.2'
+    sdkVersionCode = 203
+    sdkVersionName = '2.0.3'
 }

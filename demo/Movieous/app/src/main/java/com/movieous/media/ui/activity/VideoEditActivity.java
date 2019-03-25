@@ -52,9 +52,7 @@ public class VideoEditActivity extends BaseActivity {
     @Override
     public void initView() {
         if (TextUtils.isEmpty(mVideoPath)) return;
-        if (mVideoEditFragment == null) {
-            mVideoEditFragment = VideoEditFragment.getInstance(mVideoPath);
-        }
+        mVideoEditFragment = VideoEditFragment.getInstance(mVideoPath);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, mVideoEditFragment)

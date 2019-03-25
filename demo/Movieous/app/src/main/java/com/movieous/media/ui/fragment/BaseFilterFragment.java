@@ -3,12 +3,11 @@ package com.movieous.media.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
-import com.faceunity.entity.Filter;
 import com.movieous.media.R;
 import com.movieous.media.base.BaseFragment;
 import com.movieous.media.mvp.contract.FilterChangedListener;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class BaseFilterFragment extends BaseFragment implements FilterChangedLis
     protected Activity mActivity;
     protected LayoutInflater mInflater;
     protected FilterChangedListener mFilterChangedListener;
-    protected HashMap<String, ArrayList<MagicFilterItem>> mStickerFilterList = new HashMap<>();
+    protected HashMap<String, ArrayList<UFilter>> mStickerFilterList = new HashMap<>();
 
     public void setOnFilterChangedListener(FilterChangedListener listener) {
         mFilterChangedListener = listener;
@@ -66,12 +65,12 @@ public class BaseFilterFragment extends BaseFragment implements FilterChangedLis
     }
 
     @Override
-    public void onBeautyFilterChanged(@NotNull Filter filterName) {
-        mFilterChangedListener.onBeautyFilterChanged(filterName);
+    public void onBeautyFilterChanged(@NotNull UFilter filter) {
+        mFilterChangedListener.onBeautyFilterChanged(filter);
     }
 
     @Override
-    public void onMagicFilterChanged(@NotNull MagicFilterItem filter) {
+    public void onMagicFilterChanged(@NotNull UFilter filter) {
         if (mFilterChangedListener != null) {
             mFilterChangedListener.onMagicFilterChanged(filter);
         }

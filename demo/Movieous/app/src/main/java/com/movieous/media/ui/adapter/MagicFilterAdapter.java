@@ -9,17 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.movieous.media.R;
 import com.movieous.media.mvp.contract.OnItemClickListener;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
 
 import java.util.ArrayList;
 
 public class MagicFilterAdapter extends RecyclerView.Adapter implements View.OnClickListener, View.OnLongClickListener {
     private Context mContext;
-    private ArrayList<MagicFilterItem> mFilterList;
+    private ArrayList<UFilter> mFilterList;
     private OnItemClickListener mOnItemClickListener;
     private int mSelectedPosition = -1;
 
-    public MagicFilterAdapter(ArrayList<MagicFilterItem> list, Context context) {
+    public MagicFilterAdapter(ArrayList<UFilter> list, Context context) {
         mFilterList = list;
         mContext = context;
     }
@@ -54,14 +54,14 @@ public class MagicFilterAdapter extends RecyclerView.Adapter implements View.OnC
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         final FilterViewHolder holder = (FilterViewHolder) viewHolder;
         boolean isSelected = mSelectedPosition == position;
-        MagicFilterItem item = mFilterList.get(position);
+        UFilter item = mFilterList.get(position);
         ImageView icon = holder.imageView;
         View itemView = holder.itemView;
         switch (item.getVendor()) {
-            case FU:
+            case FACEUNITY:
                 icon.setImageResource(item.getResId());
                 break;
-            case ST:
+            case SENSETIME:
                 icon.setImageBitmap(item.getIcon());
                 break;
         }

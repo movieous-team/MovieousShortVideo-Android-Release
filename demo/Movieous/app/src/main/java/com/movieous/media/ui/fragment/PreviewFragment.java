@@ -3,15 +3,16 @@ package com.movieous.media.ui.fragment;
 import android.app.Activity;
 import android.util.Log;
 import butterknife.BindView;
-import com.faceunity.entity.Filter;
 import com.movieous.media.R;
 import com.movieous.media.api.vendor.fusdk.FuSDKManager;
+import com.movieous.media.api.vendor.stsdk.StSDKManager;
 import com.movieous.media.base.BaseFragment;
 import com.movieous.media.mvp.contract.FilterChangedListener;
 import com.movieous.media.mvp.contract.FilterSdkManager;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
 import com.movieous.media.mvp.model.entity.FilterVendor;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
+import com.movieous.media.utils.SharePrefUtils;
 import com.movieous.media.view.SaveProgressDialog;
 import org.jetbrains.annotations.NotNull;
 import video.movieous.engine.UVideoFrameListener;
@@ -27,8 +28,8 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     @BindView(R.id.preview)
     protected UTextureView mPreview;
     protected SaveProgressDialog mProcessingDialog;
-    protected FilterSdkManager mVendorSdkManager;
-    protected MagicFilterItem mCurrentFilter;
+    protected FilterSdkManager mFilterSdkManager;
+    protected UFilter mCurrentFilter;
 
     protected void initProcessingDialog() {
         mProcessingDialog = new SaveProgressDialog(mActivity);
@@ -59,20 +60,24 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     public void onSurfaceCreated() {
         Log.i(TAG, "onSurfaceCreated");
         initVendorSDKManager();
-        mVendorSdkManager.onSurfaceCreated();
+        mFilterSdkManager.onSurfaceCreated();
         onMagicFilterChanged(mCurrentFilter);
     }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
         Log.i(TAG, "onSurfaceChanged, width = " + width + ", height = " + height);
+        if (mFilterSdkManager != null) {
+            mFilterSdkManager.onSurfaceChanged(width, height);
+        }
     }
 
     @Override
     public void onSurfaceDestroyed() {
         Log.i(TAG, "onSurfaceDestroyed");
-        if (mVendorSdkManager != null) {
-            mVendorSdkManager.destroy();
+        if (mFilterSdkManager != null) {
+            mFilterSdkManager.destroy();
+            mFilterSdkManager = null;
         }
     }
 
@@ -80,13 +85,15 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     public int onDrawFrame(int texId, int texWidth, int texHeight) {
         int outTexId = texId;
         synchronized (mActivity) {
-            if (mVendorSdkManager == null) {
+            if (mFilterSdkManager == null) {
                 initVendorSDKManager();
+                onSurfaceCreated();
+                onSurfaceChanged(texWidth, texHeight);
             }
-            if (mVendorSdkManager.needReInit()) {
+            if (mFilterSdkManager.needReInit()) {
                 onSurfaceCreated();
             }
-            outTexId = mVendorSdkManager.onDrawFrame(texId, texWidth, texHeight);
+            outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
         }
         return outTexId;
     }
@@ -118,32 +125,28 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     //FilterChangedListener
     @Override
     public void onMusicFilterTime(long time) {
-        mVendorSdkManager.changeMusicFilterTime(-1);
+        mFilterSdkManager.changeMusicFilterTime(-1);
     }
 
     @Override
     public void onBeautyValueChanged(float value, @NotNull BeautyParamEnum beautyType) {
-        mVendorSdkManager.changeBeautyValue(value, beautyType);
+        mFilterSdkManager.changeBeautyValue(value, beautyType);
     }
 
     @Override
-    public void onBeautyFilterChanged(@NotNull Filter filterName) {
-        mVendorSdkManager.changeBeautyFilter(filterName);
+    public void onBeautyFilterChanged(@NotNull UFilter filter) {
+        mFilterSdkManager.changeBeautyFilter(filter);
     }
 
     @Override
-    public void onMagicFilterChanged(@NotNull MagicFilterItem filter) {
-        if (filter == null || mVendorSdkManager == null) {
+    public void onMagicFilterChanged(@NotNull UFilter filter) {
+        if (filter == null || mFilterSdkManager == null) {
             Log.w("", "filter is null!");
             return;
         }
         mCurrentFilter = filter;
-        mVendorSdkManager.clearAllFilters();
-        if (filter.getVendor() == FilterVendor.FU) {
-            if (filter.getEnabled()) {
-                mVendorSdkManager.changeFilter(filter);
-            }
-        }
+        mFilterSdkManager.clearAllFilters();
+        mFilterSdkManager.changeFilter(filter);
         showFilterDescription(filter);
     }
 
@@ -153,22 +156,29 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
 
     @Override
     public void onClearFilter() {
-        if (mVendorSdkManager != null) {
-            mVendorSdkManager.clearAllFilters();
+        if (mFilterSdkManager != null) {
+            mFilterSdkManager.clearAllFilters();
         }
     }
 
-    private void initVendorSDKManager() {
-        if (mVendorSdkManager == null) {
-            mVendorSdkManager = new FuSDKManager(mActivity);
-            mVendorSdkManager.init(mActivity, true);
+    // 初始化三方特效 SDK
+    protected void initVendorSDKManager() {
+        if (mFilterSdkManager == null) {
+            mFilterSdkManager = isFuFilterSDK() ?
+                    new FuSDKManager(mActivity) :
+                    new StSDKManager(mActivity);
+            mFilterSdkManager.init(mActivity, true);
         }
     }
 
-    private void showFilterDescription(MagicFilterItem filterItem) {
+    private void showFilterDescription(UFilter filterItem) {
         if (filterItem.getDescription() > 0) {
             mActivity.runOnUiThread(() -> showToast(mActivity, getString(filterItem.getDescription())));
         }
+    }
+
+    protected boolean isFuFilterSDK() {
+        return SharePrefUtils.getParam(mActivity).vendor == FilterVendor.FACEUNITY;
     }
 
 }

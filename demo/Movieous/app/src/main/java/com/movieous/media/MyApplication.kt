@@ -1,13 +1,14 @@
 package com.movieous.media
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
-import com.faceunity.FURenderer
+import com.movieous.media.api.vendor.fusdk.FuSDKManager
+import com.movieous.media.api.vendor.stsdk.StSDKManager
 import com.movieous.media.mvp.model.VideoDataUtil
+import com.movieous.media.mvp.model.entity.FilterVendor
+import com.movieous.media.ui.fragment.PreviewFragment
 import com.movieous.media.utils.DisplayManager
+import com.movieous.media.utils.SharePrefUtils
 import iknow.android.utils.BaseUtils
 import video.movieous.engine.base.utils.ULog
 import video.movieous.shortvideo.UShortVideoEnv
@@ -22,48 +23,19 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        BaseUtils.init(this)
         context = applicationContext
+        DisplayManager.init(this)
+
+        initShortVideoEnv()
+        BaseUtils.init(this)
         // 获取播放列表
         VideoDataUtil.doGetVideoList()
-        initShortVideoEnv()
-        initFaceunity()
-        DisplayManager.init(this)
-        registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks)
     }
 
+    // 初始化 SDK 运行环境
     private fun initShortVideoEnv() {
-        UShortVideoEnv.setLogLevel(ULog.I)
-        UShortVideoEnv.init(context, Constants.MOVIEOUS_SIGN)
+        UShortVideoEnv.setLogLevel(ULog.D)
+        UShortVideoEnv.init(MyApplication.context, Constants.MOVIEOUS_SIGN)
     }
 
-    private fun initFaceunity() {
-        FURenderer.initFURenderer(context)
-    }
-
-    private val mActivityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            Log.i(TAG, "onCreated: " + activity.componentName.className)
-        }
-
-        override fun onActivityStarted(activity: Activity) {
-            Log.i(TAG, "onStart: " + activity.componentName.className)
-        }
-
-        override fun onActivityResumed(activity: Activity) {
-        }
-
-        override fun onActivityPaused(activity: Activity) {
-        }
-
-        override fun onActivityStopped(activity: Activity) {
-        }
-
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        }
-
-        override fun onActivityDestroyed(activity: Activity) {
-            Log.d(TAG, "onDestroy: " + activity.componentName.className)
-        }
-    }
 }

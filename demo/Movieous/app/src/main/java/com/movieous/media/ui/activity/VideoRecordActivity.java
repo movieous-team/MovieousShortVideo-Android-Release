@@ -9,7 +9,7 @@ import com.movieous.media.ui.fragment.VideoRecordFragment;
 
 public class VideoRecordActivity extends BaseActivity {
     private static final String TAG = "VideoRecordActivity";
-    VideoRecordFragment mVideoRecordFragment;
+    private VideoRecordFragment mVideoRecordFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +17,7 @@ public class VideoRecordActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         if (null == savedInstanceState) {
-            if (mVideoRecordFragment == null) {
-                mVideoRecordFragment = new VideoRecordFragment();
-            }
+            mVideoRecordFragment = new VideoRecordFragment();
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, mVideoRecordFragment)
@@ -43,4 +41,5 @@ public class VideoRecordActivity extends BaseActivity {
     @Override
     public void start() {
     }
+
 }

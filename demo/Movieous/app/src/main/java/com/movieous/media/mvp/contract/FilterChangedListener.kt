@@ -1,14 +1,13 @@
 package com.movieous.media.mvp.contract
 
-import com.faceunity.entity.Filter
 import com.movieous.media.mvp.model.entity.BeautyParamEnum
-import com.movieous.media.mvp.model.entity.MagicFilterItem
+import com.movieous.media.mvp.model.entity.UFilter
 
 interface FilterChangedListener {
     /**
      * Triggered when the magic filter is changed
      */
-    fun onMagicFilterChanged(filter: MagicFilterItem)
+    fun onMagicFilterChanged(filter: UFilter)
 
     /**
      * Triggered when music filter time is changed
@@ -23,7 +22,7 @@ interface FilterChangedListener {
     /**
      * Triggered when beauty filter is changed
      */
-    fun onBeautyFilterChanged(filterName: Filter)
+    fun onBeautyFilterChanged(filter: UFilter)
 
     /**
      * Remove last filter

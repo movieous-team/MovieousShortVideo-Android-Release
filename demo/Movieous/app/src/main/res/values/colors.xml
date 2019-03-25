@@ -32,6 +32,7 @@
     <!-- 默认背景色 -->
     <color name="backgroundColor">#EEEEEE</color>
     <color name="button_background">#292929</color>
+    <color name="dark_black">#CC262626</color>
 
     <!-- white -->
     <color name="color_white">#FFFFFF</color>

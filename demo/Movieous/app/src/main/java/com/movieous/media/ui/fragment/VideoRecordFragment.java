@@ -3,7 +3,6 @@ package com.movieous.media.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -62,7 +61,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     @BindView(R.id.tv_time_down_count)
     TimeDownView mTimeDownView;
 
-    private UVideoRecordManager mVideoRecorder;
+    private UVideoRecordManager mVideoRecordManager;
     // sticker
     private StickerFilterFragment mStickerFilterFragment;
     // music list
@@ -84,20 +83,15 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        mVideoRecorder.startPreview();
+        mVideoRecordManager.startPreview();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mVideoRecorder.stopPreview();
+        mVideoRecordManager.stopPreview();
     }
 
     @Override
@@ -107,12 +101,12 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
         mBeautyFilterFragment = null;
         mProcessingDialog = null;
         mActivity = null;
-        if (mVendorSdkManager != null) {
-            mVendorSdkManager.clearAllFilters();
-            mVendorSdkManager.destroy();
-            mVendorSdkManager = null;
+        if (mFilterSdkManager != null) {
+            mFilterSdkManager.clearAllFilters();
+            mFilterSdkManager.destroy();
+            mFilterSdkManager = null;
         }
-        mVideoRecorder.release();
+        mVideoRecordManager.release();
     }
 
     @Override
@@ -139,7 +133,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
                 if (!hideFragmentView()) {
                     mFocusMarkerX = (int) e.getX() - mFocusIndicator.getWidth() / 2;
                     mFocusMarkerY = (int) e.getY() - mFocusIndicator.getHeight() / 2;
-                    mVideoRecorder.focus(e.getX(), e.getY());
+                    mVideoRecordManager.focus(e.getX(), e.getY());
                 }
                 return false;
             }
@@ -199,9 +193,11 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     @OnClick(R.id.btn_stickers)
     public void showStickerFilterFragment() {
         mIsStickerFilterShowing = true;
+        mVideoRecordManager.setOutputBuffer(mFilterSdkManager.getRGBABuffer());
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         if (mStickerFilterFragment == null) {
             mStickerFilterFragment = new StickerFilterFragment();
+            mStickerFilterFragment.setFilterSdkManager(mFilterSdkManager);
             mStickerFilterFragment.setOnFilterChangedListener(this);
             ft.add(R.id.fragment_container, mStickerFilterFragment);
         } else {
@@ -229,7 +225,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
 
     @OnClick(R.id.switch_camera)
     public void onClickSwitchCamera() {
-        mVideoRecorder.switchCamera();
+        mVideoRecordManager.switchCamera();
         mFocusIndicator.focusCancel();
     }
 
@@ -330,12 +326,6 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
                 PlaybackActivity.start(mActivity, destFile);
             }
         });
-    }
-
-    @Override
-    public int onDrawFrame(int texId, int texWidth, int texHeight) {
-        mVendorSdkManager.changeMusicFilterTime(-1); // only for douyin filter
-        return super.onDrawFrame(texId, texWidth, texHeight);
     }
 
     private void setShutterTime(long totalDuration, int clipCount) {
@@ -450,7 +440,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
 
     // 初始化 UVideoRecordManager
     private void initVideoRecordManager() {
-        mVideoRecorder = new UVideoRecordManager()
+        mVideoRecordManager = new UVideoRecordManager()
                 .init(mPreview)
                 .setRecordListener(this)
                 .setFocusListener(this)
@@ -482,10 +472,10 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
         if (mBtnShutter.isDeleteMode()) {
             if (clearAll) {
                 mBtnShutter.cleanSplitView();
-                mVideoRecorder.removeAllClips();
+                mVideoRecordManager.removeAllClips();
             } else {
                 mBtnShutter.deleteSplitView();
-                mVideoRecorder.removeLastClip();
+                mVideoRecordManager.removeLastClip();
             }
         } else {
             mBtnShutter.setDeleteMode(true);
@@ -508,7 +498,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     }
 
     private void combineClip() {
-        mVideoRecorder.combineClip(Constants.RECORD_FILE_PATH, this);
+        mVideoRecordManager.combineClip(Constants.RECORD_FILE_PATH, this);
     }
 
     // ShutterButton.OnShutterListener
@@ -534,11 +524,11 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     };
 
     private void startRecord() {
-        mVideoRecorder.startRecord();
+        mVideoRecordManager.startRecord();
     }
 
     private void stopRecord() {
-        mVideoRecorder.stopRecord();
+        mVideoRecordManager.stopRecord();
     }
 
     private void initSpeedPanel() {
@@ -550,7 +540,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
             @Override
             public void onTabSelect(int position) {
                 // TODO
-                //mVideoRecorder.setVideoSpeed(recordSpeed[position]);
+                //mVideoRecordManager.setVideoSpeed(recordSpeed[position]);
             }
 
             @Override
@@ -563,8 +553,8 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     public void onMusicSelected(@NotNull String file) {
         Log.i(TAG, "Select file: " + file);
         if (!TextUtils.isEmpty(file)) {
-            mVideoRecorder.setMusicFile(file);
-            mVideoRecorder.setOriginVolume(0);
+            mVideoRecordManager.setMusicFile(file);
+            mVideoRecordManager.setOriginVolume(0);
         }
     }
 }

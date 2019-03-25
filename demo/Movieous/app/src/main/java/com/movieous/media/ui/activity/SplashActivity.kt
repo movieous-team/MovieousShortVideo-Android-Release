@@ -10,8 +10,12 @@ import android.view.animation.Animation.AnimationListener
 import com.movieous.media.BuildConfig
 import com.movieous.media.MyApplication
 import com.movieous.media.R
+import com.movieous.media.api.vendor.fusdk.FuSDKManager
+import com.movieous.media.api.vendor.stsdk.StSDKManager
 import com.movieous.media.base.BaseActivity
+import com.movieous.media.mvp.model.entity.FilterVendor
 import com.movieous.media.utils.AppUtils
+import com.movieous.media.utils.SharePrefUtils
 import kotlinx.android.synthetic.main.activity_splash.*
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
@@ -32,7 +36,15 @@ class SplashActivity : BaseActivity() {
 
     override fun layoutId(): Int = R.layout.activity_splash
 
-    override fun initData() {}
+    override fun initData() {
+        // 初始化三方特效 SDK
+        val param = SharePrefUtils.getParam(this)
+        if (param.vendor === FilterVendor.FACEUNITY) {
+            FuSDKManager.initFuSDKEnv(this)
+        } else {
+            StSDKManager.initStSDKEnv(this)
+        }
+    }
 
     override fun initView() {
         tv_app_name.typeface = textTypeface

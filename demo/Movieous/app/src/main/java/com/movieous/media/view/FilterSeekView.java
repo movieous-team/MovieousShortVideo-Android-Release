@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.movieous.media.R;
-import com.movieous.media.mvp.model.entity.MagicFilterItem;
+import com.movieous.media.mvp.model.entity.UFilter;
 import com.movieous.media.utils.ScreenUtils;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class FilterSeekView extends View {
     private int dip5;
     private float firstPointX, secondPointX;
 
-    private List<MagicFilterItem> mVideoFxDataInfoList = new ArrayList<>();//滤镜特效数据信息
+    private List<UFilter> mVideoFxDataInfoList = new ArrayList<>();//滤镜特效数据信息
 
     private OnDataChangedListener OnDataChangedListener;
 
@@ -118,7 +118,7 @@ public class FilterSeekView extends View {
         invalidate();
     }
 
-    public void addingFilter(MagicFilterItem filterItem) {
+    public void addingFilter(UFilter filterItem) {
         Log.i(TAG, "addingFilter: " + filterItem.getName() + ", color = " + filterItem.getColor());
         addingFilter = true;
         curFxColor = filterItem.getColor();
@@ -172,7 +172,7 @@ public class FilterSeekView extends View {
         addingFilter = false;
         rectInfoList.clear();
         for (int i = 0; i < mVideoFxDataInfoList.size(); i++) {
-            MagicFilterItem info = mVideoFxDataInfoList.get(i);
+            UFilter info = mVideoFxDataInfoList.get(i);
             RectInfo rectInfo = new RectInfo();
             rectInfo.color = getRectColor(info.getName());
             float inPoint = info.getStart(); // TODO 时间？
@@ -217,7 +217,7 @@ public class FilterSeekView extends View {
     private int getRectColor(String fxName) {
         int count = mVideoFxDataInfoList.size();
         for (int index = 0; index < count; ++index) {
-            MagicFilterItem filter = mVideoFxDataInfoList.get(index);
+            UFilter filter = mVideoFxDataInfoList.get(index);
             if (filter.getName().equals(fxName)) {//
 
                 Log.i(TAG, "onMagicFilterChanged: " + filter.getName() + ", color = " + filter.getColor());

@@ -10,7 +10,18 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@+id/close_window"
+        android:id="@+id/func_window"
+        android:layout_width="@dimen/dp50"
+        android:layout_height="@dimen/dp50"
+        android:layout_margin="@dimen/dp10"
+        android:gravity="center"
+        android:onClick="onShowSettingDialog"
+        android:padding="@dimen/dp20"
+        android:scaleType="center"
+        android:src="@drawable/func_list" />
+
+    <ImageView
+        android:id="@+id/new_shortvideo"
         android:layout_width="@dimen/dp50"
         android:layout_height="@dimen/dp50"
         android:layout_alignParentBottom="true"

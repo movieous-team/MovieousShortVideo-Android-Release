@@ -108,3 +108,7 @@
 -dontwarn com.shuyu.gsyvideoplayer.utils.**
 -keep class tv.danmaku.ijk.** { *; }
 -dontwarn tv.danmaku.ijk.**
+
+# sensetime
+-keep class com.sensetime.stmobile.* { *;}
+-keep class com.sensetime.stmobile.model.* { *;}

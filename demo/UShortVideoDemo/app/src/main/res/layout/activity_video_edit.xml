@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/capture"
-        android:layout_toEndOf="@+id/add_mv_file"
+        android:layout_toEndOf="@+id/add_paintview"
         android:text="保存" />
 
     <Button
@@ -66,8 +66,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/capture"
         android:layout_toRightOf="@id/add_music"
-        android:visibility="visible"
-        android:text="MV 合成" />
+        android:text="MV 合成"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/add_paintview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/capture"
+        android:layout_toEndOf="@+id/add_mv_file"
+        android:text="涂鸦" />
 
     <TextView
         android:id="@+id/tv_tip"
@@ -84,7 +92,7 @@
         android:id="@+id/preview_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>
