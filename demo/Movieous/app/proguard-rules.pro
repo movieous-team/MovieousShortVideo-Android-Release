@@ -14,7 +14,8 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 # 忽略警告
 -ignorewarning
-
+# 保留行号
+-keepattributes SourceFile,LineNumberTable
 # 保持哪些类不被混淆
 -keep public class * extends android.app.Fragment
 -keep public class * extends android.app.Activity      # 保持哪些类不被混淆

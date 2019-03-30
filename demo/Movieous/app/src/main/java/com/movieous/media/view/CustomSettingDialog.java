@@ -4,10 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.*;
 import com.movieous.media.R;
 import com.movieous.media.mvp.model.entity.FilterVendor;
 import com.movieous.media.mvp.model.entity.MediaParam;
@@ -16,11 +13,6 @@ import com.movieous.media.utils.SharePrefUtils;
 public class CustomSettingDialog {
     private Context mContext;
     private MediaParam mMediaParam;
-    private OnUpdateParamListener mUpdateParamListener;
-
-    public interface OnUpdateParamListener {
-        void onUpdateRtcSetting(MediaParam param);
-    }
 
     public CustomSettingDialog(Context context, MediaParam param) {
         mContext = context;
@@ -40,6 +32,9 @@ public class CustomSettingDialog {
         } else if (mMediaParam.vendor == FilterVendor.SENSETIME) {
             RadioButton button = layout.findViewById(R.id.vendor_zego);
             button.setChecked(true);
+        } else {
+            RadioButton button = layout.findViewById(R.id.vendor_none);
+            button.setChecked(true);
         }
         rtcVendor.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
@@ -49,14 +44,24 @@ public class CustomSettingDialog {
                 case R.id.vendor_zego:
                     mMediaParam.vendor = FilterVendor.SENSETIME;
                     break;
+                case R.id.vendor_none:
+                    mMediaParam.vendor = FilterVendor.NONE;
+                    break;
                 default:
                     break;
             }
         });
 
+        CheckBox cbVideoSizeRamain = layout.findViewById(R.id.checkbox_video_size_remain);
+        cbVideoSizeRamain.setChecked(mMediaParam.remainVideoSize);
+
         // width
         SeekBar widthSeekBar = layout.findViewById(R.id.text_set_width);
+        widthSeekBar.setEnabled(!mMediaParam.remainVideoSize);
+        widthSeekBar.setMax(1024);
+        widthSeekBar.setProgress(mMediaParam.width);
         final TextView widthTextView = layout.findViewById(R.id.show_width);
+        widthTextView.setText(mMediaParam.width + "");
         widthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -79,7 +84,11 @@ public class CustomSettingDialog {
 
         // height
         final TextView heightTextView = layout.findViewById(R.id.show_height);
+        heightTextView.setText(mMediaParam.height + "");
         SeekBar heightSeekBar = layout.findViewById(R.id.text_set_height);
+        heightSeekBar.setMax(1024);
+        heightSeekBar.setProgress(mMediaParam.height);
+        heightSeekBar.setEnabled(!mMediaParam.remainVideoSize);
         heightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -101,9 +110,19 @@ public class CustomSettingDialog {
         });
         heightSeekBar.setProgress(mMediaParam.height);
 
+        cbVideoSizeRamain.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            boolean isCustomVideoSizeEnabled = !isChecked;
+            mMediaParam.remainVideoSize = isChecked;
+            widthSeekBar.setEnabled(isCustomVideoSizeEnabled);
+            heightSeekBar.setEnabled(isCustomVideoSizeEnabled);
+        });
+
         // video bitrate
         final SeekBar bitrateSeekBar = layout.findViewById(R.id.text_set_bitrate);
+        bitrateSeekBar.setProgress(mMediaParam.videoBitrate);
+        bitrateSeekBar.setMax(2 * 1024);
         final TextView bitRateTextView = layout.findViewById(R.id.show_bitrate);
+        bitRateTextView.setText(mMediaParam.videoBitrate + "");
         bitrateSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -126,7 +145,10 @@ public class CustomSettingDialog {
 
         // fps
         SeekBar fpsSeekBar = layout.findViewById(R.id.text_set_fps);
+        fpsSeekBar.setMax(30);
+        fpsSeekBar.setProgress(mMediaParam.videoFrameRate);
         final TextView fpsTextView = layout.findViewById(R.id.show_fps);
+        fpsTextView.setText(mMediaParam.videoFrameRate + "");
         fpsSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -146,29 +168,6 @@ public class CustomSettingDialog {
             }
         });
         fpsSeekBar.setProgress(mMediaParam.videoFrameRate);
-
-        // gop
-        SeekBar gopSeekBar = layout.findViewById(R.id.text_set_gop);
-        final TextView gopTextView = layout.findViewById(R.id.show_gop);
-        gopSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0) {
-                    progress = 1;
-                }
-                mMediaParam.videoGop = progress;
-                gopTextView.setText("" + progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-        gopSeekBar.setProgress(mMediaParam.videoGop);
 
         // sample rate
         if (mMediaParam.audioSampleRate == 32000) {
@@ -239,17 +238,8 @@ public class CustomSettingDialog {
         builder = new AlertDialog.Builder(mContext);
         builder.setView(layout);
         alertDialog = builder.create();
-        alertDialog.setOnDismissListener(dialog -> {
-            saveSetting(mMediaParam);
-            if (mUpdateParamListener != null) {
-                mUpdateParamListener.onUpdateRtcSetting(mMediaParam);
-            }
-        });
+        alertDialog.setOnDismissListener(dialog -> saveSetting(mMediaParam));
         alertDialog.show();
-    }
-
-    public void setOnUpdateTranscodingListener(OnUpdateParamListener listener) {
-        mUpdateParamListener = listener;
     }
 
     private void saveSetting(MediaParam setting) {

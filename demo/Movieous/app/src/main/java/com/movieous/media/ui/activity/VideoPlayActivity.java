@@ -35,7 +35,6 @@ public class VideoPlayActivity extends BaseActivity {
     private ArrayList<VideoListItem> mVideoList;
     private boolean mIsPause;
     private int mPlayPosition;
-
     private View mPlayView;
 
     private void playVideo() {
@@ -123,12 +122,14 @@ public class VideoPlayActivity extends BaseActivity {
     public void start() {
     }
 
+    // 显示参数设置窗口
     public void onShowSettingDialog(View view) {
-        MediaParam setting = SharePrefUtils.getParam(this);
-        CustomSettingDialog dialog = new CustomSettingDialog(this, setting);
+        MediaParam param = SharePrefUtils.getParam(this);
+        CustomSettingDialog dialog = new CustomSettingDialog(this, param);
         dialog.showDialog();
     }
 
+    // 进入短视频录制
     public void onCreateShortVideo(View view) {
         startActivity(new Intent(this, VideoRecordActivity.class));
     }

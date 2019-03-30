@@ -31,6 +31,7 @@ object Constants {
     const val EDIT_FILE_PATH = VIDEO_STORAGE_DIR + "edit.mp4"
     const val COVER_FILE_PATH = VIDEO_STORAGE_DIR + "cover.gif"
     const val MERGE_FILE_PATH = VIDEO_STORAGE_DIR + "merge.mp4"
+    const val UPLOAD_FILE_PATH = VIDEO_STORAGE_DIR + "upload.mp4"
 
     // 变速录制/编辑参数
     const val VIDEO_SPEED_SUPER_SLOW = 0.25

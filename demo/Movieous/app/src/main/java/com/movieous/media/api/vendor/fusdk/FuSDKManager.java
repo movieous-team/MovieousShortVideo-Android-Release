@@ -159,10 +159,8 @@ public class FuSDKManager implements FilterSdkManager {
 
     @Override
     public void changeFilter(@NotNull UFilter filter) {
+        Log.i(TAG, "changeFilter: filter = " + filter.getName());
         Effect effect = new Effect(filter.getName(), filter.getResId(), filter.getPath(), filter.getMaxFace(), filter.getType(), filter.getDescription());
-        if (mCurrentEffect != null && mCurrentEffect.bundleName().equals(effect.bundleName())) {
-            //return;
-        }
         if (mIsPreviewMode) {
             getPreviewFilterEngine().onEffectSelected(effect);
         } else {
@@ -170,7 +168,6 @@ public class FuSDKManager implements FilterSdkManager {
         }
         mCurrentEffect = effect;
         mStartTime = System.currentTimeMillis();
-        //playMusic(effect);
     }
 
     @Override

@@ -5,21 +5,20 @@ public class MediaParam {
     public FilterVendor vendor = FilterVendor.FACEUNITY;
 
     // video
-    public int width = 360;
-    public int height = 640;
-    public int videoBitrate = 400;
-    public int videoFrameRate = 15;
-    public int videoGop = 30;
+    public boolean remainVideoSize;
+    public int width;
+    public int height;
+    public int videoBitrate;
+    public int videoFrameRate;
 
     // audio
-    public int audioSampleRate = 44100;
-    public int audioBitrate = 48;
-    public int audioChannels = 1;
+    public int audioSampleRate;
+    public int audioBitrate;
+    public int audioChannels;
 
     @Override
     public String toString() {
-        return "rtc setting: video: width=" + width + ", height=" + height + ", bitrate=" + videoBitrate
-                + ", fps=" + videoFrameRate + ", gop=" + videoGop
+        return "rtc setting: video: width=" + width + ", height=" + height + ", bitrate=" + videoBitrate + ", fps=" + videoFrameRate
                 + ", audio: samplerate=" + audioSampleRate + ", bitrate=" + audioBitrate + ", channel=" + audioChannels;
     }
 }

@@ -37,9 +37,10 @@ class SplashActivity : BaseActivity() {
     override fun layoutId(): Int = R.layout.activity_splash
 
     override fun initData() {
-        // 初始化三方特效 SDK
         val param = SharePrefUtils.getParam(this)
-        if (param.vendor === FilterVendor.FACEUNITY) {
+        if (param.vendor == FilterVendor.NONE) return // 关闭三方特效
+        // 初始化三方特效 SDK
+        if (param.vendor == FilterVendor.FACEUNITY) {
             FuSDKManager.initFuSDKEnv(this)
         } else {
             StSDKManager.initStSDKEnv(this)

@@ -23,8 +23,11 @@ import com.movieous.media.utils.StringUtils;
 import com.movieous.media.view.player.VideoPlayerView;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
+import iknow.android.utils.thread.BackgroundExecutor;
 import okhttp3.Request;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import video.movieous.engine.UConstants;
+import video.movieous.shortvideo.UMediaUtil;
 
 import static com.movieous.media.ExtensionsKt.showToast;
 
@@ -131,24 +134,36 @@ public class PlaybackActivity extends AppCompatActivity {
     private class UploadOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mVideoUploadManager.startUpload(mVideoPath, Constants.BUCKET, new UfileCallback<BaseResponseBean>() {
+            mProgressBarDeterminate.setVisibility(View.VISIBLE);
+            BackgroundExecutor.execute(new BackgroundExecutor.Task("", 0, "") {
                 @Override
-                public void onResponse(BaseResponseBean response) {
-                    onUploadSuccess(response.getMessage());
-                }
+                public void execute() {
+                    // 检查并提前 moov
+                    boolean isOk = UMediaUtil.fastStartMp4(mVideoPath, Constants.UPLOAD_FILE_PATH) == 0;
+                    String uploadFile = isOk ? Constants.UPLOAD_FILE_PATH : mVideoPath;
 
-                @Override
-                public void onError(Request request, ApiError error, UfileErrorBean response) {
-                    onUploadFail(response.getErrMsg());
-                }
+                    if (v != null) return; // demo 这里直接返回
 
-                @Override
-                public void onProgress(long bytesWritten, long contentLength) {
-                    onUploadProgress((int) (bytesWritten * 100 / contentLength));
+                    // 仅做上传演示之用
+                    mVideoUploadManager.startUpload(uploadFile, Constants.BUCKET, new UfileCallback<BaseResponseBean>() {
+                        @Override
+                        public void onResponse(BaseResponseBean response) {
+                            onUploadSuccess(response.getMessage());
+                        }
+
+                        @Override
+                        public void onError(Request request, ApiError error, UfileErrorBean response) {
+                            onUploadFail(response.getErrMsg());
+                        }
+
+                        @Override
+                        public void onProgress(long bytesWritten, long contentLength) {
+                            onUploadProgress((int) (bytesWritten * 100 / contentLength));
+                        }
+                    });
+                    mIsUpload = true;
                 }
             });
-            mProgressBarDeterminate.setVisibility(View.VISIBLE);
-            mIsUpload = true;
         }
     }
 

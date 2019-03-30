@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.3.jar')
+    implementation files('libs/ushortvideo-2.0.4.jar')
     // ufile 文件上传 SDK
     implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 

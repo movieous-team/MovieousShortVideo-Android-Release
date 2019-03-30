@@ -33,8 +33,8 @@ import com.movieous.media.view.TimeDownView;
 import org.jetbrains.annotations.NotNull;
 import video.movieous.engine.UCameraFocusListener;
 import video.movieous.engine.URecordListener;
-import video.movieous.shortvideo.UVideoRecordManager;
 import video.movieous.engine.view.UFitViewHelper;
+import video.movieous.shortvideo.UVideoRecordManager;
 
 /**
  * 相机预览页面
@@ -116,6 +116,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
 
     @Override
     public void lazyLoad() {
+        super.lazyLoad();
         initVideoRecordManager();
         initTimer();
     }
@@ -192,6 +193,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
      */
     @OnClick(R.id.btn_stickers)
     public void showStickerFilterFragment() {
+        if (!isFilterVendorEnabled(true)) return;
         mIsStickerFilterShowing = true;
         mVideoRecordManager.setOutputBuffer(mFilterSdkManager.getRGBABuffer());
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
@@ -239,6 +241,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
 
     @OnClick(R.id.face_beauty)
     public void onClickFaceBeauty() {
+        if (!isFilterVendorEnabled(true)) return;
         if (mIsBeautyFilterShowing) {
             hideFaceBeautyView();
         } else {
@@ -442,6 +445,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     private void initVideoRecordManager() {
         mVideoRecordManager = new UVideoRecordManager()
                 .init(mPreview)
+                .setAVOptions(mAVOptions) // 自定义音视频参数
                 .setRecordListener(this)
                 .setFocusListener(this)
                 .setVideoFrameListener(this);

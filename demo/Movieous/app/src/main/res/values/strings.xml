@@ -142,6 +142,7 @@
     <string name="video_file_tail">片尾</string>
     <string name="select_music_file_tip">请选择音乐文件</string>
     <string name="save_file_failed_tip">保存失败，错误码：</string>
+    <string name="no_vendor_tip">您当前没有选择特效供应商</string>
     <string name="audio_volume_title">声音调节</string>
     <string name="beauty_adjust_title">美颜调节</string>
     <string name="effect_title">特效</string>

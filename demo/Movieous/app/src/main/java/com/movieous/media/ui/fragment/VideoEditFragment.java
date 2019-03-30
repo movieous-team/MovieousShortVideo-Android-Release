@@ -149,6 +149,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
     @Override
     public void lazyLoad() {
+        super.lazyLoad();
         initVideoEditManager();
     }
 
@@ -160,7 +161,8 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
         });
     }
 
-    @OnClick({R.id.pause_playback, R.id.preview, R.id.main_menu, R.id.add_text, R.id.face_stick, R.id.btn_select_music, R.id.fragment_back_button, R.id.fragment_next_button})
+    @OnClick({R.id.pause_playback, R.id.preview, R.id.main_menu, R.id.add_text, R.id.face_stick, R.id.btn_select_music,
+            R.id.fragment_back_button, R.id.fragment_next_button})
     @Override
     public void onClick(View v) {
         if (v == null) return;
@@ -182,6 +184,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 showBottomMenu(true);
                 break;
             case R.id.face_stick: // 贴纸
+                if (!isFilterVendorEnabled(true)) return;
                 showStickerFilterFragment();
                 setMenuTitleColor(R.id.face_stick);
                 showBottomMenu(true);
@@ -322,6 +325,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
         Log.i(TAG, "media file: " + mVideoPath);
         mVideoEditManager = new UVideoEditManager()
                 .init(mPreview, mVideoPath)
+                .setAVOptions(mAVOptions)
                 .setVideoFrameListener(this)
                 .setVideoPlayerListener(this, 100)
                 .setVideoSaveListener(this);
@@ -467,15 +471,18 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 resId = R.layout.view_audio_volume;
                 break;
             case R.drawable.face_beauty_set: // 美颜调节
+                if (!isFilterVendorEnabled(true)) return;
                 resId = R.layout.menu_view_beauty;
                 break;
             case R.drawable.filter: // 美颜滤镜
+                if (!isFilterVendorEnabled(true)) return;
                 resId = R.layout.menu_view_filter;
                 break;
             case R.drawable.cut: // 视频剪辑
                 resId = R.layout.view_video_cut;
                 break;
             case R.drawable.facial_effects: // 滤镜特效、时间特效
+                if (!isFilterVendorEnabled(true)) return;
                 resId = R.layout.view_magic_filter;
                 break;
             case R.drawable.cover: // GIF 动图
@@ -927,60 +934,68 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     private void saveVideoFile() {
         stopPlayback();
         showProcessingDialog();
-        UVideoFrameListener listener;
-        ByteBuffer byteBuffer = mFilterSdkManager.getRGBABuffer();
-        mFilterSdkManager.destroy();
-        mFilterSdkManager = null;
-        if (isFuFilterSDK()) {
-            FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
-            fuSDKManager.setPreviewMode(false);
-            listener = new UVideoFrameListener() {
-                @Override
-                public void onSurfaceCreated() {
-                    FURenderer fuFilterEngine = fuSDKManager.getSaveFilterEngine();
-                    fuFilterEngine.loadItems();
-                    if (mCurrentFilter != null) {
-                        fuSDKManager.changeFilter(mCurrentFilter);
+        UVideoFrameListener listener = null;
+        if (isFilterVendorEnabled(false) && mFilterSdkManager != null) {
+            if (isFuFilterSDK()) { // 相芯
+                Log.i(TAG, "FACEUNITY filter is enabled!!!");
+                mFilterSdkManager.destroy();
+                mFilterSdkManager = null;
+                FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
+                fuSDKManager.setPreviewMode(false);
+                listener = new UVideoFrameListener() {
+                    @Override
+                    public void onSurfaceCreated() {
+                        Log.i(TAG, "onSurfaceCreated");
+                        FURenderer fuFilterEngine = fuSDKManager.getSaveFilterEngine();
+                        fuFilterEngine.loadItems();
+                        if (mCurrentFilter != null) {
+                            fuSDKManager.changeFilter(mCurrentFilter);
+                        }
                     }
-                }
 
-                @Override
-                public void onSurfaceDestroyed() {
-                    fuSDKManager.destroy();
-                }
-
-                @Override
-                public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                    return (mCurrentFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
-                }
-            };
-        } else {
-            listener = new UVideoFrameListener() {
-                @Override
-                public void onSurfaceCreated() {
-                    initVendorSDKManager();
-                    mFilterSdkManager.setRGBABuffer(byteBuffer);
-                    mFilterSdkManager.onSurfaceCreated();
-                    if (mCurrentFilter != null) {
-                        mFilterSdkManager.changeFilter(mCurrentFilter);
+                    @Override
+                    public void onSurfaceDestroyed() {
+                        fuSDKManager.destroy();
                     }
-                }
 
-                @Override
-                public void onSurfaceDestroyed() {
-                    mFilterSdkManager.destroy();
-                    mFilterSdkManager = null;
-                }
+                    @Override
+                    public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                        return (mCurrentFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
+                    }
+                };
+            } else { // 商汤
+                Log.i(TAG, "SENSETIME filter is enabled!!!");
+                ByteBuffer byteBuffer = mFilterSdkManager.getRGBABuffer();
+                mFilterSdkManager.destroy();
+                mFilterSdkManager = null;
+                mFilterSdkManager = new StSDKManager(mActivity);
+                listener = new UVideoFrameListener() {
+                    @Override
+                    public void onSurfaceCreated() {
+                        initVendorSDKManager();
+                        mFilterSdkManager.setRGBABuffer(byteBuffer);
+                        mFilterSdkManager.onSurfaceCreated();
+                        if (mCurrentFilter != null) {
+                            mFilterSdkManager.changeFilter(mCurrentFilter);
+                        }
+                    }
 
-                @Override
-                public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                    if (mCurrentFilter == null) return texId;
-                    int outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
-                    return outTexId;
-                }
-            };
+                    @Override
+                    public void onSurfaceDestroyed() {
+                        mFilterSdkManager.destroy();
+                        mFilterSdkManager = null;
+                    }
+
+                    @Override
+                    public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                        if (mCurrentFilter == null) return texId;
+                        int outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
+                        return outTexId;
+                    }
+                };
+                mVideoEditManager.setOutputBuffer(byteBuffer);
+            }
         }
-        mVideoEditManager.setOutputBuffer(byteBuffer);
         mVideoEditManager.save(Constants.EDIT_FILE_PATH, listener);
     }
 

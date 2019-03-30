@@ -11,10 +11,12 @@ import com.movieous.media.mvp.contract.FilterChangedListener;
 import com.movieous.media.mvp.contract.FilterSdkManager;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
 import com.movieous.media.mvp.model.entity.FilterVendor;
+import com.movieous.media.mvp.model.entity.MediaParam;
 import com.movieous.media.mvp.model.entity.UFilter;
 import com.movieous.media.utils.SharePrefUtils;
 import com.movieous.media.view.SaveProgressDialog;
 import org.jetbrains.annotations.NotNull;
+import video.movieous.engine.UAVOptions;
 import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.view.UTextureView;
@@ -30,6 +32,8 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     protected SaveProgressDialog mProcessingDialog;
     protected FilterSdkManager mFilterSdkManager;
     protected UFilter mCurrentFilter;
+    protected FilterVendor mFilterVendor;
+    protected UAVOptions mAVOptions; // 可以自定义 SDK 参数
 
     protected void initProcessingDialog() {
         mProcessingDialog = new SaveProgressDialog(mActivity);
@@ -53,21 +57,35 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
 
     @Override
     public void lazyLoad() {
+        MediaParam mediaParam = SharePrefUtils.getParam(mActivity);
+        initAVOptions(mediaParam);
+        mFilterVendor = mediaParam.vendor;
+    }
+
+    // 自定义音视频输出参数，如果不自定义的话，会采用默认参数，参见 {@link UConstants}
+    private void initAVOptions(MediaParam mediaParam) {
+        mAVOptions = new UAVOptions()
+                .setInteger(UAVOptions.KEY_VIDEO_WIDTH, mediaParam.width)
+                .setInteger(UAVOptions.KEY_VIDEO_HEIGHT, mediaParam.height)
+                .setInteger(UAVOptions.KEY_VIDEO_BITRATE, mediaParam.videoBitrate * 1000)
+                .setInteger(UAVOptions.KEY_VIDEO_FPS, mediaParam.videoFrameRate);
     }
 
     // UVideoFrameListener
     @Override
     public void onSurfaceCreated() {
         Log.i(TAG, "onSurfaceCreated");
-        initVendorSDKManager();
-        mFilterSdkManager.onSurfaceCreated();
-        onMagicFilterChanged(mCurrentFilter);
+        if (isFilterVendorEnabled(false)) {
+            initVendorSDKManager();
+            mFilterSdkManager.onSurfaceCreated();
+            onMagicFilterChanged(mCurrentFilter);
+        }
     }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
         Log.i(TAG, "onSurfaceChanged, width = " + width + ", height = " + height);
-        if (mFilterSdkManager != null) {
+        if (isFilterVendorEnabled(false) && mFilterSdkManager != null) {
             mFilterSdkManager.onSurfaceChanged(width, height);
         }
     }
@@ -83,6 +101,7 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
 
     @Override
     public int onDrawFrame(int texId, int texWidth, int texHeight) {
+        if (!isFilterVendorEnabled(false)) return texId;
         int outTexId = texId;
         synchronized (mActivity) {
             if (mFilterSdkManager == null) {
@@ -178,7 +197,15 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     }
 
     protected boolean isFuFilterSDK() {
-        return SharePrefUtils.getParam(mActivity).vendor == FilterVendor.FACEUNITY;
+        return mFilterVendor == FilterVendor.FACEUNITY;
+    }
+
+    protected boolean isFilterVendorEnabled(boolean showToastEnabled) {
+        boolean isEnabled = mFilterVendor != FilterVendor.NONE;
+        if (!isEnabled && showToastEnabled) {
+            showToast(mActivity, getString(R.string.no_vendor_tip));
+        }
+        return isEnabled;
     }
 
 }

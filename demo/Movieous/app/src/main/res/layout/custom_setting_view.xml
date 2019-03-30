@@ -22,7 +22,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="10dp"
                 android:text="特效供应商   "
-                android:textColor="@android:color/black"
+                android:textColor="@color/crimson"
                 android:textStyle="bold" />
 
             <View
@@ -51,6 +51,13 @@
                     android:layout_height="wrap_content"
                     android:text="SENSETIME"
                     android:textColor="@color/dark_black" />
+
+                <RadioButton
+                    android:id="@+id/vendor_none"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NONE"
+                    android:textColor="@color/dark_black" />
             </RadioGroup>
 
             <TextView
@@ -58,17 +65,18 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="10dp"
-                android:text="说明：重启应用后生效"
+                android:text="改变供应商，需要重启应用后生效"
                 android:textColor="@color/dark_black" />
         </LinearLayout>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:text="视频"
-            android:textColor="@android:color/black"
+            android:textColor="@color/crimson"
             android:textStyle="bold" />
 
         <View
@@ -77,11 +85,21 @@
             android:layout_marginBottom="5dp"
             android:background="@android:color/darker_gray" />
 
+        <CheckBox
+            android:id="@+id/checkbox_video_size_remain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="编辑时,保持原始尺寸"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="normal" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dialog_horizontal_margin"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="@dimen/dialog_horizontal_margin"
             android:orientation="horizontal">
 
@@ -112,7 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dialog_horizontal_margin"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="@dimen/dialog_horizontal_margin"
             android:orientation="horizontal">
 
@@ -143,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dialog_horizontal_margin"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="@dimen/dialog_horizontal_margin"
             android:orientation="horizontal">
 
@@ -174,7 +192,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dialog_horizontal_margin"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="@dimen/dialog_horizontal_margin"
             android:orientation="horizontal">
 
@@ -201,44 +219,13 @@
                 android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dialog_horizontal_margin"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="@dimen/dialog_horizontal_margin"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="@dimen/transcoding_setting_left_width"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="GOP"
-                android:textColor="@android:color/black" />
-
-            <SeekBar
-                android:id="@+id/text_set_gop"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:max="60" />
-
-            <TextView
-                android:id="@+id/show_gop"
-                android:layout_width="@dimen/transcoding_setting_right_width"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="1"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:text="音频"
-            android:textColor="@android:color/black"
+            android:textColor="@color/crimson"
             android:textStyle="bold" />
 
         <View
@@ -250,7 +237,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -296,7 +283,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -337,6 +324,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
