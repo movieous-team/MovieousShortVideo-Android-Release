@@ -110,6 +110,9 @@
 -keep class tv.danmaku.ijk.** { *; }
 -dontwarn tv.danmaku.ijk.**
 
+# faceunity
+-keep class com.faceunity.wrapper.faceunity {*;}
+
 # sensetime
 -keep class com.sensetime.stmobile.* { *;}
 -keep class com.sensetime.stmobile.model.* { *;}

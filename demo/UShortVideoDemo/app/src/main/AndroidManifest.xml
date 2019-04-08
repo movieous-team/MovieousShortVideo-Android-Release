@@ -83,6 +83,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Fullscreen" />
 
+        <!-- 图片编辑 -->
+        <activity
+            android:name=".activity.ImageEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Fullscreen" />
     </application>
 
 </manifest>

@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.movieous.media.R;
 import com.movieous.media.api.vendor.fusdk.FuSDKManager;
-import com.movieous.media.api.vendor.stsdk.StSDKManager;
 import com.movieous.media.mvp.contract.FilterChangedListener;
 import com.movieous.media.mvp.model.entity.FilterVendor;
 import com.movieous.media.mvp.model.entity.MediaParam;
@@ -25,7 +24,7 @@ public class BeautyFilterAdapter extends RecyclerView.Adapter<BeautyFilterAdapte
 
     private FilterChangedListener mFilterChangedListener;
     private List<UFilter> mBeautyFilters;
-    public FilterVendor mFilterVendor = FilterVendor.FACEUNITY;
+    public FilterVendor mFilterVendor;
 
     public BeautyFilterAdapter(Context context, FilterChangedListener listener) {
         mFilterChangedListener = listener;
@@ -33,7 +32,7 @@ public class BeautyFilterAdapter extends RecyclerView.Adapter<BeautyFilterAdapte
         mFilterVendor = param.vendor;
         mBeautyFilters = mFilterVendor == FilterVendor.FACEUNITY ?
                 FuSDKManager.getFilterList() :
-                StSDKManager.getFilterList(context);
+                null;
     }
 
     @Override

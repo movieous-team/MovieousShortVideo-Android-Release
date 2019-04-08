@@ -27,10 +27,7 @@ public class CustomSettingDialog {
         // vendor
         RadioGroup rtcVendor = layout.findViewById(R.id.vendor);
         if (mMediaParam.vendor == FilterVendor.FACEUNITY) {
-            RadioButton button = layout.findViewById(R.id.vendor_agora);
-            button.setChecked(true);
-        } else if (mMediaParam.vendor == FilterVendor.SENSETIME) {
-            RadioButton button = layout.findViewById(R.id.vendor_zego);
+            RadioButton button = layout.findViewById(R.id.vendor_fu);
             button.setChecked(true);
         } else {
             RadioButton button = layout.findViewById(R.id.vendor_none);
@@ -38,11 +35,8 @@ public class CustomSettingDialog {
         }
         rtcVendor.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
-                case R.id.vendor_agora:
+                case R.id.vendor_fu:
                     mMediaParam.vendor = FilterVendor.FACEUNITY;
-                    break;
-                case R.id.vendor_zego:
-                    mMediaParam.vendor = FilterVendor.SENSETIME;
                     break;
                 case R.id.vendor_none:
                     mMediaParam.vendor = FilterVendor.NONE;

@@ -39,8 +39,9 @@ android {
     }
 
     sourceSets {
-        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/bundle', "src/main/poster"]
-        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/filters/res', 'src/main/makeup/res']
+        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/material',
+                                "src/main/poster", "src/main/magicphoto"]
+        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/makeup/res']
     }
 
     compileOptions {
@@ -58,7 +59,7 @@ android {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.4.jar')
+    implementation files('libs/ushortvideo-2.0.5.jar')
     // ufile 文件上传 SDK
     implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 
@@ -69,8 +70,6 @@ dependencies {
 
     // faceunity 特效库
     implementation project(path: ':faceunity')
-    // sensetime 特效库
-    implementation project(path: ':STMobileJNI')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

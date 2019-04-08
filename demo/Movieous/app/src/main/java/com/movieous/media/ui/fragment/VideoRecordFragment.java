@@ -13,9 +13,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.flyco.tablayout.SegmentTabLayout;
@@ -35,6 +33,8 @@ import video.movieous.engine.UCameraFocusListener;
 import video.movieous.engine.URecordListener;
 import video.movieous.engine.view.UFitViewHelper;
 import video.movieous.shortvideo.UVideoRecordManager;
+
+import static com.movieous.media.ExtensionsKt.showToast;
 
 /**
  * 相机预览页面
@@ -60,6 +60,8 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     SegmentTabLayout mRecordSpeedPanel;
     @BindView(R.id.tv_time_down_count)
     TimeDownView mTimeDownView;
+    @BindView(R.id.camera_light)
+    ImageView mBtnCameraLight;
 
     private UVideoRecordManager mVideoRecordManager;
     // sticker
@@ -229,6 +231,18 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
     public void onClickSwitchCamera() {
         mVideoRecordManager.switchCamera();
         mFocusIndicator.focusCancel();
+    }
+
+    @OnClick(R.id.camera_light)
+    public void onClickCameraLight() {
+        if (!mVideoRecordManager.isCameraFlashSupported()) {
+            showToast(mActivity, getString(R.string.no_camera_flash_support));
+            return;
+        }
+        boolean nowMode = mBtnCameraLight.getTag() == null;
+        boolean isOk = mVideoRecordManager.setCameraFlashMode(nowMode);
+        mBtnCameraLight.setTag(!nowMode ? null : 1);
+        mBtnCameraLight.setSelected(isOk && nowMode);
     }
 
     @OnClick(R.id.record_speed)

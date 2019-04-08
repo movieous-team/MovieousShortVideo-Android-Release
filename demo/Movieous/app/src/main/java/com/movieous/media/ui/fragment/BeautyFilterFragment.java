@@ -6,7 +6,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import butterknife.BindView;
-import com.faceunity.entity.Filter;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -123,7 +122,6 @@ public class BeautyFilterFragment extends BaseFilterFragment implements SeekBar.
             LinearLayoutManager mFilterLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(mFilterLayoutManager);
             mBeautyFilterAdapter = new BeautyFilterAdapter(mActivity, this);
-            mBeautyFilterAdapter.setFilterType(Filter.FILTER_TYPE_BEAUTY_FILTER);
             recyclerView.setAdapter(mBeautyFilterAdapter);
         }
         mLayoutContent.removeAllViews();

@@ -62,6 +62,13 @@
                 android:src="@drawable/btn_switch_camera" />
 
             <ImageView
+                android:id="@+id/camera_light"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="@dimen/dp10"
+                android:src="@drawable/camera_light" />
+
+            <ImageView
                 android:id="@+id/record_speed"
                 android:layout_width="45dp"
                 android:layout_height="45dp"

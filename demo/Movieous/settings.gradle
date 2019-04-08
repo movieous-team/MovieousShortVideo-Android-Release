@@ -1,1 +1,1 @@
-include ':app', ':multiple-status-view', ':faceunity', ':recyclerkit', ':recyclerviewindicator', ':gridpagersnaphelper', ':FlycoTabLayout_Lib', ':STMobileJNI'
+include ':app', ':multiple-status-view', ':faceunity', ':recyclerkit', ':recyclerviewindicator', ':gridpagersnaphelper', ':FlycoTabLayout_Lib'

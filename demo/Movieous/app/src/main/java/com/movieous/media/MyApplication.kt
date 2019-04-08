@@ -2,13 +2,8 @@ package com.movieous.media
 
 import android.app.Application
 import android.content.Context
-import com.movieous.media.api.vendor.fusdk.FuSDKManager
-import com.movieous.media.api.vendor.stsdk.StSDKManager
 import com.movieous.media.mvp.model.VideoDataUtil
-import com.movieous.media.mvp.model.entity.FilterVendor
-import com.movieous.media.ui.fragment.PreviewFragment
 import com.movieous.media.utils.DisplayManager
-import com.movieous.media.utils.SharePrefUtils
 import iknow.android.utils.BaseUtils
 import video.movieous.engine.base.utils.ULog
 import video.movieous.shortvideo.UShortVideoEnv

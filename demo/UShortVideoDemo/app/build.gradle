@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.4.jar')
+    implementation files('libs/ushortvideo-2.0.5.jar')
 
     implementation "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"

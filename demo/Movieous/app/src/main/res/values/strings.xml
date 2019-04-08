@@ -143,6 +143,7 @@
     <string name="select_music_file_tip">请选择音乐文件</string>
     <string name="save_file_failed_tip">保存失败，错误码：</string>
     <string name="no_vendor_tip">您当前没有选择特效供应商</string>
+    <string name="no_camera_flash_support">不支持闪光灯操作</string>
     <string name="audio_volume_title">声音调节</string>
     <string name="beauty_adjust_title">美颜调节</string>
     <string name="effect_title">特效</string>
@@ -173,4 +174,10 @@
     <string name="video_title">标题</string>
     <string name="video_time_addr">时间地点</string>
     <string name="video_text_effect">字幕</string>
+
+    <!-- faceunity -->
+    <string name="push_hand">Push hand</string>
+    <string name="lengsediao">cool</string>
+    <string name="nuansediao">warm</string>
+    <string name="bailiang">light</string>
 </resources>

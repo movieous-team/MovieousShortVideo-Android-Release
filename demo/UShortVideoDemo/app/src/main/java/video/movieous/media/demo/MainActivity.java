@@ -66,6 +66,11 @@ public class MainActivity extends BaseActivity {
             startActivity(intent);
         });
 
+        $(R.id.image_edit).setOnClickListener(view -> {
+            Intent intent = new Intent(this, ImageEditActivity.class);
+            startActivity(intent);
+        });
+
         String ver = "版本号：" + getVersionDescription() + "，编译时间：" + getBuildTime();
         ((TextView) $(R.id.tv_version)).setText(ver);
     }

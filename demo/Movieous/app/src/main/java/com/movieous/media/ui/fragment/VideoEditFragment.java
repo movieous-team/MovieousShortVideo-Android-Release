@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.*;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.faceunity.FURenderer;
-import com.faceunity.entity.Effect;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -26,7 +24,6 @@ import com.hhl.recyclerviewindicator.LinePageIndicator;
 import com.movieous.media.Constants;
 import com.movieous.media.R;
 import com.movieous.media.api.vendor.fusdk.FuSDKManager;
-import com.movieous.media.api.vendor.stsdk.StSDKManager;
 import com.movieous.media.mvp.contract.MusicSelectedListener;
 import com.movieous.media.mvp.contract.OnSeekBarChangeListener;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
@@ -569,7 +566,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                     return Unit.INSTANCE;
                 })
                 .build();
-        List<UFilter> items = isVendorFu ? FuSDKManager.getFilterList() : StSDKManager.getFilterList(mActivity);
+        List<UFilter> items = isVendorFu ? FuSDKManager.getFilterList() : null;
         List<RecyclerAdapter.ViewModel> models = new ArrayList<>();
         for (UFilter item : items) {
             models.add(new RecyclerAdapter.ViewModel(R.layout.item_filter_view, 1, RecyclerAdapter.ModelType.LEADING, item, false));
@@ -674,8 +671,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                     return Unit.INSTANCE;
                 })
                 .build();
-        int douyinIndex = isFuFilterSDK() ? Effect.EFFECT_TYPE_MUSIC_FILTER : 1;
-        ArrayList<UFilter> items = mFilterSdkManager.getMagicFilterList(douyinIndex);
+        ArrayList<UFilter> items = mFilterSdkManager.getMagicFilterList(mFilterSdkManager.getMusicFilterIndex());
         List<RecyclerAdapter.ViewModel> models = new ArrayList<>();
         for (UFilter item : items) {
             models.add(new RecyclerAdapter.ViewModel(R.layout.item_filter_view, 1, RecyclerAdapter.ModelType.LEADING, item, false));
@@ -946,10 +942,12 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                     @Override
                     public void onSurfaceCreated() {
                         Log.i(TAG, "onSurfaceCreated");
-                        FURenderer fuFilterEngine = fuSDKManager.getSaveFilterEngine();
-                        fuFilterEngine.loadItems();
+                        fuSDKManager.init(mActivity, false);
                         if (mCurrentFilter != null) {
                             fuSDKManager.changeFilter(mCurrentFilter);
+                        }
+                        if (mBeautyFilter != null) {
+                            fuSDKManager.changeBeautyFilter(mBeautyFilter);
                         }
                     }
 
@@ -960,40 +958,9 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
 
                     @Override
                     public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                        return (mCurrentFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
+                        return (mCurrentFilter != null || mBeautyFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
                     }
                 };
-            } else { // 商汤
-                Log.i(TAG, "SENSETIME filter is enabled!!!");
-                ByteBuffer byteBuffer = mFilterSdkManager.getRGBABuffer();
-                mFilterSdkManager.destroy();
-                mFilterSdkManager = null;
-                mFilterSdkManager = new StSDKManager(mActivity);
-                listener = new UVideoFrameListener() {
-                    @Override
-                    public void onSurfaceCreated() {
-                        initVendorSDKManager();
-                        mFilterSdkManager.setRGBABuffer(byteBuffer);
-                        mFilterSdkManager.onSurfaceCreated();
-                        if (mCurrentFilter != null) {
-                            mFilterSdkManager.changeFilter(mCurrentFilter);
-                        }
-                    }
-
-                    @Override
-                    public void onSurfaceDestroyed() {
-                        mFilterSdkManager.destroy();
-                        mFilterSdkManager = null;
-                    }
-
-                    @Override
-                    public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                        if (mCurrentFilter == null) return texId;
-                        int outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
-                        return outTexId;
-                    }
-                };
-                mVideoEditManager.setOutputBuffer(byteBuffer);
             }
         }
         mVideoEditManager.save(Constants.EDIT_FILE_PATH, listener);

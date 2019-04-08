@@ -61,9 +61,6 @@ public class MagicFilterAdapter extends RecyclerView.Adapter implements View.OnC
             case FACEUNITY:
                 icon.setImageResource(item.getResId());
                 break;
-            case SENSETIME:
-                icon.setImageBitmap(item.getIcon());
-                break;
         }
         itemView.setTag(position);
         itemView.setSelected(isSelected);

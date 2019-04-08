@@ -5,7 +5,6 @@ import android.util.Log;
 import butterknife.BindView;
 import com.movieous.media.R;
 import com.movieous.media.api.vendor.fusdk.FuSDKManager;
-import com.movieous.media.api.vendor.stsdk.StSDKManager;
 import com.movieous.media.base.BaseFragment;
 import com.movieous.media.mvp.contract.FilterChangedListener;
 import com.movieous.media.mvp.contract.FilterSdkManager;
@@ -32,6 +31,7 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     protected SaveProgressDialog mProcessingDialog;
     protected FilterSdkManager mFilterSdkManager;
     protected UFilter mCurrentFilter;
+    protected UFilter mBeautyFilter;
     protected FilterVendor mFilterVendor;
     protected UAVOptions mAVOptions; // 可以自定义 SDK 参数
 
@@ -154,6 +154,7 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
 
     @Override
     public void onBeautyFilterChanged(@NotNull UFilter filter) {
+        mBeautyFilter = filter;
         mFilterSdkManager.changeBeautyFilter(filter);
     }
 
@@ -185,7 +186,7 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
         if (mFilterSdkManager == null) {
             mFilterSdkManager = isFuFilterSDK() ?
                     new FuSDKManager(mActivity) :
-                    new StSDKManager(mActivity);
+                    null;
             mFilterSdkManager.init(mActivity, true);
         }
     }

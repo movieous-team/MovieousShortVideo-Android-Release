@@ -3,7 +3,10 @@ package com.faceunity;
 
 import com.faceunity.entity.Effect;
 import com.faceunity.entity.Filter;
-import com.faceunity.entity.Makeup;
+import com.faceunity.entity.MagicPhotoEntity;
+import com.faceunity.entity.MakeupItem;
+
+import java.util.List;
 
 /**
  * FURenderer与界面之间的交互接口
@@ -55,21 +58,6 @@ public interface OnFUControlListener {
      * @param hairColorLevel
      */
     void onHairLevelSelected(int type, int hairColorIndex, float hairColorLevel);
-
-    /**
-     * 美妆选择
-     *
-     * @param makeup
-     */
-    void onMakeupSelected(Makeup makeup);
-
-    /**
-     * 美妆程度
-     *
-     * @param makeupType
-     * @param level
-     */
-    void onMakeupLevelSelected(int makeupType, float level);
 
     /**
      * 精准磨皮
@@ -155,11 +143,6 @@ public interface OnFUControlListener {
     void onIntensityMouthSelected(float level);
 
     /**
-     * 海报换脸，切换模板
-     */
-    void onPosterTemplateChanged();
-
-    /**
      * 切换海报模板
      *
      * @param tempWidth
@@ -180,9 +163,46 @@ public interface OnFUControlListener {
     void onPosterInputPhoto(int inputWidth, int inputHeight, byte[] input, float[] landmark);
 
     /**
-     * 加载 Animoji 风格滤镜
+     * 设置风格滤镜
      *
-     * @param enable
+     * @param style
      */
-    void onLoadAnimFilter(boolean enable);
+    void onCartoonFilterSelected(int style);
+
+    /**
+     * 选择美妆效果
+     *
+     * @param makeupItem
+     * @param level
+     */
+    void onMakeupSelected(MakeupItem makeupItem, float level);
+
+    /**
+     * 调节美妆强度
+     *
+     * @param makeupType
+     * @param level
+     */
+    void onMakeupLevelChanged(int makeupType, float level);
+
+    /**
+     * 调节多个妆容
+     *
+     * @param makeupItems
+     */
+    void onBatchMakeupSelected(List<MakeupItem> makeupItems);
+
+    /**
+     * 妆容总体调节
+     *
+     * @param level
+     */
+    void onMakeupOverallLevelChanged(float level);
+
+    /**
+     * 设置异图的点位和图像数据，用来驱动图像
+     *
+     * @param magicPhotoEntity
+     */
+    void setMagicPhoto(final MagicPhotoEntity magicPhotoEntity);
 }

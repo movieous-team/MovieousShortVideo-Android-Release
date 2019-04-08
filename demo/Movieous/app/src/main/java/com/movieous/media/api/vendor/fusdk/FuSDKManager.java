@@ -10,10 +10,14 @@ import android.util.Log;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
 import com.faceunity.entity.Filter;
+import com.faceunity.utils.FileUtils;
+import com.movieous.media.api.vendor.fusdk.entity.EffectEnum;
+import com.movieous.media.api.vendor.fusdk.entity.FilterEnum;
 import com.movieous.media.mvp.contract.FilterSdkManager;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
 import com.movieous.media.mvp.model.entity.FilterVendor;
 import com.movieous.media.mvp.model.entity.UFilter;
+import iknow.android.utils.thread.BackgroundExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,7 +37,18 @@ public class FuSDKManager implements FilterSdkManager {
 
     public static void initFuSDKEnv(Context context) {
         Log.i(TAG, "init faceunity sdk env");
-        FURenderer.initFURenderer(context.getApplicationContext());
+        Context sContext = context.getApplicationContext();
+        BackgroundExecutor.execute(new BackgroundExecutor.Task("", 0, "") {
+            @Override
+            public void execute() {
+                // 拷贝 assets 资源
+                FileUtils.copyAssetsMagicPhoto(sContext);
+                FileUtils.copyAssetsTemplate(sContext);
+                FURenderer fuRenderer = new FURenderer.Builder(sContext).build();
+                fuRenderer.loadItems();
+                Log.i(TAG, "initFuSDKEnv is ok");
+            }
+        });
     }
 
     public FuSDKManager(Context context) {
@@ -42,13 +57,13 @@ public class FuSDKManager implements FilterSdkManager {
 
     public String[] getFilterTypeName() {
         return new String[]{
-                "普通", "AR", "换脸", "表情", "背景替换", "手势", "哈哈镜", "3D", "人像", "抖音",
+                "普通", "AR", "换脸", "表情", "背景替换", "手势", "PORTRAIT", "ANIMOJI", "人像", "哈哈镜", "抖音",
         };
     }
 
     public static List<UFilter> getFilterList() {
         List<UFilter> filterItemList = new ArrayList<>();
-        ArrayList<Filter> beautyFilterList = BeautyFilterEnum.Companion.getFiltersByFilterType(Filter.FILTER_TYPE_BEAUTY_FILTER);
+        ArrayList<Filter> beautyFilterList = FilterEnum.getFiltersByFilterType();
         for (Filter filter : beautyFilterList) {
             UFilter item = new UFilter(filter.filterName(), filter.description());
             item.setResId(filter.resId());
@@ -58,7 +73,7 @@ public class FuSDKManager implements FilterSdkManager {
     }
 
     public ArrayList<UFilter> getMagicFilterList(int type) {
-        ArrayList<Effect> mEffects = FuFilterEnum.Companion.getEffectsByEffectType(type);
+        ArrayList<Effect> mEffects = EffectEnum.getEffectsByEffectType(type);
         ArrayList<UFilter> items = new ArrayList<>();
         for (Effect effect : mEffects) {
             UFilter item = new UFilter(effect.bundleName(), effect.path());
@@ -120,7 +135,11 @@ public class FuSDKManager implements FilterSdkManager {
 
     @Override
     public void init(@NotNull Context context, boolean isPreview) {
-        getPreviewFilterEngine().loadItems();
+        if (isPreview) {
+            getPreviewFilterEngine().loadItems();
+        } else {
+            getSaveFilterEngine().loadItems();
+        }
     }
 
     @Override
@@ -208,7 +227,7 @@ public class FuSDKManager implements FilterSdkManager {
 
     @Override
     public void changeBeautyFilter(@NotNull UFilter filterItem) {
-        Filter filter = new Filter(filterItem.getName(), filterItem.getResId(), filterItem.getDescription(), Filter.FILTER_TYPE_BEAUTY_FILTER);
+        Filter filter = new Filter(filterItem.getName(), filterItem.getResId(), filterItem.getDescription());
         if (mIsPreviewMode) {
             getPreviewFilterEngine().onFilterNameSelected(filter);
         } else {
@@ -219,9 +238,9 @@ public class FuSDKManager implements FilterSdkManager {
     @Override
     public synchronized void clearAllFilters() {
         if (mIsPreviewMode) {
-            getPreviewFilterEngine().onEffectSelected(FuFilterEnum.Companion.getEffectsByEffectType(0).get(0));
+            getPreviewFilterEngine().onEffectSelected(EffectEnum.getEffectsByEffectType(0).get(0));
         } else {
-            getSaveFilterEngine().onEffectSelected(FuFilterEnum.Companion.getEffectsByEffectType(0).get(0));
+            getSaveFilterEngine().onEffectSelected(EffectEnum.getEffectsByEffectType(0).get(0));
         }
     }
 
@@ -306,5 +325,10 @@ public class FuSDKManager implements FilterSdkManager {
 
     @Override
     public void setRGBABuffer(@NotNull ByteBuffer buffer) {
+    }
+
+    @Override
+    public int getMusicFilterIndex() {
+        return Effect.EFFECT_TYPE_MUSIC_FILTER;
     }
 }

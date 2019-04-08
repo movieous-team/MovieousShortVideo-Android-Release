@@ -64,6 +64,8 @@ interface FilterSdkManager {
 
     fun getMagicFilterList(type: Int): ArrayList<UFilter>
 
+    fun getMusicFilterIndex(): Int
+
     fun getRGBABuffer(): ByteBuffer
 
     fun setRGBABuffer(buffer: ByteBuffer)

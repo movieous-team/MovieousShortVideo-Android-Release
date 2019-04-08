@@ -11,7 +11,6 @@ import com.movieous.media.BuildConfig
 import com.movieous.media.MyApplication
 import com.movieous.media.R
 import com.movieous.media.api.vendor.fusdk.FuSDKManager
-import com.movieous.media.api.vendor.stsdk.StSDKManager
 import com.movieous.media.base.BaseActivity
 import com.movieous.media.mvp.model.entity.FilterVendor
 import com.movieous.media.utils.AppUtils
@@ -42,8 +41,6 @@ class SplashActivity : BaseActivity() {
         // 初始化三方特效 SDK
         if (param.vendor == FilterVendor.FACEUNITY) {
             FuSDKManager.initFuSDKEnv(this)
-        } else {
-            StSDKManager.initStSDKEnv(this)
         }
     }
 

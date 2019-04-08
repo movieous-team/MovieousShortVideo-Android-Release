@@ -18,7 +18,7 @@ import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseActivity;
 import video.movieous.media.demo.model.TransferItem;
 import video.movieous.media.demo.utils.UriUtil;
-import video.movieous.shortvideo.UImageEditManager;
+import video.movieous.shortvideo.UImageCombineManager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ImageMovieActivity extends BaseActivity {
     private static final int REQUEST_CODE_CHOOSE = 1;
     private static final int REQUEST_MUSIC = 2;
 
-    private UImageEditManager mImageEditManager;
+    private UImageCombineManager mImageEditManager;
     private UImageRenderView mRenderView;
     private List<TransferItem> mTransfers;
     private int mTransferIndex;
@@ -89,7 +89,7 @@ public class ImageMovieActivity extends BaseActivity {
     }
 
     private void initView() {
-        setContentView(R.layout.activity_image_video);
+        setContentView(R.layout.activity_image_combine);
         mRenderView = $(R.id.preview);
 
         $(R.id.change_image).setOnClickListener(v -> requestPhotos());
@@ -102,7 +102,7 @@ public class ImageMovieActivity extends BaseActivity {
     }
 
     private void initImageEditManager() {
-        mImageEditManager = new UImageEditManager();
+        mImageEditManager = new UImageCombineManager();
         mImageEditManager.init(this, mRenderView);
     }
 

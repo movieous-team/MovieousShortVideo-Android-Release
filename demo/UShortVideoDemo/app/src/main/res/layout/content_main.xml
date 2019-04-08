@@ -65,6 +65,13 @@
             android:text="屏幕录制"
             android:textSize="15sp" />
 
+        <Button
+            android:id="@+id/image_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="图片编辑"
+            android:textSize="15sp" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
