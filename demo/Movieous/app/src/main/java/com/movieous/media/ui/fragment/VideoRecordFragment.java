@@ -240,7 +240,7 @@ public class VideoRecordFragment extends PreviewFragment implements URecordListe
             return;
         }
         boolean nowMode = mBtnCameraLight.getTag() == null;
-        boolean isOk = mVideoRecordManager.setCameraFlashMode(nowMode);
+        boolean isOk = mVideoRecordManager.turnCameraLight(nowMode);
         mBtnCameraLight.setTag(!nowMode ? null : 1);
         mBtnCameraLight.setSelected(isOk && nowMode);
     }
