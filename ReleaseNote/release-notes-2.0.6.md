@@ -16,4 +16,7 @@ MovieousShortVideo-Android 是一款适用于 Android 平台的短视频 SDK，�
 
 ## 缺陷
 
+* 修复录制时指定 GOP 无效问题
+* 修复剪辑时预览画面和用户指定画面不匹配 bug
+
 ## 注意事项
