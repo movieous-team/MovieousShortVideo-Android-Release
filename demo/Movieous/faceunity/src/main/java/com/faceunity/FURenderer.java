@@ -134,7 +134,7 @@ public class FURenderer implements OnFUControlListener {
     private volatile static float mIntensityMouth = 0.4f;//嘴形
     private volatile Effect mDefaultEffect;//默认道具（同步加载）
     // 默认滤镜，淡雅效果
-    private volatile Filter mFilterName = new Filter(Filter.Key.FENNEN_1);
+    private volatile Filter mFilterName = new Filter(Filter.Key.ORIGIN);
     private boolean mIsCreateEGLContext; //是否需要手动创建EGLContext
     private int mInputTextureType = 0; //输入的图像texture类型，Camera提供的默认为EXTERNAL OES
     private int mInputImageFormat = 0;

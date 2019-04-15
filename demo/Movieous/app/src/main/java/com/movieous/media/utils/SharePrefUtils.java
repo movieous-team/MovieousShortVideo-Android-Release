@@ -23,7 +23,7 @@ public class SharePrefUtils {
 
     public synchronized static void save(Context context, MediaParam param) {
         SharePrefUtils pref = SharePrefUtils.getInstance(context);
-        pref.saveStringValue(Config.RTC_VENDOR, param.vendor.name());
+        pref.saveStringValue(Config.FILTER_VENDOR, param.vendor.name());
         pref.saveBooleanValue(Config.VIDEO_SIZE_REMAIN, param.remainVideoSize);
         pref.saveIntValue(Config.VIDEO_WIDTH, param.width);
         pref.saveIntValue(Config.VIDEO_HEIGHT, param.height);
@@ -37,15 +37,15 @@ public class SharePrefUtils {
     public synchronized static MediaParam getParam(Context context) {
         SharePrefUtils pref = SharePrefUtils.getInstance(context);
         MediaParam param = new MediaParam();
-        param.vendor = FilterVendor.valueOf(pref.getStringValueByKey(Config.RTC_VENDOR, FilterVendor.FACEUNITY.name()));
+        param.vendor = FilterVendor.valueOf(pref.getStringValueByKey(Config.FILTER_VENDOR, FilterVendor.FACEUNITY.name()));
         param.remainVideoSize = pref.getBooleanValueByKey(Config.VIDEO_SIZE_REMAIN, true);
-        param.width = pref.getIntValueByKey(Config.VIDEO_WIDTH, Config.DEFAULT_RTC_VIDEO_WIDTH);
-        param.height = pref.getIntValueByKey(Config.VIDEO_HEIGHT, Config.DEFAULT_RTC_VIDEO_HEIGHT);
-        param.videoBitrate = pref.getIntValueByKey(Config.VIDEO_BITRATE, Config.DEFAULT_RTC_VIDEO_BITRATE);
-        param.videoFrameRate = pref.getIntValueByKey(Config.VIDEO_FPS, Config.DEFAULT_RTC_FRAME_RATE);
-        param.audioSampleRate = pref.getIntValueByKey(Config.AUDIO_SAMPLE_RATE, Config.DEFAULT_RTC_AUDIO_SAMPLE_RATE);
-        param.audioBitrate = pref.getIntValueByKey(Config.AUDIO_BITRATE, Config.DEFAULT_RTC_AUDIO_BITRATE);
-        param.audioChannels = pref.getIntValueByKey(Config.AUDIO_CHANNEL, Config.DEFAULT_RTC_AUDIO_CHANNEL);
+        param.width = pref.getIntValueByKey(Config.VIDEO_WIDTH, Config.DEFAULT_VIDEO_WIDTH);
+        param.height = pref.getIntValueByKey(Config.VIDEO_HEIGHT, Config.DEFAULT_VIDEO_HEIGHT);
+        param.videoBitrate = pref.getIntValueByKey(Config.VIDEO_BITRATE, Config.DEFAULT_VIDEO_BITRATE);
+        param.videoFrameRate = pref.getIntValueByKey(Config.VIDEO_FPS, Config.DEFAULT_FRAME_RATE);
+        param.audioSampleRate = pref.getIntValueByKey(Config.AUDIO_SAMPLE_RATE, Config.DEFAULT_AUDIO_SAMPLE_RATE);
+        param.audioBitrate = pref.getIntValueByKey(Config.AUDIO_BITRATE, Config.DEFAULT_AUDIO_BITRATE);
+        param.audioChannels = pref.getIntValueByKey(Config.AUDIO_CHANNEL, Config.DEFAULT_AUDIO_CHANNEL);
         return param;
     }
 
