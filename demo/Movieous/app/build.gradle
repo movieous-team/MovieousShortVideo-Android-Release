@@ -58,8 +58,15 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs' //this way we can find the .aar file in libs folder
+    }
+}
+
 dependencies {
-    implementation files('libs/ushortvideo-2.0.6.jar')
+    implementation files('libs/ushortvideo-2.0.7.jar')
+    implementation(name:'movieous-player-2.0.1', ext:'aar')
     // ufile 文件上传 SDK
     implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 
@@ -98,13 +105,10 @@ dependencies {
     implementation project(':multiple-status-view')
     // 运行时权限
     implementation 'pub.devrel:easypermissions:1.2.0'
-    // 播放器
-    implementation 'com.shuyu:GSYVideoPlayer:6.0.2'
     // Gif
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     implementation 'com.github.iknow4:android-utils-sdk:1.1.2'
     // 视频/图片文件选择库
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.zhihu.android:matisse:0.5.2-beta4'
-
 }

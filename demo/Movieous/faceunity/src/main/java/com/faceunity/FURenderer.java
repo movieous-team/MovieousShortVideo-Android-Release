@@ -203,8 +203,13 @@ public class FURenderer implements OnFUControlListener {
         faceunity.fuSetExpressionCalibration(2);
         faceunity.fuSetMaxFaces(mMaxFaces);//设置多脸，目前最多支持8人。
 
+        Log.i(TAG, "isNeedFaceBeauty = " + isNeedFaceBeauty + ", mIsSyncLoadBeautyBundle = " + mIsSyncLoadBeautyBundle);
         if (isNeedFaceBeauty) {
-            mFuItemHandler.sendEmptyMessage(ITEM_ARRAYS_FACE_BEAUTY_INDEX);
+            if (mIsSyncLoadBeautyBundle) {
+                loadBeautyBundle();
+            } else {
+                mFuItemHandler.sendEmptyMessage(ITEM_ARRAYS_FACE_BEAUTY_INDEX);
+            }
         }
         if (isNeedBeautyHair) {
             if (mHairColorType == HAIR_NORMAL) {
@@ -1426,6 +1431,7 @@ public class FURenderer implements OnFUControlListener {
 
     // Movieous 定制增加，处理编辑预览和保存的切换
     private static boolean isInit;
+    private boolean mIsSyncLoadBeautyBundle;
 
     public void loadItems() {
         if (!isInit) {
@@ -1433,6 +1439,20 @@ public class FURenderer implements OnFUControlListener {
             initFURenderer(mContext);
         }
         onSurfaceCreated();
+    }
+
+    public void setIsSyncLoadeBeautyBundle(boolean isSync) {
+        mIsSyncLoadBeautyBundle = isSync;
+    }
+
+    private void loadBeautyBundle() {
+        Log.i(TAG, "load beauty bundle +");
+        final long st = System.currentTimeMillis();
+        final int itemBeauty = loadItem(BUNDLE_face_beautification);
+        Log.i(TAG, "queueEventItemHandle: " + mEventQueue.size());
+        mItemsArray[ITEM_ARRAYS_FACE_BEAUTY_INDEX] = itemBeauty;
+        isNeedUpdateFaceBeauty = true;
+        Log.i(TAG, "load beauty bundle -: " + mFilterName.filterName() + ", cost time = " + (System.currentTimeMillis() - st));
     }
 
     public void destroyItems() {
@@ -1745,14 +1765,7 @@ public class FURenderer implements OnFUControlListener {
                 break;
                 //加载美颜bundle
                 case ITEM_ARRAYS_FACE_BEAUTY_INDEX: {
-                    final int itemBeauty = loadItem(BUNDLE_face_beautification);
-                    queueEventItemHandle(new Runnable() {
-                        @Override
-                        public void run() {
-                            mItemsArray[ITEM_ARRAYS_FACE_BEAUTY_INDEX] = itemBeauty;
-                            isNeedUpdateFaceBeauty = true;
-                        }
-                    });
+                    loadBeautyBundle();
                 }
                 break;
                 //加载普通美发bundle

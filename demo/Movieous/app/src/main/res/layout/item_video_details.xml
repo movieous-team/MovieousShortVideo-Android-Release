@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.movieous.media.view.player.VideoTouchView
-        android:id="@+id/videoTouchView"
+    <video.movieous.droid.player.ui.widget.VideoView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true">
-
-        <com.movieous.media.view.player.VideoPlayerView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black" />
-    </com.movieous.media.view.player.VideoTouchView>
+        app:useTextureViewBacking="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical"
-        android:layout_marginBottom="@dimen/dp50"
         android:padding="18dp">
 
         <LinearLayout
@@ -40,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:textColor="@color/white" />
+                android:textColor="@color/color_white" />
         </LinearLayout>
 
         <TextView
@@ -50,7 +44,7 @@
             android:layout_marginTop="9dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/white" />
+            android:textColor="@color/color_white" />
     </LinearLayout>
 
 </RelativeLayout>

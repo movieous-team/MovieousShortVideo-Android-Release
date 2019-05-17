@@ -10,6 +10,8 @@ import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.shortvideo.UMultiVideoRecordManager;
 
+import java.util.List;
+
 /**
  * MultiVideoRecordActivity
  */
@@ -25,7 +27,7 @@ public class MultiVideoRecordActivity extends BaseEditActivity implements UVideo
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        startVideoSelectActivity(this);
+        startFileSelectActivity(this, false, 1);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class MultiVideoRecordActivity extends BaseEditActivity implements UVideo
     }
 
     @Override
-    protected void getVideoFile(String file) {
-        initRecordManager(file);
+    protected void getFiles(List<String> fileList) {
+        initRecordManager(fileList.get(0));
     }
 }

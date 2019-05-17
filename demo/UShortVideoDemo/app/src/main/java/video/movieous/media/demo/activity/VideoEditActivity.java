@@ -22,6 +22,8 @@ import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
 
+import java.util.List;
+
 /**
  * VideoEditActivity
  */
@@ -60,11 +62,11 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        mVideoFile = getIntent().getStringExtra(VIDEO_PATH);
-        if (TextUtils.isEmpty(mVideoFile)) {
-            startVideoSelectActivity(this);
+        mInputFile = getIntent().getStringExtra(VIDEO_PATH);
+        if (TextUtils.isEmpty(mInputFile)) {
+            startFileSelectActivity(this, false, 1);
         } else {
-            getVideoFile(mVideoFile);
+            getFile(mInputFile);
         }
     }
 
@@ -202,7 +204,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void initVideoEditManager() {
         mVideoEditManager = new UVideoEditManager();
         mVideoEditManager.setVideoFrameListener(this);
-        mVideoEditManager.init(mRenderView, mVideoFile);
+        mVideoEditManager.init(mRenderView, mInputFile);
     }
 
     private void startPlayback() {
@@ -263,9 +265,13 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     }
 
     @Override
-    protected void getVideoFile(String file) {
-        mVideoFile = file;
-        MediaUtil.Metadata metadata = UMediaUtil.getMetadata(file);
+    protected void getFiles(List<String> fileList) {
+        getFile(fileList.get(0));
+    }
+
+    private void getFile(String file) {
+        mInputFile = file;
+        MediaUtil.Metadata metadata = UMediaUtil.getMetadata(mInputFile);
         boolean needRotation = metadata.rotation / 90 % 2 != 0;
         mVideoWidth = needRotation ? metadata.height : metadata.width;
         mVideoHeight = needRotation ? metadata.width : metadata.height;
@@ -306,7 +312,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         int stickerH = stickerW / stickerText.length();
         mTextSticker.init(USticker.StickerType.TEXT, stickerW, stickerH)
                 .setText(stickerText, Color.RED)
-                .setDuration(0, (int) UMediaUtil.getMetadata(mVideoFile).duration)
+                .setDuration(0, (int) UMediaUtil.getMetadata(mInputFile).duration)
                 .setPosition(mVideoWidth / 2 - stickerW / 2, mVideoHeight - stickerH - 20);     //视频图像的左上角为坐标原点
         mVideoEditManager.addSticker(mTextSticker);
     }

@@ -324,7 +324,6 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 .init(mPreview, mVideoPath)
                 .setAVOptions(mAVOptions)
                 .setVideoFrameListener(this)
-                .setVideoPlayerListener(this, 100)
                 .setVideoSaveListener(this);
     }
 
@@ -928,39 +927,42 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     }
 
     private void saveVideoFile() {
-        stopPlayback();
+        pausePlayback();
         showProcessingDialog();
         UVideoFrameListener listener = null;
-        if (isFilterVendorEnabled(false) && mFilterSdkManager != null) {
-            if (isFuFilterSDK()) { // 相芯
-                Log.i(TAG, "FACEUNITY filter is enabled!!!");
-                mFilterSdkManager.destroy();
-                mFilterSdkManager = null;
-                FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
-                fuSDKManager.setPreviewMode(false);
-                listener = new UVideoFrameListener() {
-                    @Override
-                    public void onSurfaceCreated() {
-                        Log.i(TAG, "onSurfaceCreated");
-                        fuSDKManager.init(mActivity, false);
-                        if (mCurrentFilter != null) {
-                            fuSDKManager.changeFilter(mCurrentFilter);
+        synchronized (mActivity) {
+            if (isFilterVendorEnabled(false) && mFilterSdkManager != null) {
+                if (isFuFilterSDK()) { // 相芯
+                    Log.i(TAG, "FACEUNITY filter is enabled!");
+                    mFilterSdkManager.destroy();
+                    mFilterSdkManager = null;
+                    FuSDKManager fuSDKManager = new FuSDKManager(mActivity);
+                    fuSDKManager.setPreviewMode(false);
+                    if (mCurrentFilter != null) {
+                        fuSDKManager.changeFilter(mCurrentFilter);
+                    }
+                    if (mBeautyFilter != null) {
+                        fuSDKManager.changeBeautyFilter(mBeautyFilter);
+                    }
+                    listener = new UVideoFrameListener() {
+                        @Override
+                        public void onSurfaceCreated() {
+                            Log.i(TAG, "onSurfaceCreated");
+                            fuSDKManager.init(mActivity, false);
                         }
-                        if (mBeautyFilter != null) {
-                            fuSDKManager.changeBeautyFilter(mBeautyFilter);
+
+                        @Override
+                        public void onSurfaceDestroyed() {
+                            fuSDKManager.destroy();
                         }
-                    }
 
-                    @Override
-                    public void onSurfaceDestroyed() {
-                        fuSDKManager.destroy();
-                    }
-
-                    @Override
-                    public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                        return (mCurrentFilter != null || mBeautyFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
-                    }
-                };
+                        @Override
+                        public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                            int outTexId = (mCurrentFilter != null || mBeautyFilter != null) ? fuSDKManager.onDrawFrame(texId, texWidth, texHeight) : texId;
+                            return outTexId;
+                        }
+                    };
+                }
             }
         }
         mVideoEditManager.save(Constants.EDIT_FILE_PATH, listener);

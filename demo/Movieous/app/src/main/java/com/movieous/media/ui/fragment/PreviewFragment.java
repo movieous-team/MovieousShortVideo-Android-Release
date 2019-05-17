@@ -104,13 +104,10 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
         if (!isFilterVendorEnabled(false)) return texId;
         int outTexId = texId;
         synchronized (mActivity) {
-            if (mFilterSdkManager == null) {
+            if (mFilterSdkManager == null || mFilterSdkManager.needReInit()) {
                 initVendorSDKManager();
                 onSurfaceCreated();
                 onSurfaceChanged(texWidth, texHeight);
-            }
-            if (mFilterSdkManager.needReInit()) {
-                onSurfaceCreated();
             }
             outTexId = mFilterSdkManager.onDrawFrame(texId, texWidth, texHeight);
         }
@@ -182,12 +179,15 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
     }
 
     // 初始化三方特效 SDK
-    protected void initVendorSDKManager() {
+    protected synchronized void initVendorSDKManager() {
         if (mFilterSdkManager == null) {
             mFilterSdkManager = isFuFilterSDK() ?
                     new FuSDKManager(mActivity) :
                     null;
             mFilterSdkManager.init(mActivity, true);
+            if (mBeautyFilter != null) {
+                mFilterSdkManager.changeBeautyFilter(mBeautyFilter);
+            }
         }
     }
 

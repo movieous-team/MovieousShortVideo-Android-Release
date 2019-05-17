@@ -1,29 +1,29 @@
 package video.movieous.media.demo.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
+import video.movieous.engine.UAVOptions;
 import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.view.UPaintView;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
-import video.movieous.media.demo.activity.base.BaseActivity;
+import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.shortvideo.UImageEditManager;
 import video.movieous.shortvideo.USticker;
+
+import java.util.List;
 
 /**
  * ImageEditActivity
  */
-public class ImageEditActivity extends BaseActivity implements UVideoFrameListener {
+public class ImageEditActivity extends BaseEditActivity implements UVideoFrameListener {
     private static final String TAG = "ImageEditActivity";
 
     private UTextureView mRenderView;
     private ImageView mPreviewImage;
-    private Bitmap mBitmap;
     private UImageEditManager mImageEditManager;
     private USticker mTextSticker;
     private UPaintView mPaintView;
@@ -32,7 +32,7 @@ public class ImageEditActivity extends BaseActivity implements UVideoFrameListen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        initImageManager();
+        startFileSelectActivity(this, true, 1);
     }
 
     @Override
@@ -52,11 +52,11 @@ public class ImageEditActivity extends BaseActivity implements UVideoFrameListen
     }
 
     private void initView() {
+        UAVOptions.VIDEO_ADAPTIVE_PREVIEW = true;
         setContentView(R.layout.activity_image_edit);
         mRenderView = $(R.id.render_view);
         mRenderView.setRenderMode(UTextureView.RENDERMODE_CONTINUOUSLY);
         mPreviewImage = $(R.id.preview_image);
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.preview);
 
         $(R.id.add_text).setOnClickListener(view -> demoText());
 
@@ -69,7 +69,8 @@ public class ImageEditActivity extends BaseActivity implements UVideoFrameListen
     private void initImageManager() {
         mImageEditManager = new UImageEditManager();
         mImageEditManager.init(mRenderView)
-                .setBitmap(mBitmap)
+                .setFilePath(mInputFile)
+                .setBackgroundColor(Color.DKGRAY)
                 .setVideoFrameListener(this);
     }
 
@@ -85,8 +86,8 @@ public class ImageEditActivity extends BaseActivity implements UVideoFrameListen
     private void addTextSticker() {
         mTextSticker = new USticker();
         String stickerText = "美丽的传说";
-        int width = mBitmap.getWidth();
-        int height = mBitmap.getHeight();
+        int width = 400;
+        int height = 100;
         int stickerW = width / 2;
         int stickerH = stickerW / stickerText.length();
         mTextSticker.init(USticker.StickerType.TEXT, stickerW, stickerH)
@@ -140,5 +141,11 @@ public class ImageEditActivity extends BaseActivity implements UVideoFrameListen
         //Log.i(TAG, "onDrawFrame: w = " + texWidth + ", h = " + texHeight);
         // 可以进行三方特效处理
         return texId;
+    }
+
+    @Override
+    protected void getFiles(List<String> fileList) {
+        mInputFile = fileList.get(0);
+        initImageManager();
     }
 }

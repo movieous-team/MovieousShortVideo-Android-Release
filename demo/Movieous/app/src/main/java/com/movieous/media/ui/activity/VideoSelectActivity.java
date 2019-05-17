@@ -44,7 +44,7 @@ public class VideoSelectActivity extends BaseActivity implements View.OnClickLis
                     mVideoSelectAdapter.setItemClickCallback((isSelected, videoPath) -> {
                         mVideoPath = videoPath;
                         mNextStep.setEnabled(true);
-                        mNextStep.setTextColor(getResources().getColor(R.color.style_color));
+                        mNextStep.setTextColor(getResources().getColor(R.color.color_black));
                     });
                 } else {
                     mVideoSelectAdapter.swapCursor((Cursor) obj);

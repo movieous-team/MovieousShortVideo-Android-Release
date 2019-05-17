@@ -3,36 +3,36 @@ package com.movieous.media.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import com.movieous.media.R;
-import com.movieous.media.base.BaseActivity;
 import com.movieous.media.mvp.model.VideoDataUtil;
 import com.movieous.media.mvp.model.entity.MediaParam;
 import com.movieous.media.mvp.model.entity.VideoListItem;
-import com.movieous.media.ui.adapter.VideoDetailsAdapter;
+import com.movieous.media.ui.adapter.VideoItemAdapter;
 import com.movieous.media.utils.SharePrefUtils;
 import com.movieous.media.view.CustomSettingDialog;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
-import org.jetbrains.annotations.Nullable;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 import java.util.ArrayList;
 
 /**
  * 仿抖音上下滑动播放
  */
-public class VideoPlayActivity extends BaseActivity {
+public class VideoPlayActivity extends AppCompatActivity {
+    private static final String TAG = "VideoPlayActivity";
+
     private Context mContext;
     private RecyclerView mVideoListRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private PagerSnapHelper mPagerSnapHelper;
-    private ArrayList<VideoListItem> mVideoList;
+    private static ArrayList<VideoListItem> mVideoList;
     private boolean mIsPause;
     private int mPlayPosition;
     private View mPlayView;
@@ -47,10 +47,22 @@ public class VideoPlayActivity extends BaseActivity {
             return;
         }
 
+        if (mPlayView != null) {
+            final VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
+            vh.videoView.setTag(vh.videoView.getVideoUri().toString());
+            vh.videoView.stopPlayback();
+        }
+
         mPlayView = snapView;
         mPlayPosition = position;
-        final VideoDetailsAdapter.VideoViewHolder vh = (VideoDetailsAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
-        vh.playTextureView.startPlayLogic();
+        final VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
+        Log.i(TAG, "start play, url: " + vh.videoView.getVideoUri().toString());
+
+        if (vh.videoView.getTag() == null || !vh.videoView.getTag().equals(vh.videoView.getVideoUri().toString())) {
+            vh.videoView.start();
+        } else {
+            vh.videoView.restart();
+        }
     }
 
     @Override
@@ -66,25 +78,15 @@ public class VideoPlayActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         mIsPause = true;
-        VideoDetailsAdapter.VideoViewHolder vh = (VideoDetailsAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
-        vh.playTextureView.onVideoPause();
+        VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
+        vh.videoView.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GSYVideoManager.releaseAllVideos();
-    }
-
-    @Override
-    public int layoutId() {
-        return R.layout.activity_video_detail;
-    }
-
-    @Override
-    public void initData() {
-        mVideoList = VideoDataUtil.INSTANCE.getVideoList();
-        IjkPlayerManager.setLogLevel(IjkMediaPlayer.IJK_LOG_SILENT);
+        VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
+        vh.videoView.release();
     }
 
     @Override
@@ -92,17 +94,19 @@ public class VideoPlayActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
+        mVideoList = VideoDataUtil.INSTANCE.getVideoList();
+        initView();
     }
 
-    @Override
-    public void initView() {
+    private void initView() {
         mContext = VideoPlayActivity.this;
+        setContentView(R.layout.activity_video_detail);
         mVideoListRecyclerView = findViewById(R.id.rv_video_detail);
         mLinearLayoutManager = new LinearLayoutManager(mContext);
         mVideoListRecyclerView.setLayoutManager(mLinearLayoutManager);
         mPagerSnapHelper = new PagerSnapHelper();
         mPagerSnapHelper.attachToRecyclerView(mVideoListRecyclerView);
-        mVideoListRecyclerView.setAdapter(new VideoDetailsAdapter(mContext, mVideoList));
+        mVideoListRecyclerView.setAdapter(new VideoItemAdapter(mContext, mVideoList));
         mVideoListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -112,14 +116,12 @@ public class VideoPlayActivity extends BaseActivity {
             }
         });
 
-        mVideoListRecyclerView.post(() -> {
-            mVideoListRecyclerView.scrollToPosition(mPlayPosition);
-            mVideoListRecyclerView.post(() -> playVideo());
-        });
-    }
-
-    @Override
-    public void start() {
+        if (mVideoList != null && !mVideoList.isEmpty()) {
+            mVideoListRecyclerView.post(() -> {
+                mVideoListRecyclerView.scrollToPosition(mPlayPosition);
+                mVideoListRecyclerView.post(() -> playVideo());
+            });
+        }
     }
 
     // 显示参数设置窗口
@@ -133,4 +135,5 @@ public class VideoPlayActivity extends BaseActivity {
     public void onCreateShortVideo(View view) {
         startActivity(new Intent(this, VideoRecordActivity.class));
     }
+
 }

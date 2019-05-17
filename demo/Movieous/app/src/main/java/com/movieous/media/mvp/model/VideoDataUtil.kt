@@ -18,9 +18,9 @@ import javax.net.ssl.X509TrustManager
 
 object VideoDataUtil {
 
-    private val VIDEO_SOURCE = arrayOf("huo-shan", "kuai-shou", "dou-yin", "mei-pai")
+    private val VIDEO_SOURCE = arrayOf("dou-yin", "kuai-shou", "huo-shan", "mei-pai")
     private val TIME_RANGE = arrayOf("week", "month")
-    private val MAX_PAGE = 1
+    private val MAX_PAGE = 5
     private var SOURCE_INDEX: Int = 0
 
     private val mVideoList = ArrayList<VideoListItem>()
@@ -59,10 +59,10 @@ object VideoDataUtil {
 
     // 仅做测试之用
     private fun getVideoListInternal() {
-        val rangeIndex = Utils.getRandomNum(0, 1)
+        val rangeIndex = 1//Utils.getRandomNum(0, 1)
         val url = String.format(
-            "https://kuaiyinshi.com/api/hot/videos/?source=%s&page=%d&st=%s&_=%d",
-            VIDEO_SOURCE[SOURCE_INDEX], MAX_PAGE, TIME_RANGE[rangeIndex], System.currentTimeMillis()
+            "http://kuaiyinshi.com/api/hot/videos/?source=%s&page=%d&st=%s&_=%d",
+            VIDEO_SOURCE[SOURCE_INDEX], MAX_PAGE, TIME_RANGE[rangeIndex], System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
         )
         SOURCE_INDEX++
         val okHttpClient = OkHttpClient.Builder().sslSocketFactory(SSLSocketFactoryCompat(), trustManager!!).build()
@@ -73,7 +73,6 @@ object VideoDataUtil {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 
     private fun parseResponse(response: Response) {
@@ -83,13 +82,14 @@ object VideoDataUtil {
         try {
             val json = JSONObject(response.body()!!.string())
             if (json.optInt("code") != 200) {
+                Log.e("movieous", "code = " + json.optInt("code"))
                 return
             }
             val data = json.optJSONArray("data")
             //mVideoList.clear();
             for (i in 0 until data.length()) {
                 val videoItem = data.getJSONObject(i)
-                val head = "https:"
+                val head = "http:"
                 val videoUrl = head + videoItem.optString("video_url")
                 val userName = videoItem.optString("nickname")
                 val content = videoItem.optString("desc")
@@ -101,7 +101,7 @@ object VideoDataUtil {
                     VideoListItem(videoUrl, userName, content, coverUrl, avatarUrl, 720, 1280)
                 mVideoList.add(videoBean)
             }
-            Log.i("movieous", "video list length = " + data.length())
+            Log.i("movieous", "get video list length = " + data.length())
         } catch (e: JSONException) {
             e.printStackTrace()
         } catch (e: IOException) {

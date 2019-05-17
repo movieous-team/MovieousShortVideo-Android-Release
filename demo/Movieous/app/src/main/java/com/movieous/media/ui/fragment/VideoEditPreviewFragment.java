@@ -38,6 +38,9 @@ public abstract class VideoEditPreviewFragment extends PreviewFragment {
     // TODO 暂时分段特效与贴纸滤镜不能共存，需要确认是否有共存的需求，需要 供应商 确认
     @Override
     public int onDrawFrame(int texId, int texWidth, int texHeight) {
+        if (mFilterSdkManager == null) {
+            initVendorSDKManager();
+        }
         if (isFilterVendorEnabled(false) && mFilterSdkManager != null && isTimeRangeFilter()) {
             UFilter filterItem = getMagicFilterByPosition(mVideoEditManager.getCurrentPosition());
             if (filterItem != null) {

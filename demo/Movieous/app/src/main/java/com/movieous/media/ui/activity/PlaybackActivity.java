@@ -14,19 +14,16 @@ import cn.ucloud.ufile.api.ApiError;
 import cn.ucloud.ufile.bean.UfileErrorBean;
 import cn.ucloud.ufile.bean.base.BaseResponseBean;
 import cn.ucloud.ufile.http.UfileCallback;
+import com.google.android.exoplayer2.Player;
 import com.movieous.media.Constants;
 import com.movieous.media.R;
 import com.movieous.media.api.ufilesdk.UFileUploadManager;
 import com.movieous.media.utils.AppUtils;
 import com.movieous.media.utils.GetPathFromUri;
 import com.movieous.media.utils.StringUtils;
-import com.movieous.media.view.player.VideoPlayerView;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
 import iknow.android.utils.thread.BackgroundExecutor;
 import okhttp3.Request;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import video.movieous.engine.UConstants;
+import video.movieous.droid.player.ui.widget.VideoView;
 import video.movieous.shortvideo.UMediaUtil;
 
 import static com.movieous.media.ExtensionsKt.showToast;
@@ -35,7 +32,7 @@ public class PlaybackActivity extends AppCompatActivity {
     private static final String TAG = "PlaybackActivity";
     private static final String MP4_PATH = "MP4_PATH";
 
-    private VideoPlayerView mVideoView;
+    private VideoView mVideoView;
     private static String mVideoPath;
     private Button mUploadBtn;
     private UFileUploadManager mVideoUploadManager;
@@ -45,8 +42,7 @@ public class PlaybackActivity extends AppCompatActivity {
     public static void start(Activity activity, String mp4Path) {
         mVideoPath = mp4Path;
         Intent intent = new Intent(activity, PlaybackActivity.class);
-        intent.putExtra(MP4_PATH, getLocalFilePath(mp4Path));
-        IjkPlayerManager.setLogLevel(IjkMediaPlayer.IJK_LOG_SILENT);
+        intent.putExtra(MP4_PATH, mp4Path);
         activity.startActivity(intent);
     }
 
@@ -79,7 +75,7 @@ public class PlaybackActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (mVideoView != null) {
-            mVideoView.onVideoPause();
+            mVideoView.pause();
         }
     }
 
@@ -87,7 +83,7 @@ public class PlaybackActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (mVideoView != null) {
-            mVideoView.onVideoResume();
+            mVideoView.start();
         }
     }
 
@@ -95,7 +91,7 @@ public class PlaybackActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (mVideoView != null) {
-            GSYVideoManager.releaseAllVideos();
+            mVideoView.release();
         }
     }
 
@@ -120,14 +116,8 @@ public class PlaybackActivity extends AppCompatActivity {
      */
     private void setVideo(String url) {
         Log.d(TAG, "play url = " + url);
-        mVideoView.setUp(url, false, "");
-        mVideoView.setLooping(true);
-        //开始自动播放
-        mVideoView.startPlayLogic();
-    }
-
-    private static String getLocalFilePath(String videoPath) {
-        return "file:/" + videoPath;
+        mVideoView.setVideoPath(url);
+        mVideoView.setRepeatMode(Player.REPEAT_MODE_ALL);
     }
 
     // 上传到 UCloud，仅做参考

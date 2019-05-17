@@ -15,6 +15,8 @@ import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.UVideoEditManager;
 import video.movieous.engine.view.UTextureView;
 
+import java.util.List;
+
 /**
  * VideoTrimActivity
  */
@@ -40,17 +42,19 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        startVideoSelectActivity(this);
+        startFileSelectActivity(this, false, 1);
     }
 
     @Override
-    protected void getVideoFile(String inFile) {
-        mVideoFile = inFile;
-        mFileTip.setText(mVideoFile);
-        mDuration = UMediaUtil.getMetadata(mVideoFile).duration;
-        mVideoEditManager.init(mRenderView, mVideoFile)
+    protected void getFiles(List<String> inFile) {
+        mInputFile = inFile.get(0);
+        mFileTip.setText(mInputFile);
+        mDuration = UMediaUtil.getMetadata(mInputFile).duration;
+        //mEtTrimTime.setText(Long.toString(mDuration));
+        mVideoEditManager.init(mRenderView, mInputFile)
                 .setVideoFrameListener(this)
                 .start();
+        mVideoEditManager.setTrimTime(new UMediaTrimTime(0, (int) mDuration));
     }
 
     @Override
@@ -83,7 +87,7 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
     private void startTrimVideo() {
         int endTime = Integer.parseInt(mEtTrimTime.getText().toString()) * 1000;
         UMediaTrimTime trimTime = (endTime <= 0 || endTime > mDuration) ? null : new UMediaTrimTime(0, endTime);
-        Log.i(TAG, "video path = " + mVideoFile + ", trim time: " + (trimTime == null ? mDuration : trimTime.getDuration()));
+        Log.i(TAG, "video path = " + mInputFile + ", trim time: " + (trimTime == null ? mDuration : trimTime.getDuration()));
         Log.i(TAG, "out file: " + mOutFile);
         mVideoEditManager.stop();
         mVideoEditManager.setVideoSaveListener(this)
