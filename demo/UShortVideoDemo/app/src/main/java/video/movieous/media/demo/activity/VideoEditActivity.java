@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.View;
 import android.widget.*;
+import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.media.util.MediaUtil;
 import video.movieous.engine.view.UPaintView;
-import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
+import video.movieous.media.demo.kiwi.KwTrackerWrapper;
 import video.movieous.media.demo.utils.UriUtil;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
@@ -33,7 +34,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     public static final String VIDEO_PATH = "video_path";
     private static final String OUT_FILE = "/sdcard/movieous/shortvideo/video_edit_test.mp4";
 
-    private UTextureView mRenderView;
     private ImageView mPreviewImage;
     private Button mRecordButton;
     private Button mSaveButton;
@@ -73,6 +73,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     @Override
     protected void onResume() {
         super.onResume();
+        mKwTrackWrapper.onResume(this);
         if (mVideoEditManager != null) {
             startPlayback();
         }
@@ -81,6 +82,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     @Override
     protected void onPause() {
         super.onPause();
+        mKwTrackWrapper.onPause(this);
         if (mVideoEditManager != null) {
             pausePlayback();
         }
@@ -89,6 +91,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mKwTrackWrapper.onDestroy(this);
         if (mVideoEditManager != null) {
             stopPlayback();
             mVideoEditManager.release();
@@ -157,36 +160,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
         $(R.id.combine).setOnClickListener(v -> combineClip());
 
-        // for 文字演示
-        mRenderView.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mTouchingTextureView = true;
-                    startPlayback();
-                    mSticker = new USticker();
-                    mSticker.init(USticker.StickerType.TEXT, mVideoWidth / 4, mVideoWidth / 4 / 4)
-                            .setText("哈哈哈哈", Color.RED)
-                            //视频图像的左上角为坐标原点
-                            .setPosition(Math.round(event.getX() * mSticker.getWidth() * 1f / mRenderView.getWidth()),
-                                    Math.round(event.getY() * mSticker.getHeight() * 1f / mRenderView.getHeight()))
-                            .setAngle(45);
-                    mVideoEditManager.addSticker(mSticker);
-                    mSticker.start();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    mSticker.setPosition(Math.round(event.getX() * mSticker.getWidth() * 1f / mRenderView.getWidth()),
-                            Math.round(event.getY() * mSticker.getHeight() * 1f / mRenderView.getHeight()));
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    mTouchingTextureView = false;
-                    pausePlayback();
-                    mSticker.pause();
-                    break;
-            }
-            return true;
-        });
-
         // 背景音乐
         $(R.id.add_music).setOnClickListener(v -> startMusicActivity());
 
@@ -199,12 +172,20 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         // 涂鸦
         $(R.id.add_paintview).setOnClickListener(view -> demoGraffitiPaint());
 
+        // 美颜贴纸
+        $(R.id.show_kw_beauty).setOnClickListener(view -> showKiwiView());
+
+        mKwTrackWrapper = new KwTrackerWrapper(this);
+        mKwTrackWrapper.onCreate(this);
+        mKwControlView = findViewById(R.id.kw_beauty_layout);
+        mKwControlView.setOnEventListener(mKwTrackWrapper.initUIEventListener());
     }
 
     private void initVideoEditManager() {
-        mVideoEditManager = new UVideoEditManager();
-        mVideoEditManager.setVideoFrameListener(this);
-        mVideoEditManager.init(mRenderView, mInputFile);
+        mVideoEditManager = new UVideoEditManager()
+                .setVideoFrameListener(this)
+                .setRecordEnabled(true, true)
+                .init(mRenderView, mInputFile);
     }
 
     private void startPlayback() {
@@ -368,9 +349,15 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     }
 
     private void saveVideo() {
-        stopPlayback();
+        pausePlayback();
         mStartTime = System.currentTimeMillis();
         mVideoEditManager.setVideoSaveListener(this);
+        UVideoFrameListener videoFrameListener = new UVideoFrameListener() {
+            @Override
+            public int onDrawFrame(int texId, int texWidth, int texHeight) {
+                return mKwTrackWrapper.onDrawFrame(texId, texWidth, texHeight);
+            }
+        };
         mVideoEditManager.save(OUT_FILE);
     }
 
@@ -400,5 +387,16 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
             mSaveButton.setTag(null);
             mTvTip.setText("已取消");
         });
+    }
+
+    // 美颜贴纸
+    private void showKiwiView() {
+        if (mKwControlView.getTag() == null) {
+            mKwControlView.setVisibility(View.VISIBLE);
+            mKwControlView.setTag(1);
+        } else {
+            mKwControlView.setVisibility(View.INVISIBLE);
+            mKwControlView.setTag(null);
+        }
     }
 }

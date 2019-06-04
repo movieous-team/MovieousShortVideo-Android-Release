@@ -52,7 +52,6 @@ public class ImageEditActivity extends BaseEditActivity implements UVideoFrameLi
     }
 
     private void initView() {
-        UAVOptions.VIDEO_ADAPTIVE_PREVIEW = true;
         setContentView(R.layout.activity_image_edit);
         mRenderView = $(R.id.render_view);
         mRenderView.setRenderMode(UTextureView.RENDERMODE_CONTINUOUSLY);

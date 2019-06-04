@@ -39,7 +39,9 @@ repositories {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.7.jar')
+    implementation files('libs/ushortvideo-2.0.7.2.jar')
+
+    api project(':kiwi')
 
     implementation "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"

@@ -17,10 +17,18 @@
         android:text="切换摄像头" />
 
     <Button
+        android:id="@+id/builtin_beauty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_camera"
+        android:text="内置美颜" />
+
+    <Button
         android:id="@+id/add_music"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/switch_camera"
+        android:layout_toEndOf="@+id/builtin_beauty"
         android:text="加背景音乐" />
 
     <Button
@@ -50,4 +58,16 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentEnd="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true">
+
+        <com.kiwi.ui.KwControlView
+            android:id="@+id/kiwi_control_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
+    </LinearLayout>
 </RelativeLayout>

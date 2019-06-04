@@ -6,15 +6,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import video.movieous.engine.UVideoSaveListener;
+import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BasePreviewActivity;
+import video.movieous.media.demo.kiwi.KwTrackerWrapper;
 import video.movieous.media.demo.utils.UriUtil;
 import video.movieous.shortvideo.UVideoRecordManager;
-import video.movieous.engine.view.UTextureView;
 
 /**
  * 视频录制
@@ -24,7 +26,6 @@ public class VideoRecordActivity extends BasePreviewActivity {
     private static final int REQUEST_CODE_CHOOSE = 1;
     private String mOutFile = "/sdcard/movieous/shortvideo/record.mp4";
 
-    private UTextureView mRenderView;
     private ImageView mPreviewImage;
     private Button mRecordButton;
     private UVideoRecordManager mRecordManager;
@@ -32,6 +33,7 @@ public class VideoRecordActivity extends BasePreviewActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         initView();
         initRecordManager();
     }
@@ -39,18 +41,21 @@ public class VideoRecordActivity extends BasePreviewActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mKwTrackWrapper.onResume(this);
         mRecordManager.startPreview();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mKwTrackWrapper.onPause(this);
         mRecordManager.stopPreview();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mKwTrackWrapper.onDestroy(this);
         mRecordManager.release();
     }
 
@@ -71,6 +76,7 @@ public class VideoRecordActivity extends BasePreviewActivity {
         mRenderView = $(R.id.render_view);
         mPreviewImage = $(R.id.preview_image);
         mRecordButton = $(R.id.record);
+        mRenderView.setScaleType(FitViewHelper.ScaleType.CENTER_CROP);
 
         $(R.id.switch_camera).setOnClickListener(v -> mRecordManager.switchCamera());
 
@@ -114,11 +120,28 @@ public class VideoRecordActivity extends BasePreviewActivity {
                 mRecordManager.stopRecord();
             }
         });
+
+        // 内置美颜
+        $(R.id.builtin_beauty).setOnClickListener(v-> {
+            if (v.getTag() != null) {
+                mKwControlView.setVisibility(View.INVISIBLE);
+                v.setTag(null);
+            } else {
+                mKwControlView.setVisibility(View.VISIBLE);
+                v.setTag(1);
+            }
+        });
+
+        mKwTrackWrapper = new KwTrackerWrapper(this);
+        mKwTrackWrapper.onCreate(this);
+        mKwControlView = findViewById(R.id.kiwi_control_layout);
+        mKwControlView.setOnEventListener(mKwTrackWrapper.initUIEventListener());
     }
 
     private void initRecordManager() {
         mRecordManager = new UVideoRecordManager();
         mRecordManager.init(mRenderView);
+        mRecordManager.setVideoFrameListener(this);
     }
 
 }
