@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <video.movieous.engine.view.UTextureView
+        android:id="@+id/render_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <Button
+        android:id="@+id/trim_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/st_trim_time"
+        android:layout_marginLeft="20dp"
+        android:layout_toEndOf="@id/check_audio_track"
+        android:text="转码裁剪" />
+
+    <EditText
+        android:id="@+id/st_trim_time"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_horizontal"
+        android:inputType="number"
+        android:text="0"
+        android:textColor="@color/colorPrimary" />
+
+    <EditText
+        android:id="@+id/et_trim_time"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/st_trim_time"
+        android:gravity="center_horizontal"
+        android:inputType="number"
+        android:text="10000"
+        android:textColor="@color/colorPrimary" />
+
+    <Button
+        android:id="@+id/priview_trim_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/et_trim_time"
+        android:text="确定" />
+
+    <CheckBox
+        android:id="@+id/check_audio_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/priview_trim_video"
+        android:checked="false"
+        android:gravity="center_vertical"
+        android:text="关闭音频"
+        android:textSize="15sp"
+        android:textColor="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/tv_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/check_audio_track"
+        android:layout_marginLeft="20dp"
+        android:padding="10dp"
+        android:text="单击按钮开始裁剪"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/file_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:padding="10dp"
+        android:text=""
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="15sp" />
+</RelativeLayout>

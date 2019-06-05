@@ -104,7 +104,7 @@ public class FuSDKManager implements FilterSdkManager {
         if (mSaveFilterEngine == null) {
             mSaveFilterEngine = createFilterEngine();
         }
-        mSaveFilterEngine.setIsSyncLoadeBeautyBundle(true);
+        mSaveFilterEngine.setIsSyncLoadBeautyBundle(true);
         return mSaveFilterEngine;
     }
 

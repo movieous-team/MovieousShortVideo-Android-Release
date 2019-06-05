@@ -65,15 +65,16 @@ repositories {
 }
 
 dependencies {
-    implementation files('libs/ushortvideo-2.0.7.jar')
+    api fileTree(dir: 'libs', include: ['*.jar'])
     implementation(name:'movieous-player-2.0.1', ext:'aar')
-    // ufile 文件上传 SDK
-    implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 
     implementation project(path: ':recyclerkit')
     implementation project(path: ':gridpagersnaphelper')
     implementation project(path: ':recyclerviewindicator')
     implementation project(path: ':FlycoTabLayout_Lib')
+
+    // ufile 文件上传 SDK
+    implementation 'cn.ucloud.ufile:ufile-client-java:2.0.6'
 
     // faceunity 特效库
     implementation project(path: ':faceunity')

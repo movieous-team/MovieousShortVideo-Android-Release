@@ -1441,7 +1441,7 @@ public class FURenderer implements OnFUControlListener {
         onSurfaceCreated();
     }
 
-    public void setIsSyncLoadeBeautyBundle(boolean isSync) {
+    public void setIsSyncLoadBeautyBundle(boolean isSync) {
         mIsSyncLoadBeautyBundle = isSync;
     }
 

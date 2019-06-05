@@ -18,7 +18,7 @@ import javax.net.ssl.X509TrustManager
 
 object VideoDataUtil {
 
-    private val VIDEO_SOURCE = arrayOf("dou-yin", "kuai-shou", "huo-shan", "mei-pai")
+    private val VIDEO_SOURCE = arrayOf("huo-shan", "mei-pai", "kuai-shou", "dou-yin")
     private val TIME_RANGE = arrayOf("week", "month")
     private val MAX_PAGE = 5
     private var SOURCE_INDEX: Int = 0
