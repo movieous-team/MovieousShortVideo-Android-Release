@@ -350,15 +350,10 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
     private void saveVideo() {
         pausePlayback();
+        onSurfaceDestroyed();
         mStartTime = System.currentTimeMillis();
         mVideoEditManager.setVideoSaveListener(this);
-        UVideoFrameListener videoFrameListener = new UVideoFrameListener() {
-            @Override
-            public int onDrawFrame(int texId, int texWidth, int texHeight) {
-                return mKwTrackWrapper.onDrawFrame(texId, texWidth, texHeight);
-            }
-        };
-        mVideoEditManager.save(OUT_FILE);
+        mVideoEditManager.save(OUT_FILE, this);
     }
 
     @Override

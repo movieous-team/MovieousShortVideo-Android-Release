@@ -94,3 +94,6 @@
 # 保持 Serializable 不被混淆
 -keepclassmembers class * implements java.io.Serializable
 -keepclassmembers class * implements java.lang.Comparable
+
+-dontwarn com.kiwi.**
+-keep public class com.kiwi.**{*;}

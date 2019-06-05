@@ -10,6 +10,45 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <com.kiwi.ui.KwControlView
+            android:id="@+id/kw_beauty_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/show_kw_beauty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="美颜贴纸" />
+
+            <Button
+                android:id="@+id/debug_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打开 log" />
+
+            <Button
+                android:id="@+id/get_thumb_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="获取缩略图" />
+        </LinearLayout>
+    </LinearLayout>
+
     <ImageButton
         android:id="@+id/pause_playback"
         android:layout_width="wrap_content"
@@ -94,44 +133,5 @@
         android:layout_height="100dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-
-        <com.kiwi.ui.KwControlView
-            android:id="@+id/kw_beauty_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="invisible" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/show_kw_beauty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="美颜贴纸" />
-
-            <Button
-                android:id="@+id/debug_on"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="打开 log" />
-
-            <Button
-                android:id="@+id/get_thumb_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="获取缩略图" />
-        </LinearLayout>
-    </LinearLayout>
 
 </RelativeLayout>
