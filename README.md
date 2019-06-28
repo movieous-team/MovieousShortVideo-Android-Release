@@ -1,57 +1,57 @@
 # MovieousShortVideo-Android
 
-MovieousShortVideo-Android is a short video SDK for Android platform launched by Movieous. It provides video recording, video editing, beautification, filter, segment recording, cloud storage, and many other functions, supporting high customization and secondary development.
+MovieousShortVideo-Android 是 Movieous 推出的一款适用于 Android 平台的短视频 SDK，提供了视频录制、视频编辑、美颜、滤镜、分段录制、云端存储等多种功能，支持高度定制以及二次开发, 能够让开发者快速构建一款优秀的短视频 app。
 
-*Read this in other languages: [English](README.md), [简体中文](docs/README.zh-cn.md).*
+*其他语言版本: [English](README.en-us.md), [简体中文](README.md).*
 
-## Features list
+## 功能特性
 
-- [x] Support video recording/editing
-- [x] Segment recording
-- [x] Delete video
-- [x] Auto focus
-- [x] Manual focus
-- [x] Support microphone mute
-- [x] Support flash operation
-- [x] Support camera dynamic switching
-- [x] Support watermark
-- [x] Video stitching
-- [x] Video segment clip
-- [x] Support H.264 and AAC hard encoding
-- [x] Third-party beautification interface
-- [x] Third-party filter interface
-- [x] Big eyes/Face-lifting  [Contact us](mailto:sales@movieous.com)
-- [x] Sticker effects  [Contact us](mailto:sales@movieous.com)
-- [x] Filter effects   [Contact us](mailto:sales@movieous.com)
-- [x] Background replacement  [Contact us](mailto:sales@movieous.com)
-- [x] Expression effects  [Contact us](mailto:sales@movieous.com)
-- [x] Gesture recognition  [Contact us](mailto:sales@movieous.com)
-- [x] Uploading to cloud-end
-- [x] Continue to transport after pause
-- [x] Support for mainstream architecture like arm64、armv7、armeabi、x86
-- [x] Support Android API 18（Android 4.3）and later
+- [x] 支持视频录制/编辑
+- [x] 分段录制
+- [x] 回删视频
+- [x] 支持自动对焦
+- [x] 支持手动对焦
+- [x] 支持麦克风静音
+- [x] 支持闪光灯操作
+- [x] 支持摄像头动态切换
+- [x] 支持水印
+- [x] 视频拼接
+- [x] 视频片段剪辑
+- [x] 支持 H.264 和 AAC 硬编
+- [x] 第三方美颜接口
+- [x] 第三方滤镜接口
+- [x] 大眼/瘦脸 [联系商务](mailto:sales@movieous.com)
+- [x] 贴纸特效  [联系商务](mailto:sales@movieous.com)
+- [x] 抖音滤镜  [联系商务](mailto:sales@movieous.com)
+- [x] 背景替换  [联系商务](mailto:sales@movieous.com)
+- [x] 表情特效  [联系商务](mailto:sales@movieous.com)
+- [x] 手势识别  [联系商务](mailto:sales@movieous.com)
+- [x] 上传云端
+- [x] 断点续传
+- [x] 支持 arm64、armv7、armeabi、x86 等主流芯片体系架构
+- [x] 支持 Android API 18（Android 4.3）及其以上版本
 
 ## MovieousShortVideo-Android Wiki
 
-wiki documents：[MovieousShortVideo-Android Guide](https://developer.movieous.cn/#/en-uk/Android_ShortVideo) for your reference
+请参考 wiki 文档：[MovieousShortVideo-Android 开发指南](https://developer.movieous.cn/#/Android_ShortVideo)
 
-## Device and system requirements
+## 设备以及系统要求
 
-- Device requirements：Device with Android system
-- System requirements：Android 4.3(API 18) and later
+- 设备要求：搭载 Android 系统的设备
+- 系统要求：Android 4.3(API 18) 及其以上
 
-## Feedback and Suggestions
+## 反馈及意见
 
-Please feedback the problem by submitting issues on GitHub's repo if any problems you got, describe it as clearly as possible, It would be nice if an error message or screenshot also came together, and pointed out the type of bug or other issues in Labels.
+当你遇到任何问题时，可以通过在 GitHub 的 repo 提交 issues 来反馈问题，请尽可能的描述清楚遇到的问题，如果有错误信息也一同附带，并且在 Labels 中指明类型为 bug 或者其他。
 
-[View existing issues and submit bugs here](https://github.com/movieous-team/MovieousShortVideo-Android-Release/issues).
+[通过这里查看已有的 issues 和提交 Bug。](https://github.com/movieous-team/MovieousShortVideo-Android-Release/issues)
 
-## Authentication description
+## 鉴权说明
 
-- The usage of SDK  requires official authentication
+- SDK 的使用需要进行官方鉴权
 
-- Authentication method
+- 鉴权方法
 
-After creating the app on the official website, the console will generate the license.txt authentication file, and pass the string in the license.txt file to the SDK for authentication through the `init` interface in `UShortVideoEnv`. Please refer to the SDK documentation interface description for details.
+在官网创建 app 后，控制台会生成 license.txt 鉴权文件，通过 `UShortVideoEnv` 中的 `init` 接口，把 license.txt 文件中的字符串传递给 SDK 进行鉴权，具体请参考 SDK 文档接口说明。
 
-- [Contact us](mailto:sales@movieous.com)
+- [联系商务](mailto:sales@movieous.com)
