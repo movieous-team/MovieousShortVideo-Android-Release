@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import video.movieous.engine.UAVOptions;
+import video.movieous.engine.UAudioMixClip;
 import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.base.callback.SingleCallback;
@@ -27,10 +28,7 @@ import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.media.demo.utils.UriUtil;
-import video.movieous.shortvideo.UMediaUtil;
-import video.movieous.shortvideo.UShortVideoEnv;
-import video.movieous.shortvideo.USticker;
-import video.movieous.shortvideo.UVideoEditManager;
+import video.movieous.shortvideo.*;
 
 import java.util.List;
 
@@ -208,6 +206,9 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
         // 涂鸦
         $(R.id.add_paintview).setOnClickListener(view -> demoGraffitiPaint());
+
+        // 多段混音
+        $(R.id.add_multi_audio_mix).setOnClickListener(view -> demoMultiAudioMix());
 
     }
 
@@ -393,6 +394,37 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void removePaintView() {
         mVideoEditManager.removePaintView(mPaintView);
         mPaintView = null;
+    }
+
+    // 多段混音
+    private void demoMultiAudioMix() {
+        int clipDuration = 8;
+        // 第一段音频
+        UAudioMixClip firstAudioClip = new UAudioMixClip();
+        firstAudioClip.path = "/sdcard/Download/kuaizi.mp3"; // 音频文件路径, 需要替换为您手机中的有效音频文件
+        firstAudioClip.startMs = 30 * 1000; // 音频文件开始时间
+        firstAudioClip.durationMs = clipDuration * 1000; // 混音音频时长
+        firstAudioClip.startMsInVideo = 0 * 1000; // 视频文件中开始叠加位置
+        // 第二段音频
+        UAudioMixClip secondAudioClip = new UAudioMixClip();
+        secondAudioClip.path = "/sdcard/Download/test.mp3";
+        secondAudioClip.startMs = 60 * 1000;
+        secondAudioClip.durationMs = clipDuration * 1000;
+        secondAudioClip.startMsInVideo = clipDuration * 1000;
+        // 第三段音频
+        UAudioMixClip thirdClip = new UAudioMixClip();
+        thirdClip.path = "/sdcard/Download/piano.mp3";
+        thirdClip.startMs = 20 * 1000;
+        thirdClip.durationMs = clipDuration * 1000;
+        thirdClip.startMsInVideo = clipDuration * 2 * 1000;
+        // 清除已添加音频
+        mVideoEditManager.clearAudioClip();
+        // 添加音频
+        mVideoEditManager.addAudioClip(firstAudioClip);
+        mVideoEditManager.addAudioClip(secondAudioClip);
+        mVideoEditManager.addAudioClip(thirdClip);
+        mVideoEditManager.setOriginVolume(0);
+        mVideoEditManager.seekTo(0);
     }
 
     private void cancelSave() {

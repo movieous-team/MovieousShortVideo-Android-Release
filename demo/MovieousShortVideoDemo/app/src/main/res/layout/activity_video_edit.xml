@@ -32,6 +32,14 @@
         android:text="背景音乐" />
 
     <Button
+        android:id="@+id/add_multi_audio_mix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_music"
+        android:enabled="true"
+        android:text="多段混音" />
+
+    <Button
         android:id="@+id/capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,11 +99,12 @@
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/debug_on"
         android:text="获取缩略图" />
+
     <TextView
         android:id="@+id/tv_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/save"
+        android:layout_above="@+id/debug_on"
         android:padding="10dp"
         android:text=""
         android:textColor="@color/colorAccent"

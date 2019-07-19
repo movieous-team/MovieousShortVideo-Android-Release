@@ -26,7 +26,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "ushortvideo_demo_v${variant.versionName}_${variant.name}.apk"
+            outputFileName = "movieous_shortvideo_demo_v${variant.versionName}_${variant.name}.apk"
         }
     }
 }
