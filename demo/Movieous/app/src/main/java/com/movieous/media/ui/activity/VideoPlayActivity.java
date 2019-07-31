@@ -30,6 +30,7 @@ public class VideoPlayActivity extends AppCompatActivity {
 
     private Context mContext;
     private RecyclerView mVideoListRecyclerView;
+    private VideoItemAdapter mVideoItemAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private PagerSnapHelper mPagerSnapHelper;
     private static ArrayList<VideoListItem> mVideoList;
@@ -78,15 +79,21 @@ public class VideoPlayActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mIsPause = true;
-        VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
-        vh.videoView.pause();
+        if (mVideoListRecyclerView != null) {
+            VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
+            vh.videoView.pause();
+        }
     }
 
     @Override
     protected void onDestroy() {
+        if (mVideoItemAdapter != null) {
+            mVideoItemAdapter.release();
+        }
+        if (mVideoListRecyclerView != null) {
+            mVideoListRecyclerView.setAdapter(null);
+        }
         super.onDestroy();
-        VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
-        vh.videoView.release();
     }
 
     @Override
@@ -106,7 +113,8 @@ public class VideoPlayActivity extends AppCompatActivity {
         mVideoListRecyclerView.setLayoutManager(mLinearLayoutManager);
         mPagerSnapHelper = new PagerSnapHelper();
         mPagerSnapHelper.attachToRecyclerView(mVideoListRecyclerView);
-        mVideoListRecyclerView.setAdapter(new VideoItemAdapter(mContext, mVideoList));
+        mVideoItemAdapter = new VideoItemAdapter(mContext, mVideoList);
+        mVideoListRecyclerView.setAdapter(mVideoItemAdapter);
         mVideoListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

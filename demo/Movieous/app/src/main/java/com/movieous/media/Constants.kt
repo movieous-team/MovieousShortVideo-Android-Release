@@ -16,7 +16,8 @@ object Constants {
     const val MEDIA_FILE_PREFIX = "shortvideo" // 短视频文件前缀
     const val THUMB_FILE_PREFIX = "thumb"  // 视频封面文件前缀
     const val BASE_URL = "https://api.movieous.cn"
-    const val MOVIEOUS_SIGN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBpZCI6ImNvbS5tb3ZpZW91cy5tZWRpYSJ9.USaTo0E_1DZoxNMc51HMqP-ixIt9k-rzjPVuoMQLqJM"
+    const val MOVIEOUS_SHORTVIDEO_SIGN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBpZCI6ImNvbS5tb3ZpZW91cy5tZWRpYSJ9.USaTo0E_1DZoxNMc51HMqP-ixIt9k-rzjPVuoMQLqJM"
+    const val MOVIEOUS_PLAYER_SIGN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBpZCI6ImNvbS5tb3ZpZW91cy5tZWRpYSJ9.USaTo0E_1DZoxNMc51HMqP-ixIt9k-rzjPVuoMQLqJM"
 
     // 最大录制时长
     const val DEFAULT_MAX_RECORD_DURATION = 15 * 1000
