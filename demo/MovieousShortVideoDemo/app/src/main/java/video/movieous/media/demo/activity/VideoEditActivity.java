@@ -27,6 +27,7 @@ import video.movieous.engine.view.UPaintView;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
+import video.movieous.media.demo.player.MovieousPlayer;
 import video.movieous.media.demo.utils.UriUtil;
 import video.movieous.shortvideo.*;
 
@@ -214,6 +215,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
     private void initVideoEditManager() {
         mVideoEditManager = new UVideoEditManager()
+                .setMediaPlayer(new MovieousPlayer(this))
                 .setVideoFrameListener(this)
                 .setRecordEnabled(true, false)
                 .init(mRenderView, mInputFile);

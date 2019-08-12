@@ -16,9 +16,12 @@ public class MediaParam {
     public int audioBitrate;
     public int audioChannels;
 
+    // player
+    public boolean isMovieousPlayer;
+
     @Override
     public String toString() {
         return "rtc setting: video: width=" + width + ", height=" + height + ", bitrate=" + videoBitrate + ", fps=" + videoFrameRate
-                + ", audio: samplerate=" + audioSampleRate + ", bitrate=" + audioBitrate + ", channel=" + audioChannels;
+                + ", audio: samplerate=" + audioSampleRate + ", bitrate=" + audioBitrate + ", channel=" + audioChannels + ", movieousPlayer=" + isMovieousPlayer;
     }
 }

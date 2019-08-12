@@ -27,10 +27,13 @@ import com.movieous.media.api.vendor.fusdk.FuSDKManager;
 import com.movieous.media.mvp.contract.MusicSelectedListener;
 import com.movieous.media.mvp.contract.OnSeekBarChangeListener;
 import com.movieous.media.mvp.model.entity.BeautyParamEnum;
+import com.movieous.media.mvp.model.entity.MediaParam;
 import com.movieous.media.mvp.model.entity.TabEntity;
 import com.movieous.media.mvp.model.entity.UFilter;
+import com.movieous.media.player.MovieousPlayer;
 import com.movieous.media.ui.activity.PlaybackActivity;
 import com.movieous.media.utils.ScreenUtils;
+import com.movieous.media.utils.SharePrefUtils;
 import com.movieous.media.view.*;
 import io.inchtime.recyclerkit.RecyclerAdapter;
 import io.inchtime.recyclerkit.RecyclerKit;
@@ -44,7 +47,6 @@ import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
 import video.movieous.shortvideo.UVideoPlayListener;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -325,6 +327,10 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 .setAVOptions(mAVOptions)
                 .setVideoFrameListener(this)
                 .setVideoSaveListener(this);
+        MediaParam mediaParam = SharePrefUtils.getParam(mActivity);
+        if (mediaParam.isMovieousPlayer) {
+            mVideoEditManager.setMediaPlayer(new MovieousPlayer(mActivity));
+        }
     }
 
     // 设置 RecyclerView

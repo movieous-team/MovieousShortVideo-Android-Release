@@ -38,6 +38,7 @@ repositories {
 }
 
 dependencies {
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
     api fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "com.android.support:support-v4:$rootProject.ext.supportLibraryVersion"

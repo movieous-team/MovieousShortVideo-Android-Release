@@ -13,6 +13,7 @@ import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
+import video.movieous.media.demo.player.MovieousPlayer;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.UVideoEditManager;
 
@@ -55,6 +56,7 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
         mDuration = UMediaUtil.getMetadata(mInputFile).duration;
         //mEtTrimTime.setText(Long.toString(mDuration));
         mVideoEditManager.init(mRenderView, mInputFile)
+                .setMediaPlayer(new MovieousPlayer(this))
                 .setVideoFrameListener(this)
                 .start();
     }

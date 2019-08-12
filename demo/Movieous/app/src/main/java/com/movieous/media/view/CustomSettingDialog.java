@@ -25,7 +25,7 @@ public class CustomSettingDialog {
         View layout = LayoutInflater.from(mContext).inflate(R.layout.custom_setting_view, null);
 
         // vendor
-        RadioGroup rtcVendor = layout.findViewById(R.id.vendor);
+        RadioGroup vendor = layout.findViewById(R.id.vendor);
         if (mMediaParam.vendor == FilterVendor.FACEUNITY) {
             RadioButton button = layout.findViewById(R.id.vendor_fu);
             button.setChecked(true);
@@ -33,7 +33,7 @@ public class CustomSettingDialog {
             RadioButton button = layout.findViewById(R.id.vendor_none);
             button.setChecked(true);
         }
-        rtcVendor.setOnCheckedChangeListener((group, checkedId) -> {
+        vendor.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.vendor_fu:
                     mMediaParam.vendor = FilterVendor.FACEUNITY;
@@ -228,6 +228,26 @@ public class CustomSettingDialog {
                     break;
             }
         });
+
+        // player
+        if (mMediaParam.isMovieousPlayer) {
+            RadioButton button = layout.findViewById(R.id.video_edit_player_movieous);
+            button.setChecked(true);
+        } else {
+            RadioButton button = layout.findViewById(R.id.video_edit_player_default);
+            button.setChecked(true);
+        }
+        RadioGroup playerRadio = layout.findViewById(R.id.video_edit_player);
+        playerRadio.setOnCheckedChangeListener(((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.video_edit_player_default:
+                    mMediaParam.isMovieousPlayer = false;
+                    break;
+                case R.id.video_edit_player_movieous:
+                    mMediaParam.isMovieousPlayer = true;
+                    break;
+            }
+        }));
 
         builder = new AlertDialog.Builder(mContext);
         builder.setView(layout);

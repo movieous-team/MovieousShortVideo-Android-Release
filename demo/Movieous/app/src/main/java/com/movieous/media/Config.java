@@ -20,4 +20,5 @@ public class Config {
     public static final String AUDIO_SAMPLE_RATE = "audio_sample_rate";
     public static final String AUDIO_BITRATE = "audio_bitrate";
     public static final String AUDIO_CHANNEL = "audio_channel";
+    public static final String MOVIEOUS_PLAYER = "movieous_player";
 }

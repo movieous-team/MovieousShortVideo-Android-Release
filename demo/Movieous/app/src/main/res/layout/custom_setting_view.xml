@@ -354,5 +354,43 @@
                     android:textColor="@color/dark_black" />
             </RadioGroup>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:text="编辑播放器"
+            android:textColor="@color/crimson"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <RadioGroup
+            android:id="@+id/video_edit_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/video_edit_player_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="系统 "
+                android:textColor="@color/dark_black" />
+
+            <RadioButton
+                android:id="@+id/video_edit_player_movieous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Movieous "
+                android:textColor="@color/dark_black" />
+        </RadioGroup>
+
     </LinearLayout>
 </ScrollView>
