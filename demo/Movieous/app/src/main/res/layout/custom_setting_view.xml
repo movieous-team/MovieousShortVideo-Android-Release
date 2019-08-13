@@ -380,7 +380,6 @@
                 android:id="@+id/video_edit_player_default"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
                 android:text="系统 "
                 android:textColor="@color/dark_black" />
 
@@ -388,6 +387,7 @@
                 android:id="@+id/video_edit_player_movieous"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="Movieous "
                 android:textColor="@color/dark_black" />
         </RadioGroup>

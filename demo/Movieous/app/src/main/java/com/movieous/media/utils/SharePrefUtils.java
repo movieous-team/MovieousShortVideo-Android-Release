@@ -47,7 +47,7 @@ public class SharePrefUtils {
         param.audioSampleRate = pref.getIntValueByKey(Config.AUDIO_SAMPLE_RATE, Config.DEFAULT_AUDIO_SAMPLE_RATE);
         param.audioBitrate = pref.getIntValueByKey(Config.AUDIO_BITRATE, Config.DEFAULT_AUDIO_BITRATE);
         param.audioChannels = pref.getIntValueByKey(Config.AUDIO_CHANNEL, Config.DEFAULT_AUDIO_CHANNEL);
-        param.isMovieousPlayer = pref.getBooleanValueByKey(Config.MOVIEOUS_PLAYER, false);
+        param.isMovieousPlayer = pref.getBooleanValueByKey(Config.MOVIEOUS_PLAYER, true);
         return param;
     }
 
