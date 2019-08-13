@@ -35,11 +35,7 @@ public class MovieousPlayer implements IMediaPlayer, OnPreparedListener, OnCompl
 
     @Override
     public void start() {
-        if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
-            mMediaPlayer.restart();
-        } else {
-            mMediaPlayer.start();
-        }
+        mMediaPlayer.start();
     }
 
     @Override
