@@ -184,9 +184,11 @@ public class PreviewFragment extends BaseFragment implements UVideoFrameListener
             mFilterSdkManager = isFuFilterSDK() ?
                     new FuSDKManager(mActivity) :
                     null;
-            mFilterSdkManager.init(mActivity, true);
-            if (mBeautyFilter != null) {
-                mFilterSdkManager.changeBeautyFilter(mBeautyFilter);
+            if (mFilterSdkManager != null) {
+                mFilterSdkManager.init(mActivity, true);
+                if (mBeautyFilter != null) {
+                    mFilterSdkManager.changeBeautyFilter(mBeautyFilter);
+                }
             }
         }
     }
