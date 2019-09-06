@@ -867,12 +867,12 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
         items.add(new TextIcon(R.drawable.facial_effects, getString(R.string.effect_title)));
         items.add(new TextIcon(R.drawable.filter, getString(R.string.btn_preview_filter)));
         items.add(new TextIcon(R.drawable.cover, getString(R.string.cover_title)));
-        items.add(new TextIcon(R.drawable.video_combination, getString(R.string.video_combination_title)));
+        /*items.add(new TextIcon(R.drawable.video_combination, getString(R.string.video_combination_title)));
         items.add(new TextIcon(R.drawable.video_splice, getString(R.string.video_front_back_merge_title)));
         items.add(new TextIcon(R.drawable.video_mv_combine, getString(R.string.mv_title)));
         items.add(new TextIcon(R.drawable.video_title_tail, getString(R.string.video_title_tail_title)));
         items.add(new TextIcon(R.drawable.video_subsection, getString(R.string.video_subsection_title)));
-        items.add(new TextIcon(R.drawable.speed_set, getString(R.string.speed_adjust_title)));
+        items.add(new TextIcon(R.drawable.speed_set, getString(R.string.speed_adjust_title)));*/
         return items;
     }
 

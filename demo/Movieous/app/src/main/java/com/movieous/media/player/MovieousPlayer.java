@@ -5,6 +5,9 @@ import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Surface;
+
+import java.io.IOException;
+
 import video.movieous.droid.player.MediaPlayer;
 import video.movieous.droid.player.listener.OnCompletionListener;
 import video.movieous.droid.player.listener.OnErrorListener;
@@ -24,8 +27,18 @@ public class MovieousPlayer implements IMediaPlayer, OnPreparedListener, OnCompl
     }
 
     @Override
+    public void setDataSource(String url) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
+        mMediaPlayer.setDataSource(Uri.parse(url));
+    }
+
+    @Override
     public void setDataSource(Context context, Uri uri) {
         mMediaPlayer.setDataSource(uri);
+    }
+
+    @Override
+    public void prepare() throws IOException, IllegalStateException {
+        if (mPreparedListener != null) mPreparedListener.onPrepared(this);
     }
 
     @Override

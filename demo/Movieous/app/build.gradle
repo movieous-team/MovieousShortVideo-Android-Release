@@ -65,8 +65,7 @@ repositories {
 }
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(name:'movieous-player-2.0.7', ext:'aar')
+    api fileTree(dir: 'libs', include: ['*.jar','*.aar'])
 
     implementation project(path: ':recyclerkit')
     implementation project(path: ':gridpagersnaphelper')
