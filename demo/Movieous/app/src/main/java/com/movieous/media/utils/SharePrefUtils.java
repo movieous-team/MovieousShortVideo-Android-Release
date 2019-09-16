@@ -2,6 +2,7 @@ package com.movieous.media.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.movieous.media.Config;
 import com.movieous.media.mvp.model.entity.FilterVendor;
 import com.movieous.media.mvp.model.entity.MediaParam;
@@ -38,7 +39,11 @@ public class SharePrefUtils {
     public synchronized static MediaParam getParam(Context context) {
         SharePrefUtils pref = SharePrefUtils.getInstance(context);
         MediaParam param = new MediaParam();
-        param.vendor = FilterVendor.valueOf(pref.getStringValueByKey(Config.FILTER_VENDOR, FilterVendor.FACEUNITY.name()));
+        try {
+            param.vendor = FilterVendor.valueOf(pref.getStringValueByKey(Config.FILTER_VENDOR, FilterVendor.FACEUNITY.name()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         param.remainVideoSize = pref.getBooleanValueByKey(Config.VIDEO_SIZE_REMAIN, true);
         param.width = pref.getIntValueByKey(Config.VIDEO_WIDTH, Config.DEFAULT_VIDEO_WIDTH);
         param.height = pref.getIntValueByKey(Config.VIDEO_HEIGHT, Config.DEFAULT_VIDEO_HEIGHT);

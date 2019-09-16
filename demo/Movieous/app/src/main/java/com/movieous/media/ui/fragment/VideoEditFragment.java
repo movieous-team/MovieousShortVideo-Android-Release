@@ -13,9 +13,13 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import butterknife.BindView;
-import butterknife.OnClick;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -34,11 +38,24 @@ import com.movieous.media.player.MovieousPlayer;
 import com.movieous.media.ui.activity.PlaybackActivity;
 import com.movieous.media.utils.ScreenUtils;
 import com.movieous.media.utils.SharePrefUtils;
-import com.movieous.media.view.*;
+import com.movieous.media.view.FilterSeekView;
+import com.movieous.media.view.FrameListView;
+import com.movieous.media.view.RangeSeekBar;
+import com.movieous.media.view.SeekBarHandler;
+import com.movieous.media.view.TextIcon;
+import com.movieous.media.view.TileView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 import io.inchtime.recyclerkit.RecyclerAdapter;
 import io.inchtime.recyclerkit.RecyclerKit;
 import kotlin.Unit;
-import org.jetbrains.annotations.NotNull;
 import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.media.util.MediaUtil;
@@ -46,10 +63,6 @@ import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
 import video.movieous.shortvideo.UVideoPlayListener;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import static com.movieous.media.ExtensionsKt.showToast;
 
@@ -325,6 +338,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
         mVideoEditManager = new UVideoEditManager()
                 .init(mPreview, mVideoPath)
                 .setAVOptions(mAVOptions)
+                .setVideoPlayerListener(this, 100)
                 .setVideoFrameListener(this)
                 .setVideoSaveListener(this);
         MediaParam mediaParam = SharePrefUtils.getParam(mActivity);

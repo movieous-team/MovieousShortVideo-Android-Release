@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 import com.movieous.media.R;
 import com.movieous.media.mvp.model.VideoDataUtil;
 import com.movieous.media.mvp.model.entity.MediaParam;
@@ -59,10 +60,8 @@ public class VideoPlayActivity extends AppCompatActivity {
         final VideoItemAdapter.VideoViewHolder vh = (VideoItemAdapter.VideoViewHolder) mVideoListRecyclerView.getChildViewHolder(mPlayView);
         Log.i(TAG, "start play, url: " + vh.videoView.getVideoUri().toString());
 
-        if (vh.videoView.getTag() == null || !vh.videoView.getTag().equals(vh.videoView.getVideoUri().toString())) {
+        if (vh.videoView.getTag() == null || !vh.videoView.getTag().equals(vh.videoView.getVideoUri().toString()) || !vh.videoView.restart()) {
             vh.videoView.start();
-        } else {
-            vh.videoView.restart();
         }
     }
 

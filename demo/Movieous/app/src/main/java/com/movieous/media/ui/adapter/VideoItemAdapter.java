@@ -8,14 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.Player;
 import com.movieous.media.R;
 import com.movieous.media.mvp.model.entity.VideoListItem;
-import video.movieous.droid.player.ui.widget.VideoView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import video.movieous.droid.player.ui.widget.VideoView;
 
 public class VideoItemAdapter extends RecyclerView.Adapter {
     private Context mContext;
@@ -48,8 +50,10 @@ public class VideoItemAdapter extends RecyclerView.Adapter {
 
         // 视频封面
         if (!TextUtils.isEmpty(videoItem.getCoverUrl())) {
+            String coverUrl = videoItem.getCoverUrl();
+            if (coverUrl.endsWith(".kpg")) coverUrl = "";
             Glide.with(mContext.getApplicationContext())
-                    .load(videoItem.getCoverUrl())
+                    .load(coverUrl)
                     .into(holder.videoView.getPreviewImageView());
         }
 
