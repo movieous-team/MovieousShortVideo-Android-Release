@@ -2,9 +2,21 @@ package video.movieous.media.demo.activity.base;
 
 import android.util.Log;
 import video.movieous.engine.UVideoFrameListener;
+import video.movieous.media.demo.R;
 
 public abstract class BasePreviewActivity extends BaseActivity implements UVideoFrameListener {
     private static final String TAG = "BasePreviewActivity";
+
+    // 滤镜资源
+    protected int mFilterIndex;
+    protected int[] mFilterResources = new int[]{
+            R.drawable.filter_adore,
+            R.drawable.filter_heart,
+            R.drawable.filter_perfume,
+            R.drawable.filter_pink,
+            R.drawable.filter_normal
+    };
+
     protected int mSurfaceWidth;
     protected int mSurfaceHeight;
 

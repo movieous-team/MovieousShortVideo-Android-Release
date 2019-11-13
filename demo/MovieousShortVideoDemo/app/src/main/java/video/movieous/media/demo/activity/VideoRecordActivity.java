@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UTextureView;
@@ -105,7 +106,10 @@ public class VideoRecordActivity extends BasePreviewActivity {
             }
         }));
 
-        $(R.id.capture).setOnClickListener(v -> mRecordManager.captureVideoFrame(bitmap -> runOnUiThread(() -> mPreviewImage.setImageBitmap(bitmap)), false));
+        $(R.id.capture).setOnClickListener(v -> {
+            Log.i(TAG, "capture frame");
+            mRecordManager.captureVideoFrame(bitmap -> runOnUiThread(() -> mPreviewImage.setImageBitmap(bitmap)), false);
+        });
 
         mRecordButton.setOnClickListener(v -> {
             if (!mRecordManager.isRecording()) {
@@ -118,14 +122,20 @@ public class VideoRecordActivity extends BasePreviewActivity {
         });
 
         // 内置美颜
-        $(R.id.builtin_beauty).setOnClickListener(v-> {
+        $(R.id.builtin_beauty).setOnClickListener(v -> {
             if (v.getTag() != null) {
-                mRecordManager.removeBuiltinBeatyFilter();
+                mRecordManager.removeBuiltinBeautyFilter();
                 v.setTag(null);
             } else {
-                mRecordManager.setBuiltinBeautyFilter(0.9f); // range: 0.0 ~ 1.0
+                mRecordManager.setBuiltinBeautyFilter(0.8f); // range: 0.0 ~ 1.0
                 v.setTag(1);
             }
+        });
+
+        // 滤镜
+        $(R.id.builtin_filter).setOnClickListener(v -> {
+            if (mFilterIndex >= mFilterResources.length) mFilterIndex = 0;
+            mRecordManager.setFilterResource(mFilterResources[mFilterIndex++]);
         });
     }
 

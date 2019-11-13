@@ -14,6 +14,7 @@
         android:id="@+id/switch_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="切换摄像头" />
 
     <Button
@@ -21,15 +22,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/switch_camera"
-        android:text="内置美颜" />
+        android:text="美颜" />
+
+    <Button
+        android:id="@+id/builtin_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_camera"
+        android:layout_toEndOf="@+id/builtin_beauty"
+        android:text="滤镜" />
 
     <Button
         android:id="@+id/add_music"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/switch_camera"
-        android:layout_toEndOf="@+id/builtin_beauty"
-        android:text="加背景音乐" />
+        android:layout_toEndOf="@+id/builtin_filter"
+        android:text="背景音乐" />
 
     <Button
         android:id="@+id/capture"
@@ -42,8 +51,7 @@
         android:id="@+id/save_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/capture"
-        android:layout_toEndOf="@id/add_music"
+        android:layout_toEndOf="@id/record"
         android:text="合成" />
 
     <Button

@@ -15,8 +15,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
+
 import video.movieous.engine.UAVOptions;
 import video.movieous.engine.UAudioMixClip;
+import video.movieous.engine.UFilePath;
 import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.base.callback.SingleCallback;
@@ -29,9 +33,10 @@ import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.media.demo.player.MovieousPlayer;
 import video.movieous.media.demo.utils.UriUtil;
-import video.movieous.shortvideo.*;
-
-import java.util.List;
+import video.movieous.shortvideo.UMediaUtil;
+import video.movieous.shortvideo.UShortVideoEnv;
+import video.movieous.shortvideo.USticker;
+import video.movieous.shortvideo.UVideoEditManager;
 
 /**
  * VideoEditActivity
@@ -41,6 +46,10 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private static final int REQUEST_CODE_CHOOSE_MUSIC = 2;
     public static final String VIDEO_PATH = "video_path";
     private static final String OUT_FILE = "/sdcard/movieous/shortvideo/video_edit_test.mp4";
+
+    private static final String[] GIF_FOLDER = new String[]{
+            "aini/", "good/"
+    };
 
     private UTextureView mRenderView;
     private ImageView mPreviewImage;
@@ -52,6 +61,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private UVideoEditManager mVideoEditManager;
     private USticker mSticker;
     private USticker mTextSticker;
+    private USticker mGifSticker;
     private UPaintView mPaintView;
     private long mStartTime;
     private int mVideoWidth;
@@ -62,6 +72,8 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     protected VideoEditorState mEditorState = VideoEditorState.Idle;
     private int mPreviewWidth;
     private int mPreviewHeight;
+
+    private int mGifIndex;
 
     protected enum VideoEditorState {
         Idle,
@@ -211,6 +223,14 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         // 多段混音
         $(R.id.add_multi_audio_mix).setOnClickListener(view -> demoMultiAudioMix());
 
+        // 动态贴纸
+        $(R.id.add_file_image).setOnClickListener(view -> demoFileSticker());
+
+        // 滤镜
+        $(R.id.add_filter).setOnClickListener(view -> {
+            if (mFilterIndex >= mFilterResources.length) mFilterIndex = 0;
+            mVideoEditManager.setFilterResource(mFilterResources[mFilterIndex++]);
+        });
     }
 
     private void initVideoEditManager() {
@@ -427,6 +447,41 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         mVideoEditManager.addAudioClip(thirdClip);
         mVideoEditManager.setOriginVolume(0);
         mVideoEditManager.seekTo(0);
+    }
+
+    //  动态贴纸
+    private void demoFileSticker() {
+        if (mGifSticker == null) {
+            addGifSticker();
+        } else {
+            removeGifSticker();
+        }
+    }
+
+    private void addGifSticker() {
+        mGifSticker = new USticker();
+        int stickerW = mVideoWidth / 2;
+        int stickerH = stickerW;
+        int posX = mVideoWidth / 2;
+        int posY = mVideoHeight / 4;
+        if (mGifIndex == GIF_FOLDER.length - 1) {
+            stickerW = mVideoWidth;
+            stickerH = mVideoHeight;
+            posX = 0;
+            posY = 0;
+        }
+        mGifSticker.init(USticker.StickerType.FILE, stickerW, stickerH)
+                .setStickerFolder(UFilePath.ASSET.wrap(GIF_FOLDER[mGifIndex]))
+                .setDuration(0, (int) UMediaUtil.getMetadata(mInputFile).duration)
+                .setPosition(posX, posY);     //视频图像的左上角为坐标原点
+        mVideoEditManager.addSticker(mGifSticker);
+        mGifIndex++;
+        if (mGifIndex >= GIF_FOLDER.length) mGifIndex = 0;
+    }
+
+    private void removeGifSticker() {
+        mVideoEditManager.removeSticker(mGifSticker);
+        mGifSticker = null;
     }
 
     private void cancelSave() {

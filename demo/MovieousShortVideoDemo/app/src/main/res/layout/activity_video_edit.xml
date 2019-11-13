@@ -40,6 +40,24 @@
         android:text="多段混音" />
 
     <Button
+        android:id="@+id/add_file_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_music"
+        android:layout_toRightOf="@+id/add_multi_audio_mix"
+        android:enabled="true"
+        android:text="动态贴纸" />
+
+    <Button
+        android:id="@+id/add_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_music"
+        android:layout_toRightOf="@+id/add_file_image"
+        android:enabled="true"
+        android:text="滤镜" />
+
+    <Button
         android:id="@+id/capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,7 +122,7 @@
         android:id="@+id/tv_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/debug_on"
+        android:layout_below="@+id/add_multi_audio_mix"
         android:padding="10dp"
         android:text=""
         android:textColor="@color/colorAccent"
