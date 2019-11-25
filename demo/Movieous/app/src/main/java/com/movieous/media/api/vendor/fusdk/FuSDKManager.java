@@ -42,8 +42,8 @@ public class FuSDKManager implements FilterSdkManager {
             @Override
             public void execute() {
                 // 拷贝 assets 资源
-                FileUtils.copyAssetsMagicPhoto(sContext);
-                FileUtils.copyAssetsTemplate(sContext);
+                FileUtils.copyAssetsLivePhotoTemplate(sContext);
+                FileUtils.copyAssetsChangeFaceTemplate(sContext);
                 FURenderer fuRenderer = new FURenderer.Builder(sContext).build();
                 fuRenderer.loadItems();
                 Log.i(TAG, "initFuSDKEnv is ok");
@@ -230,9 +230,9 @@ public class FuSDKManager implements FilterSdkManager {
     public void changeBeautyFilter(@NotNull UFilter filterItem) {
         Filter filter = new Filter(filterItem.getName(), filterItem.getResId(), filterItem.getDescription());
         if (mIsPreviewMode) {
-            getPreviewFilterEngine().onFilterNameSelected(filter);
+            getPreviewFilterEngine().onFilterNameSelected(filter.filterName());
         } else {
-            getSaveFilterEngine().onFilterNameSelected(filter);
+            getSaveFilterEngine().onFilterNameSelected(filter.filterName());
         }
     }
 

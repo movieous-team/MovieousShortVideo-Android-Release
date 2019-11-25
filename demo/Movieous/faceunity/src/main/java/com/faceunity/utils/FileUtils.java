@@ -3,7 +3,6 @@ package com.faceunity.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -23,22 +22,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author LiuQiang on 2018.08.30
+ * @author Richie on 2018.08.30
  */
 public class FileUtils {
-    /**
-     * 海报换脸临时生成文件
-     */
-    public static final String TMP_PHOTO_POSTER_NAME = "photo_poster.jpg";
     /**
      * 拍照后的临时保存路径，用于下一步的编辑
      */
     private static final String TMP_PHOTO_NAME = "photo.jpg";
     /**
-     * 异图存放文件夹
+     * 海报换脸模板文件的文件夹
      */
-    public static final String MAGIC_PHOTO_PREFIX = "magic_photo";
     public static final String TEMPLATE_PREFIX = "template_";
+    /**
+     * 表情动图模板文件的文件夹
+     */
+    private static final String LIVE_PHOTO_PREFIX = "live_photo";
     private static final String TAG = "FileUtils";
 
     private FileUtils() {
@@ -63,25 +61,9 @@ public class FileUtils {
         return file.getAbsolutePath();
     }
 
-    public static Bitmap loadTempBitmap(File file) throws IOException {
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            return BitmapFactory.decodeStream(is);
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-    }
-
     public static File getSavePathFile(Context context) {
         File file = new File(getExternalFileDir(context), TMP_PHOTO_NAME);
         return file;
-    }
-
-    public static File getSavePosterPathFile(Context context) {
-        return new File(context.getFilesDir(), TMP_PHOTO_POSTER_NAME);
     }
 
     public static String getSavePath(Context context) {
@@ -104,9 +86,12 @@ public class FileUtils {
         try {
             bis = new BufferedInputStream(is);
             bos = new BufferedOutputStream(new FileOutputStream(dest));
-            byte[] bytes = new byte[bis.available()];
-            bis.read(bytes);
-            bos.write(bytes);
+            byte[] bytes = new byte[1024 * 10];
+            int length;
+            while ((length = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, length);
+            }
+            bos.flush();
         } finally {
             if (bos != null) {
                 bos.close();
@@ -123,9 +108,9 @@ public class FileUtils {
      * @param context
      * @return
      */
-    public static File getTemplatesDir(Context context) {
+    public static File getChangeFaceTemplatesDir(Context context) {
         File fileDir = getExternalFileDir(context);
-        File templates = new File(fileDir, "templates");
+        File templates = new File(fileDir, "change_face");
         if (!templates.exists()) {
             boolean b = templates.mkdirs();
             if (!b) {
@@ -150,24 +135,6 @@ public class FileUtils {
     }
 
     /**
-     * 异图的文件夹
-     *
-     * @param context
-     * @return
-     */
-    public static File getMagicPhotoDir(Context context) {
-        File fileDir = getExternalFileDir(context);
-        File magicDir = new File(fileDir, "magic_photo");
-        if (!magicDir.exists()) {
-            boolean b = magicDir.mkdirs();
-            if (!b) {
-                return fileDir;
-            }
-        }
-        return magicDir;
-    }
-
-    /**
      * 应用外部的缓存目录
      *
      * @param context
@@ -179,6 +146,30 @@ public class FileUtils {
             cacheDir = context.getCacheDir();
         }
         return cacheDir;
+    }
+
+    public static File getThumbnailDir(Context context) {
+        File fileDir = getExternalFileDir(context);
+        File thumbDir = new File(fileDir, "thumb");
+        if (!thumbDir.exists()) {
+            thumbDir.mkdirs();
+        }
+        return thumbDir;
+    }
+
+    /**
+     * 表情动图的文件夹
+     *
+     * @param context
+     * @return
+     */
+    public static File getLivePhotoDir(Context context) {
+        File fileDir = getExternalFileDir(context);
+        File photoDir = new File(fileDir, LIVE_PHOTO_PREFIX);
+        if (!photoDir.exists()) {
+            photoDir.mkdirs();
+        }
+        return photoDir;
     }
 
     /**
@@ -195,7 +186,6 @@ public class FileUtils {
      *
      * @param file
      * @return
-     * @throws Exception
      */
     public static String getMd5ByFile(File file) throws Exception {
         FileInputStream in = null;
@@ -213,57 +203,50 @@ public class FileUtils {
         }
     }
 
-    /**
-     * 获取预置的异图数量
-     *
-     * @param context
-     * @return
-     */
-    public static int getDefaultMagicPhotoCount(Context context) {
-        List<String> photoPaths = new ArrayList<>(8);
+    public static String readStringFromAssetsFile(Context context, String path) throws IOException {
+        InputStream is = null;
         try {
-            String[] paths = context.getAssets().list("");
-            for (String path : paths) {
-                if (path.startsWith(MAGIC_PHOTO_PREFIX)) {
-                    photoPaths.add(path);
-                }
+            is = context.getAssets().open(path);
+            byte[] bytes = new byte[is.available()];
+            is.read(bytes);
+            return new String(bytes);
+        } finally {
+            if (is != null) {
+                is.close();
             }
-        } catch (IOException e) {
-            Log.e(TAG, "getDefaultMagicPhotoCount: ", e);
         }
-        return photoPaths.size();
     }
 
-    public static void copyAssetsMagicPhoto(Context context) {
+    public static void copyAssetsLivePhotoTemplate(Context context) {
         try {
             AssetManager assets = context.getAssets();
-            String[] paths = assets.list("");
-            List<String> photoPaths = new ArrayList<>(8);
-            for (String path : paths) {
-                if (path.startsWith(MAGIC_PHOTO_PREFIX)) {
-                    photoPaths.add(path);
-                }
-            }
-            for (String photoPath : photoPaths) {
-                String[] pPhoto = assets.list(photoPath);
-                for (String s : pPhoto) {
-                    File dir = new File(FileUtils.getMagicPhotoDir(context), photoPath);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
+            String photoTemplate = "live_photo";
+            String[] paths = assets.list(photoTemplate);
+            if (paths != null) {
+                for (String path : paths) {
+                    if (path.startsWith("template_")) {
+                        String photoDir = photoTemplate + File.separator + path;
+                        String[] photos = assets.list(photoDir);
+                        File dir = new File(FileUtils.getLivePhotoDir(context), path);
+                        if (photos != null) {
+                            for (String photo : photos) {
+                                String p = photoDir + File.separator + photo;
+                                FileUtils.copyAssetsFile(context, dir, p);
+                            }
+                        }
                     }
-                    copyAssetsFile(context, dir, photoPath.concat(File.separator).concat(s));
                 }
             }
-
         } catch (IOException e) {
-            Log.e(TAG, "copyAssetsMagicPhoto: ", e);
+            Log.e(TAG, "copyAssetsLivePhotoTemplate: ", e);
         }
     }
 
-    public static void copyAssetsTemplate(Context context) {
+    public static void copyAssetsChangeFaceTemplate(Context context) {
         try {
             AssetManager assets = context.getAssets();
-            String[] paths = assets.list("");
+            String baseDirPath = "change_face";
+            String[] paths = assets.list(baseDirPath);
             List<String> tempPaths = new ArrayList<>(16);
             for (String path : paths) {
                 if (path.startsWith(TEMPLATE_PREFIX)) {
@@ -271,22 +254,26 @@ public class FileUtils {
                 }
             }
             for (String tempPath : tempPaths) {
-                String[] list = assets.list(tempPath);
+                String path = baseDirPath + File.separator + tempPath;
+                String[] list = assets.list(path);
                 for (String s : list) {
-                    File dir = new File(FileUtils.getTemplatesDir(context), tempPath);
+                    File dir = new File(FileUtils.getChangeFaceTemplatesDir(context), tempPath);
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    copyAssetsFile(context, dir, tempPath.concat(File.separator).concat(s));
+                    copyAssetsFile(context, dir, path + File.separator + s);
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, "copyAssetsTemplate: ", e);
+            Log.e(TAG, "copyAssetsChangeFaceTemplate: ", e);
         }
     }
 
     private static void copyAssetsFile(Context context, File dir, String assetsPath) {
-        String fileName = assetsPath.substring(assetsPath.lastIndexOf("/") + 1, assetsPath.length());
+        String fileName = assetsPath.substring(assetsPath.lastIndexOf("/") + 1);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
         File dest = new File(dir, fileName);
         if (!dest.exists()) {
             try {
@@ -344,10 +331,13 @@ public class FileUtils {
         BufferedOutputStream bos = null;
         try {
             bis = new BufferedInputStream(new FileInputStream(srcFile));
-            byte[] bytes = new byte[bis.available()];
-            bis.read(bytes);
             bos = new BufferedOutputStream(new FileOutputStream(dest));
-            bos.write(bytes);
+            byte[] bytes = new byte[1024 * 10];
+            int length;
+            while ((length = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, length);
+            }
+            bos.flush();
         } finally {
             if (bos != null) {
                 bos.close();

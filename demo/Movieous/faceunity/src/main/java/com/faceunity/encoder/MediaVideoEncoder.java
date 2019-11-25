@@ -21,38 +21,82 @@ public class MediaVideoEncoder extends MediaEncoder {
     private static final String MIME_TYPE = "video/avc";
     // parameters for recording
     private static final int FRAME_RATE = 25;
+    private static final int IFRAME_INTERVAL = 10;       // I-frames间隔时间
     private static final float BPP = 0.25f;
 
+    /**
+     * 视频宽、高
+     */
     private final int mWidth;
     private final int mHeight;
+    /**
+     * 纹理绘制的起始位置（左下角为（0，0））
+     */
+    private int cropX;
+    private int cropY;
+    /**
+     * 纹理的宽高
+     */
+    private int textureWidth, textureHeight;
     private RenderHandler mRenderHandler;
     private Surface mSurface;
 
     private ProgramTexture2d program;
     private int[] mTextureId;
     private int[] mFBOId;
+    private int[] mViewPort = new int[4];
+    private int mFrameCount;
 
-    public MediaVideoEncoder(final MediaMuxerWrapper muxer, final MediaEncoderListener listener, final int width, final int height) {
-        super(muxer, listener);
-        if (DEBUG) Log.i(TAG, "MediaVideoEncoder: ");
-        mWidth = width;
-        mHeight = height;
-        mRenderHandler = RenderHandler.createHandler(TAG);
+    public MediaVideoEncoder(final MediaMuxerWrapper muxer, final MediaEncoderListener listener, final int videoWidth, final int viewdeoHeight) {
+        this(muxer, listener, videoWidth, viewdeoHeight, 0, 0, videoWidth, viewdeoHeight);
     }
 
-    public boolean frameAvailableSoon(int texId, final float[] texMatrix, float[] mvpMatrix) {
-        boolean result;
-        if (result = super.frameAvailableSoon()) {
-            int[] viewPort = new int[4];
-            GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewPort, 0);
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFBOId[0]);
-            GLES20.glViewport(0, 0, mWidth, mHeight);
-            program.drawFrame(texId, texMatrix, mvpMatrix);
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-            GLES20.glViewport(viewPort[0], viewPort[1], viewPort[2], viewPort[3]);
-            mRenderHandler.draw(mTextureId[0], GlUtil.IDENTITY_MATRIX, mvpMatrix);
+    public MediaVideoEncoder(final MediaMuxerWrapper muxer, final MediaEncoderListener listener, final int videoWidth, final int viewdeoHeight,
+                             int cropX, int cropY, int textureWidth, int textureHeight) {
+        super(muxer, listener);
+        if (DEBUG) Log.i(TAG, "MediaVideoEncoder: ");
+        mWidth = videoWidth;
+        mHeight = viewdeoHeight;
+        mRenderHandler = RenderHandler.createHandler(TAG);
+        this.cropX = cropX;
+        this.cropY = cropY;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
+    }
+
+
+    /**
+     * select the first codec that match a specific MIME type
+     *
+     * @param mimeType
+     * @return null if no codec matched
+     */
+    protected static final MediaCodecInfo selectVideoCodec(final String mimeType) {
+        if (DEBUG)
+            Log.v(TAG, "selectVideoCodec: " + mimeType);
+
+        // get the list of available codecs
+        final int numCodecs = MediaCodecList.getCodecCount();
+        for (int i = 0; i < numCodecs; i++) {
+            final MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+
+            if (!codecInfo.isEncoder()) {    // skipp decoder
+                continue;
+            }
+            // select first codec that match a specific MIME type and color format
+            final String[] types = codecInfo.getSupportedTypes();
+            for (int j = 0; j < types.length; j++) {
+                if (types[j].equalsIgnoreCase(mimeType)) {
+                    if (DEBUG)
+                        Log.i(TAG, "codec:" + codecInfo.getName() + ",MIME=" + types[j]);
+                    final int format = selectColorFormat(codecInfo, mimeType);
+                    if (format > 0) {
+                        return codecInfo;
+                    }
+                }
+            }
         }
-        return result;
+        return null;
     }
 
     @Override
@@ -72,7 +116,7 @@ public class MediaVideoEncoder extends MediaEncoder {
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);    // API >= 18
         format.setInteger(MediaFormat.KEY_BIT_RATE, calcBitRate());
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
         if (DEBUG) Log.i(TAG, "format: " + format);
 
         mMediaCodec = MediaCodec.createEncoderByType(MIME_TYPE);
@@ -91,12 +135,36 @@ public class MediaVideoEncoder extends MediaEncoder {
         }
     }
 
+    public boolean frameAvailableSoon(int texId, final float[] texMatrix, float[] mvpMatrix) {
+        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, mViewPort, 0);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFBOId[0]);
+        GLES20.glViewport(cropX, cropY, textureWidth, textureHeight);
+        program.drawFrame(texId, texMatrix, mvpMatrix);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES20.glViewport(mViewPort[0], mViewPort[1], mViewPort[2], mViewPort[3]);
+        // 先绘制三次，不进行编码，解决黑屏问题
+        if (mFrameCount++ < 3) {
+            return true;
+        }
+        boolean result;
+        if (result = super.frameAvailableSoon()) {
+            mRenderHandler.draw(mTextureId[0], GlUtil.IDENTITY_MATRIX, mvpMatrix);
+        }
+        return result;
+    }
+
     public void setEglContext(final EGLContext shared_context) {
         mTextureId = new int[1];
         mFBOId = new int[1];
         GlUtil.createFBO(mTextureId, mFBOId, mWidth, mHeight);
         program = new ProgramTexture2d();
-        mRenderHandler.setEglContext(shared_context, mSurface, true);
+        mRenderHandler.setEglContext(shared_context, mSurface, mTextureId[0]);
+    }
+
+    private int calcBitRate() {
+        final int bitrate = (int) (BPP * FRAME_RATE * mWidth * mHeight);
+        Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f));
+        return bitrate;
     }
 
     @Override
@@ -114,46 +182,10 @@ public class MediaVideoEncoder extends MediaEncoder {
         GlUtil.deleteTextureId(mTextureId);
         if (program != null) {
             program.release();
+            program = null;
         }
+        mFrameCount = 0;
         super.release();
-    }
-
-    private int calcBitRate() {
-        final int bitrate = (int) (BPP * FRAME_RATE * mWidth * mHeight);
-        Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f));
-        return bitrate;
-    }
-
-    /**
-     * select the first codec that match a specific MIME type
-     *
-     * @param mimeType
-     * @return null if no codec matched
-     */
-    protected static final MediaCodecInfo selectVideoCodec(final String mimeType) {
-        if (DEBUG) Log.v(TAG, "selectVideoCodec:");
-
-        // get the list of available codecs
-        final int numCodecs = MediaCodecList.getCodecCount();
-        for (int i = 0; i < numCodecs; i++) {
-            final MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
-
-            if (!codecInfo.isEncoder()) {    // skipp decoder
-                continue;
-            }
-            // select first codec that match a specific MIME type and color format
-            final String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
-                    if (DEBUG) Log.i(TAG, "codec:" + codecInfo.getName() + ",MIME=" + types[j]);
-                    final int format = selectColorFormat(codecInfo, mimeType);
-                    if (format > 0) {
-                        return codecInfo;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -162,7 +194,7 @@ public class MediaVideoEncoder extends MediaEncoder {
      * @return 0 if no colorFormat is matched
      */
     protected static final int selectColorFormat(final MediaCodecInfo codecInfo, final String mimeType) {
-        if (DEBUG) Log.i(TAG, "selectColorFormat: ");
+        if (DEBUG) Log.i(TAG, "selectColorFormat: " + mimeType);
         int result = 0;
         final MediaCodecInfo.CodecCapabilities caps;
         try {

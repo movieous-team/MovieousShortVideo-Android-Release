@@ -8,16 +8,28 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
+/**
+ * see https://github.com/saki4510t/AudioVideoRecordingSample
+ */
 public abstract class MediaEncoder implements Runnable {
     private static final String TAG = MediaEncoder.class.getSimpleName();
     private static final boolean DEBUG = false;
 
     protected static final int TIMEOUT_USEC = 10000;    // 10[msec]
+    protected TimeListener listener;//录制时间回调
+
+    public interface TimeListener {
+        void onTime(long time);
+    }
 
     public interface MediaEncoderListener {
         public void onPrepared(MediaEncoder encoder);
 
         public void onStopped(MediaEncoder encoder);
+    }
+
+    public void setListener(TimeListener listener) {
+        this.listener = listener;
     }
 
     protected final Object mLock = new Object();
@@ -28,7 +40,7 @@ public abstract class MediaEncoder implements Runnable {
     /**
      * Flag that indicate the frame data will be available soon.
      */
-    private int mRequestDrain;
+    private volatile int mRequestDrain;
     /**
      * Flag to request stop capturing
      */
@@ -111,10 +123,9 @@ public abstract class MediaEncoder implements Runnable {
             mRequestDrain = 0;
             mLock.notify();
         }
-        final boolean isRunning = true;
         boolean localRequestStop;
         boolean localRequestDrain;
-        while (isRunning) {
+        while (true) {
             synchronized (mLock) {
                 localRequestStop = mRequestStop;
                 localRequestDrain = (mRequestDrain > 0);
@@ -191,11 +202,6 @@ public abstract class MediaEncoder implements Runnable {
      */
     protected void release() {
         if (DEBUG) Log.e(TAG, "release:");
-        try {
-            mListener.onStopped(this);
-        } catch (final Exception e) {
-            Log.e(TAG, "failed onStopped", e);
-        }
         mIsCapturing = false;
         if (mMediaCodec != null) {
             try {
@@ -217,6 +223,13 @@ public abstract class MediaEncoder implements Runnable {
             }
         }
         mBufferInfo = null;
+        if (mListener != null) {
+            try {
+                mListener.onStopped(this);
+            } catch (final Exception e) {
+                Log.e(TAG, "failed onStopped", e);
+            }
+        }
     }
 
     protected void signalEndOfInputStream() {

@@ -229,18 +229,27 @@ public abstract class GlUtil {
         Log.i(TAG, "renderer: " + GLES20.glGetString(GLES20.GL_RENDERER));
         Log.i(TAG, "version : " + GLES20.glGetString(GLES20.GL_VERSION));
 
-        if (false) {
-            int[] values = new int[1];
-            GLES30.glGetIntegerv(GLES30.GL_MAJOR_VERSION, values, 0);
-            int majorVersion = values[0];
-            GLES30.glGetIntegerv(GLES30.GL_MINOR_VERSION, values, 0);
-            int minorVersion = values[0];
-            if (GLES30.glGetError() == GLES30.GL_NO_ERROR) {
-                Log.i(TAG, "iversion: " + majorVersion + "." + minorVersion);
-            }
+        int[] values = new int[1];
+        GLES30.glGetIntegerv(GLES30.GL_MAJOR_VERSION, values, 0);
+        int majorVersion = values[0];
+        GLES30.glGetIntegerv(GLES30.GL_MINOR_VERSION, values, 0);
+        int minorVersion = values[0];
+        if (GLES30.glGetError() == GLES30.GL_NO_ERROR) {
+            Log.i(TAG, "glVersion: " + majorVersion + "." + minorVersion);
         }
     }
 
+    /**
+     * 获取 OpengGL 主版本号，在 GL 线程调用
+     *
+     * @return
+     */
+    public static int getGlMajorVersion() {
+        int[] values = new int[1];
+        GLES30.glGetIntegerv(GLES30.GL_MAJOR_VERSION, values, 0);
+        int majorVersion = values[0];
+        return majorVersion;
+    }
 
     /**
      * Creates a texture object suitable for use with this program.
@@ -300,9 +309,10 @@ public abstract class GlUtil {
         }
     }
 
-    public static float[] changeMVPMatrix(float[] mvpMatrix, float viewWidth, float viewHeight, float textureWidth, float textureHeight) {
+    public static float[] changeMVPMatrixCrop(float[] mvpMatrix, float viewWidth, float viewHeight, float textureWidth, float textureHeight) {
         float scale = viewWidth * textureHeight / viewHeight / textureWidth;
-        if (scale == 1) {
+        // 浮点数近似相等
+        if (Math.abs(scale - 1) < 1e-6f) {
             return mvpMatrix;
         } else {
             float[] mvp = new float[16];
@@ -322,12 +332,19 @@ public abstract class GlUtil {
         return mvp;
     }
 
+    /**
+     * Prefer OpenGL ES 3.0, otherwise 2.0
+     *
+     * @param context
+     * @return
+     */
     public static int getSupportGLVersion(Context context) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
         int version = configurationInfo.reqGlEsVersion >= 0x30000 ? 3 : 2;
         String glEsVersion = configurationInfo.getGlEsVersion();
-        Log.e(TAG, "reqGlEsVersion: " + Integer.toHexString(configurationInfo.reqGlEsVersion) + ", glEsVersion:" + glEsVersion);
+        Log.d(TAG, "reqGlEsVersion: " + Integer.toHexString(configurationInfo.reqGlEsVersion)
+                + ", glEsVersion: " + glEsVersion + ", return: " + version);
         return version;
     }
 }

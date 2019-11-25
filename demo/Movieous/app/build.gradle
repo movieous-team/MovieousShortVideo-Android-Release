@@ -21,8 +21,6 @@ android {
             }
         }
 
-        renderscriptTargetApi 19
-        renderscriptSupportModeEnabled true
         multiDexEnabled true
 
         ndk {
@@ -36,12 +34,6 @@ android {
         variant.outputs.all {
             outputFileName = "movieous_v${variant.versionName}_${variant.name}.apk"
         }
-    }
-
-    sourceSets {
-        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/material',
-                                "src/main/poster", "src/main/magicphoto"]
-        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/makeup/res']
     }
 
     compileOptions {

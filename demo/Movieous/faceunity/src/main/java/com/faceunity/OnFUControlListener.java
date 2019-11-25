@@ -2,11 +2,11 @@ package com.faceunity;
 
 
 import com.faceunity.entity.Effect;
-import com.faceunity.entity.Filter;
-import com.faceunity.entity.MagicPhotoEntity;
+import com.faceunity.entity.LivePhoto;
 import com.faceunity.entity.MakeupItem;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * FURenderer与界面之间的交互接口
@@ -39,7 +39,7 @@ public interface OnFUControlListener {
      *
      * @param filterName 滤镜名称
      */
-    void onFilterNameSelected(Filter filterName);
+    void onFilterNameSelected(String filterName);
 
     /**
      * 美发颜色
@@ -67,19 +67,18 @@ public interface OnFUControlListener {
     void onSkinDetectSelected(float isOpen);
 
     /**
-     * 美肤类型
+     * 磨皮类型
      *
-     * @param isOpen 0:清晰美肤 1:朦胧美肤
+     * @param blurType 0 清晰磨皮，1 重度磨皮，2 精细磨皮
      */
-    void onHeavyBlurSelected(float isOpen);
+    void onBlurTypeSelected(float blurType);
 
     /**
-     * 磨皮选择
+     * 磨皮程度
      *
-     * @param level 磨皮level
+     * @param level 磨皮程度 [0, 6]，默认 6.0
      */
     void onBlurLevelSelected(float level);
-
     /**
      * 美白选择
      *
@@ -101,11 +100,6 @@ public interface OnFUControlListener {
      * 美牙
      */
     void onToothWhitenSelected(float level);
-
-    /**
-     * 脸型选择
-     */
-    void onFaceShapeSelected(float faceShape);
 
     /**
      * 大眼选择
@@ -143,6 +137,27 @@ public interface OnFUControlListener {
     void onIntensityMouthSelected(float level);
 
     /**
+     * 窄脸选择
+     *
+     * @param level
+     */
+    void onCheekNarrowSelected(float level);
+
+    /**
+     * 小脸选择
+     *
+     * @param level
+     */
+    void onCheekSmallSelected(float level);
+
+    /**
+     * V脸选择
+     *
+     * @param level
+     */
+    void onCheekVSelected(float level);
+
+    /**
      * 切换海报模板
      *
      * @param tempWidth
@@ -170,39 +185,82 @@ public interface OnFUControlListener {
     void onCartoonFilterSelected(int style);
 
     /**
-     * 选择美妆效果
-     *
-     * @param makeupItem
-     * @param level
-     */
-    void onMakeupSelected(MakeupItem makeupItem, float level);
-
-    /**
-     * 调节美妆强度
-     *
-     * @param makeupType
-     * @param level
-     */
-    void onMakeupLevelChanged(int makeupType, float level);
-
-    /**
-     * 调节多个妆容
+     * 调节多个妆容（轻美妆，质感美颜）
      *
      * @param makeupItems
      */
-    void onBatchMakeupSelected(List<MakeupItem> makeupItems);
+    void onLightMakeupBatchSelected(List<MakeupItem> makeupItems);
 
     /**
-     * 妆容总体调节
+     * 妆容总体调节（轻美妆，质感美颜）
      *
      * @param level
      */
-    void onMakeupOverallLevelChanged(float level);
+    void onLightMakeupOverallLevelChanged(float level);
 
     /**
-     * 设置异图的点位和图像数据，用来驱动图像
+     * 设置表情动图的点位和图像数据，用来驱动图像
      *
-     * @param magicPhotoEntity
+     * @param livePhoto
      */
-    void setMagicPhoto(final MagicPhotoEntity magicPhotoEntity);
+    void setLivePhoto(LivePhoto livePhoto);
+
+    /**
+     * 选择美妆妆容
+     *
+     * @param paramMap
+     * @param removePrevious
+     */
+    void selectMakeupItem(Map<String, Object> paramMap, boolean removePrevious);
+
+    /**
+     * 调节美妆妆容强度
+     *
+     * @param name
+     * @param density
+     */
+    void setMakeupItemIntensity(String name, double density);
+
+    /**
+     * 设置美妆妆容颜色
+     *
+     * @param name
+     * @param colors RGBA color
+     */
+    void setMakeupItemColor(String name, double[] colors);
+
+    /**
+     * 设置瘦身程度
+     *
+     * @param intensity
+     */
+    void setBodySlimIntensity(float intensity);
+
+    /**
+     * 设置长腿程度
+     *
+     * @param intensity
+     */
+    void setLegSlimIntensity(float intensity);
+
+    /**
+     * 设置细腰程度
+     *
+     * @param intensity
+     */
+    void setWaistSlimIntensity(float intensity);
+
+    /**
+     * 设置美肩程度
+     *
+     * @param intensity
+     */
+    void setShoulderSlimIntensity(float intensity);
+
+    /**
+     * 设置美臀程度
+     *
+     * @param intensity
+     */
+    void setHipSlimIntensity(float intensity);
 }
