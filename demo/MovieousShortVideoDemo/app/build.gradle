@@ -47,7 +47,7 @@ dependencies {
     implementation "com.android.support:design:$rootProject.ext.supportLibraryVersion"
     implementation 'com.android.support:multidex:1.0.3'
 
-    implementation 'com.zhihu.android:matisse:0.5.2-beta4'
+    implementation 'com.zhihu.android:matisse:0.5.3-beta3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'cn.ezandroid:EZPermission:1.0.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
