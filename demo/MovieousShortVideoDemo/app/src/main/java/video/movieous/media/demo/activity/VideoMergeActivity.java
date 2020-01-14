@@ -2,7 +2,7 @@ package video.movieous.media.demo.activity;
 
 import android.media.AudioFormat;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;

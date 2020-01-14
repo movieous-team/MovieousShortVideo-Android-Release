@@ -2,12 +2,11 @@ package video.movieous.media.demo.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
-import video.movieous.engine.UAVOptions;
+
 import video.movieous.engine.UVideoFrameListener;
-import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UFitViewHelper;
 import video.movieous.engine.view.UPaintView;
 import video.movieous.engine.view.UTextureView;

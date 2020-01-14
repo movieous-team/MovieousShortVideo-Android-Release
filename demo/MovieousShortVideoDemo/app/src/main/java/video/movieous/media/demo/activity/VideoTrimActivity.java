@@ -1,7 +1,7 @@
 package video.movieous.media.demo.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;

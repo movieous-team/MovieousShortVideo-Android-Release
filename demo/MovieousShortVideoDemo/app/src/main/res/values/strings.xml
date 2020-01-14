@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MovieousShortVideoDemo</string>
+    <string name="demo_add_text">文字特效</string>
 </resources>
