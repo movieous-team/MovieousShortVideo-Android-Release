@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -31,6 +32,7 @@ import video.movieous.engine.UMediaTrimTime;
 import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.base.callback.SingleCallback;
 import video.movieous.engine.base.utils.ULog;
+import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.media.util.MediaUtil;
 import video.movieous.engine.view.UFitViewHelper;
 import video.movieous.engine.view.UPaintView;
@@ -45,18 +47,19 @@ import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.UShortVideoEnv;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
+import video.movieous.shortvideo.UVideoPlayListener;
 
 /**
  * VideoEditActivity
  */
-public class VideoEditActivity extends BaseEditActivity implements UVideoSaveListener {
+public class VideoEditActivity extends BaseEditActivity implements UVideoSaveListener, UVideoPlayListener {
     private static final String TAG = "VideoEditActivity";
-
-    public static final String VIDEO_PATH = "video_path";
     private static final int REQUEST_CODE_CHOOSE_MUSIC = 2;
+    public static final String VIDEO_PATH = "video_path";
     private static final String OUT_FILE = "/sdcard/movieous/shortvideo/video_edit_test.mp4";
+
     private static final String[] GIF_FOLDER = new String[]{
-            "aini/", "good/"
+            "aini/", "test/"
     };
 
     private UTextureView mRenderView;
@@ -71,22 +74,23 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private USticker mTextSticker;
     private USticker mGifSticker;
     private UPaintView mPaintView;
+    private StrokedTextView mTextView;
+    private ViewTouchListener mEditTextTouchListener;
+    private TextStyle[] mTextStyle;
+    private int mTextStyleIndex = 10;
+
     private long mStartTime;
     private int mVideoWidth;
     private int mVideoHeight;
-    private int mVideoDuration;
-    private boolean mTouchingTextureView;
+    private long mVideoDuration;
     private boolean mIsOverlayVideoAdded = true;
+    private boolean mEdgeBlurEnabled = true;
     protected VideoEditorState mEditorState = VideoEditorState.Idle;
     private int mPreviewWidth;
     private int mPreviewHeight;
 
+    private MovieousPlayer mMovieousPlayer;
     private int mGifIndex;
-
-    private StrokedTextView mTextView;
-    private ViewTouchListener mEditTextTouchListener;
-    private TextStyle[] mInfos;
-    private int position = 10;
 
     protected enum VideoEditorState {
         Idle,
@@ -98,6 +102,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
+        mMovieousPlayer = new MovieousPlayer(this);
         mInputFile = getIntent().getStringExtra(VIDEO_PATH);
         if (TextUtils.isEmpty(mInputFile)) {
             startFileSelectActivity(this, false, 1);
@@ -138,7 +143,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
             Log.i(TAG, "Select file: " + selectedFilepath);
             if (selectedFilepath != null && !"".equals(selectedFilepath)) {
                 mVideoEditManager.setMusicFile(selectedFilepath);
-                mVideoEditManager.setMusicPositionMs(60 * 1000);
+                mVideoEditManager.setMusicPositionMs(20 * 1000);
                 mVideoEditManager.setOriginVolume(0);
             }
         } else {
@@ -150,12 +155,12 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void initView() {
         setContentView(R.layout.activity_video_edit);
         mRenderView = $(R.id.render_view);
+        mRenderView.setScaleType(FitViewHelper.ScaleType.CENTER_INSIDE);
         mPreviewImage = $(R.id.preview_image);
         mRecordButton = $(R.id.record);
         mTvTip = $(R.id.tv_tip);
         mPlayButton = $(R.id.pause_playback);
         mSaveButton = $(R.id.save);
-        mRenderView.setScaleType(UFitViewHelper.ScaleType.CENTER_INSIDE);
 
         $(R.id.capture).setOnClickListener(view -> mVideoEditManager.captureVideoFrame(bitmap -> runOnUiThread(() -> mPreviewImage.setImageBitmap(bitmap))));
 
@@ -244,14 +249,17 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
             if (mFilterIndex >= mFilterResources.length) mFilterIndex = 0;
             mVideoEditManager.setFilterResource(mFilterResources[mFilterIndex++]);
         });
+
     }
 
     private void initVideoEditManager() {
         mVideoEditManager = new UVideoEditManager()
-                .setMediaPlayer(new MovieousPlayer(this))
+                .setMediaPlayer(mMovieousPlayer)
                 .setVideoFrameListener(this)
+                .setVideoPlayerListener(this, 500)
                 .setRecordEnabled(true, false)
-                .init(mRenderView, mInputFile);
+                .init(mRenderView, mInputFile)
+                .setEdgeBlurEnabled(mEdgeBlurEnabled, 90);
         setOutputSize();
     }
 
@@ -278,13 +286,13 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private void startPlayback() {
         if (mEditorState == VideoEditorState.Playing) return;
         if (mEditorState == VideoEditorState.Idle) {
+            Log.i(TAG, "startPlayback: start");
             mVideoEditManager.setVideoFrameListener(this);
             mVideoEditManager.start();
             mEditorState = VideoEditorState.Playing;
-            Log.i(TAG, "startPlayback: start");
         } else if (mEditorState == VideoEditorState.Paused) {
-            mVideoEditManager.resume();
             Log.i(TAG, "startPlayback: resume");
+            mVideoEditManager.resume();
             mEditorState = VideoEditorState.Playing;
         }
         setPlayButtonState(R.drawable.btn_pause);
@@ -343,10 +351,26 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         boolean needRotation = metadata.rotation / 90 % 2 != 0;
         mVideoWidth = needRotation ? metadata.height : metadata.width;
         mVideoHeight = needRotation ? metadata.width : metadata.height;
-        mVideoDuration = (int) metadata.duration;
+        mVideoDuration = metadata.duration;
         Log.i(TAG, "video w = " + mVideoWidth + ", h = " + mVideoHeight + ", rotation = " + metadata.rotation + ", duration = " + mVideoDuration);
-        initVideoEditManager();
-        startPlayback();
+
+        // 这里演示自定义显示策略，默认是根据 ScaleType 最大化显示图片
+        // 这里的策略是宽度方向铺满画面，高度方向超过显示高度则裁剪，不足显示高度时开启边缘模糊
+        int width = mVideoWidth;
+        int height = mVideoHeight;
+        int scrW = mRenderView.getWidth();
+        int scrH = mRenderView.getHeight();
+        float inputAspect = width * 1f / height;
+        float outputAspect = scrW * 1f / scrH;
+        mEdgeBlurEnabled = inputAspect > outputAspect;
+        mRenderView.setScaleType(mEdgeBlurEnabled ? FitViewHelper.ScaleType.CENTER_INSIDE : FitViewHelper.ScaleType.CENTER_CROP);
+        mRenderView.setAspectRatio(width * 1f / height, 0, 0);
+        mRenderView.requestLayout();
+
+        mRenderView.post(() -> {
+            initVideoEditManager();
+            startPlayback();
+        });
     }
 
     // 背景音乐选择
@@ -375,7 +399,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
     private void addTextSticker() {
         mTextSticker = new USticker();
-        String stickerText = getString(R.string.demo_add_text);
+        String stickerText = "文字水印";
         int stickerW = mVideoWidth / 2;
         int stickerH = stickerW / stickerText.length();
         mTextSticker.init(USticker.StickerType.TEXT, stickerW, stickerH)
@@ -390,7 +414,64 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         mTextSticker = null;
     }
 
-    // MV 特效
+    // 文字特效
+    @SuppressLint("ClickableViewAccessibility")
+    private void demoTextView() {
+        if (mTextView == null) {
+            addTextView();
+            Toast.makeText(VideoEditActivity.this, "多次点击【文字】按钮，可以切换拖动和编辑模式", Toast.LENGTH_SHORT).show();
+        } else {
+            if (mTextView.getTag() == null) {
+                mTextView.setTag(1);
+                mTextView.setCursorVisible(true);
+                mTextView.setOnTouchListener(null);
+                Toast.makeText(VideoEditActivity.this, "当前进入文字编辑模式", Toast.LENGTH_SHORT).show();
+            } else {
+                mTextView.setTag(null);
+                mTextView.setCursorVisible(false);
+                mTextView.setOnTouchListener(mEditTextTouchListener);
+                Toast.makeText(VideoEditActivity.this, "当前进入文字拖动模式", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void addTextView() {
+        if (mTextStyle == null) {
+            mTextStyle = initTextStyleList();
+        }
+        // Get the data model based on position
+        final TextStyle info = mTextStyle[mTextStyleIndex];
+        mTextView = new StrokedTextView(this);
+        // Set item views based on your views and data model
+        mTextView.setText(info.text);
+        mTextView.setTextColor(getResources().getColor(info.colorID));
+        mTextView.setTypeface(info.typeface, info.style);
+        mTextView.setStrokeWidth(info.strokeWidth);
+        mTextView.setStrokeColor(info.strokeColor);
+        mTextView.setTextSize(40);
+        if (info.shadowRadius > 0) {
+            mTextView.setShadowLayer(info.shadowRadius, info.shadowDx, info.shadowDy, info.shadowColor);
+        }
+        mEditTextTouchListener = new ViewTouchListener(mTextView);
+        mTextView.setOnTouchListener(mEditTextTouchListener);
+        // 默认整个视频范围内添加文字特效
+        mVideoEditManager.addTextView(mTextView);
+        // 指定时间段添加文字特效
+        //mVideoEditManager.addTextView(mTextView, 2000, 5000);
+        // 居中显示
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mTextView.getLayoutParams();
+        layoutParams.leftMargin = mRenderView.getLeft() + mRenderView.getWidth() / 2 - mRenderView.getWidth() / 4;
+        layoutParams.topMargin = mRenderView.getTop() + mRenderView.getHeight() / 2 - 80 / 2;
+        mTextView.setLayoutParams(layoutParams);
+        mTextView.requestLayout();
+    }
+
+    private void removeTextView() {
+        mVideoEditManager.removeTextView(mTextView);
+        mTextView = null;
+    }
+
     private void demoMv() {
         if (mIsOverlayVideoAdded) {
             addMv();
@@ -400,9 +481,9 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     }
 
     private void addMv() {
-        // 需要存在指定的 mv 特效文件
-        String mvFile = "/sdcard/movieous/shortvideo/mv/mv.mp4";
-        String maskFile = "/sdcard/movieous/shortvideo/mv/mv_alpha.mp4";
+        // MV 特效文件，需要替换成您自己的 mv 文件
+        String mvFile = "/sdcard/movieous/shortvideo/mvs/mv.mp4";
+        String maskFile = "/sdcard/movieous/shortvideo/mvs/mv_alpha.mp4";
         mVideoEditManager.setOverlayVideoFile(mvFile, maskFile);
         mIsOverlayVideoAdded = false;
     }
@@ -432,23 +513,30 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     }
 
     // 多段混音
+    // 目前混音文件写死，仅做代码演示
+    String[] audioFiles = new String[]{
+            "/sdcard/Download/kuaizi.mp3",
+            "/sdcard/Download/test.mp3",
+            "/sdcard/Download/piano.mp3"
+    };
+
     private void demoMultiAudioMix() {
         int clipDuration = 8;
         // 第一段音频
         UAudioMixClip firstAudioClip = new UAudioMixClip();
-        firstAudioClip.path = "/sdcard/Download/kuaizi.mp3"; // 音频文件路径, 需要替换为您手机中的有效音频文件
+        firstAudioClip.path = audioFiles[0]; // 音频文件路径, 需要替换为您手机中的有效音频文件
         firstAudioClip.startMs = 30 * 1000; // 音频文件开始时间
         firstAudioClip.durationMs = clipDuration * 1000; // 混音音频时长
         firstAudioClip.startMsInVideo = 0 * 1000; // 视频文件中开始叠加位置
         // 第二段音频
         UAudioMixClip secondAudioClip = new UAudioMixClip();
-        secondAudioClip.path = "/sdcard/Download/test.mp3";
+        secondAudioClip.path = audioFiles[1];
         secondAudioClip.startMs = 60 * 1000;
         secondAudioClip.durationMs = clipDuration * 1000;
         secondAudioClip.startMsInVideo = clipDuration * 1000;
         // 第三段音频
         UAudioMixClip thirdClip = new UAudioMixClip();
-        thirdClip.path = "/sdcard/Download/piano.mp3";
+        thirdClip.path = audioFiles[2];
         thirdClip.startMs = 20 * 1000;
         thirdClip.durationMs = clipDuration * 1000;
         thirdClip.startMsInVideo = clipDuration * 2 * 1000;
@@ -541,59 +629,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         });
     }
 
-    // UTextView 文字特效演示
-    private void demoTextView() {
-        if (mTextView == null) {
-            addTextView();
-        } else {
-            if (mTextView.getTag() == null) { // 进入编辑模式
-                mTextView.setTag(1);
-                mTextView.setCursorVisible(true);
-                mTextView.setOnTouchListener(null);
-            } else { // 进入拖动模式
-                mTextView.setTag(null);
-                mTextView.setCursorVisible(false);
-                mTextView.setOnTouchListener(mEditTextTouchListener);
-            }
-        }
-    }
-
-    // 添加 UTextView 文字控件
-    private void addTextView() {
-        if (mInfos == null) {
-            mInfos = initTextStyle();
-        }
-        final TextStyle info = mInfos[position];
-        // 定义 UTextView 文字控件
-        mTextView = new StrokedTextView(this);
-        mTextView.setText(info.text);
-        mTextView.setTextColor(getResources().getColor(info.colorID));
-        mTextView.setTypeface(info.typeface, info.style);
-        mTextView.setStrokeWidth(info.strokeWidth);
-        mTextView.setStrokeColor(info.strokeColor);
-        mTextView.setTextSize(40);
-        if (info.shadowRadius > 0) {
-            mTextView.setShadowLayer(info.shadowRadius, info.shadowDx, info.shadowDy, info.shadowColor);
-        }
-        mEditTextTouchListener = new ViewTouchListener(mTextView);
-        mTextView.setOnTouchListener(mEditTextTouchListener);
-        // 添加 UTextView 文字控件
-        mVideoEditManager.addTextView(mTextView, 0, mVideoDuration);
-        // 居中显示
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mTextView.getLayoutParams();
-        layoutParams.leftMargin = mRenderView.getLeft() + mRenderView.getWidth() / 2 - mRenderView.getWidth() / 4;
-        layoutParams.topMargin = mRenderView.getTop() + mRenderView.getHeight() / 2 - 80 / 2;
-        mTextView.setLayoutParams(layoutParams);
-        mTextView.requestLayout();
-    }
-
-    // 删除 UTextView 文字控件
-    private void removeTextView() {
-        mVideoEditManager.removeTextView(mTextView);
-        mTextView = null;
-    }
-
-    // 文字特效触摸事件
     private class ViewTouchListener implements View.OnTouchListener {
         private float lastTouchRawX;
         private float lastTouchRawY;
@@ -609,20 +644,21 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
             @Override
             public boolean onDoubleTap(MotionEvent e) {
                 if (mView instanceof UTextView) {
-                    // 处理双击事件
+                    mView.setOnTouchListener(null);
                 }
                 return true;
             }
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                // 处理单击事件
                 if (isViewMoved) {
                     return true;
                 }
+                mView.setOnTouchListener(ViewTouchListener.this::onTouch);
                 return true;
             }
         };
+
         final GestureDetector gestureDetector = new GestureDetector(VideoEditActivity.this, simpleOnGestureListener);
 
         @Override
@@ -680,17 +716,17 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         }
     }
 
-    // 文字特效
     public static int[] colors = {R.color.text_color1, R.color.text_color2, R.color.text_color3, R.color.text_color4,
             R.color.text_color5, R.color.text_color6, R.color.text_color7, R.color.text_color8,
             R.color.text_color9, R.color.text_color10, R.color.text_color11, R.color.text_color12};
 
-    private TextStyle[] initTextStyle() {
-        TextStyle[] textStyleList = new TextStyle[colors.length];
-        for (int i = 0; i < textStyleList.length; i++) {
+
+    private TextStyle[] initTextStyleList() {
+        TextStyle[] textStyles = new TextStyle[colors.length];
+        for (int i = 0; i < textStyles.length; i++) {
             TextStyle textStyle = new TextStyle();
             textStyle.text = getResources().getString(R.string.demo_add_text);
-            textStyleList[i] = textStyle;
+            textStyles[i] = textStyle;
             textStyle.colorID = colors[i];
             textStyle.alpha = 0.8f;
 
@@ -705,7 +741,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
                 textStyle.shadowColor = getResources().getColor(colors[i]);
             }
         }
-        return textStyleList;
+        return textStyles;
     }
 
     private class TextStyle {
@@ -721,5 +757,4 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         int strokeColor;
         float strokeWidth;
     }
-
 }

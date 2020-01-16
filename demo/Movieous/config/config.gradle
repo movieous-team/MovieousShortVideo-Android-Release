@@ -5,7 +5,7 @@ ext {
             minSdkVersion    : 19,
             targetSdkVersion : 28,
             versionCode      : 216,
-            versionName      : "2.1.6",
+            versionName      : "2.1.8",
             // fu sdk
             namaSdkVersionCode : 80,
             namaSdkVersionName : "6.4.1-beta4",
