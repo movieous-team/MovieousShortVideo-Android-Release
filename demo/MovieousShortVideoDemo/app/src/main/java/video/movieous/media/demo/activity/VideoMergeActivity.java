@@ -2,18 +2,20 @@ package video.movieous.media.demo.activity;
 
 import android.media.AudioFormat;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+
+import java.util.List;
+
 import video.movieous.engine.UAVOptions;
-import video.movieous.engine.UVideoSaveListener;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.media.demo.view.MediaFileListAdapter;
+import video.movieous.media.listener.UVideoSaveListener;
 import video.movieous.shortvideo.UVideoEditManager;
-
-import java.util.List;
 
 /**
  * VideoTrimActivity

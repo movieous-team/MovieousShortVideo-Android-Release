@@ -4,18 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import video.movieous.engine.UVideoSaveListener;
+import androidx.annotation.Nullable;
+
 import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BasePreviewActivity;
 import video.movieous.media.demo.utils.UriUtil;
+import video.movieous.media.listener.UVideoSaveListener;
 import video.movieous.shortvideo.UVideoRecordManager;
 
 /**

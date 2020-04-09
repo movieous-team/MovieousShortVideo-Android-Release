@@ -5,23 +5,26 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
-import video.movieous.engine.UVideoSaveListener;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import video.movieous.engine.image.UPhotoMovieType;
 import video.movieous.engine.view.UImageRenderView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseActivity;
 import video.movieous.media.demo.model.TransferItem;
 import video.movieous.media.demo.utils.UriUtil;
+import video.movieous.media.listener.UVideoSaveListener;
 import video.movieous.shortvideo.UImageCombineManager;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * ImageMovieActivity

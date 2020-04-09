@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+
 import video.movieous.engine.UAVOptions;
-import video.movieous.engine.URecordListener;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseActivity;
+import video.movieous.media.listener.URecordListener;
 import video.movieous.shortvideo.UScreenRecordManager;
 
 public class ScreenRecordActivity extends BaseActivity implements URecordListener {

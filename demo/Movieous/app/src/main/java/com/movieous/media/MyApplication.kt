@@ -6,7 +6,7 @@ import com.movieous.media.mvp.model.VideoDataUtil
 import com.movieous.media.utils.DisplayManager
 import iknow.android.utils.BaseUtils
 import video.movieous.droid.player.MovieousPlayerEnv
-import video.movieous.engine.base.utils.ULog
+import video.movieous.media.ULog
 import video.movieous.shortvideo.UShortVideoEnv
 import kotlin.properties.Delegates
 

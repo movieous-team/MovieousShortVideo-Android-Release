@@ -8,20 +8,26 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.movieous.media.Constants;
 import com.movieous.media.R;
-import iknow.android.utils.thread.UiThreadExecutor;
-import video.movieous.engine.base.callback.SingleCallback;
-import video.movieous.shortvideo.UMediaUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import iknow.android.utils.thread.UiThreadExecutor;
+import video.movieous.media.base.callback.SingleCallback;
+import video.movieous.shortvideo.UMediaUtil;
 
 public class FrameListView extends FrameLayout {
     private Context mContext;

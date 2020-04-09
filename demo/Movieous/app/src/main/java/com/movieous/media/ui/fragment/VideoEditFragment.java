@@ -34,7 +34,6 @@ import com.movieous.media.mvp.model.entity.BeautyParamEnum;
 import com.movieous.media.mvp.model.entity.MediaParam;
 import com.movieous.media.mvp.model.entity.TabEntity;
 import com.movieous.media.mvp.model.entity.UFilter;
-import com.movieous.media.player.MovieousPlayer;
 import com.movieous.media.ui.activity.PlaybackActivity;
 import com.movieous.media.utils.ScreenUtils;
 import com.movieous.media.utils.SharePrefUtils;
@@ -56,17 +55,17 @@ import butterknife.OnClick;
 import io.inchtime.recyclerkit.RecyclerAdapter;
 import io.inchtime.recyclerkit.RecyclerKit;
 import kotlin.Unit;
-import video.movieous.engine.UMediaTrimTime;
-import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.media.util.MediaUtil;
+import video.movieous.media.listener.UMediaPlayListener;
+import video.movieous.media.listener.UVideoFrameListener;
+import video.movieous.media.model.UMediaTime;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
-import video.movieous.shortvideo.UVideoPlayListener;
 
 import static com.movieous.media.ExtensionsKt.showToast;
 
-public class VideoEditFragment extends VideoEditPreviewFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, UVideoPlayListener,
+public class VideoEditFragment extends VideoEditPreviewFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, UMediaPlayListener,
         FilterSeekView.OnDataChangedListener, MusicSelectedListener {
     private static final String TAG = "VideoEditFragment";
 
@@ -92,7 +91,7 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
     private RecyclerAdapter mMainAdapter;
     private SparseArray<List<RecyclerAdapter.ViewModel>> mViewModels = new SparseArray<>();
     private Map<Integer, Double> mRecordSpeed;
-    private UMediaTrimTime mTrimTime;
+    private UMediaTime mTrimTime;
     // for magic filter
     private FilterSeekView mFilterSeekView;
     private boolean mIsLongClick;
@@ -342,9 +341,6 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
                 .setVideoFrameListener(this)
                 .setVideoSaveListener(this);
         MediaParam mediaParam = SharePrefUtils.getParam(mActivity);
-        if (mediaParam.isMovieousPlayer) {
-            mVideoEditManager.setMediaPlayer(new MovieousPlayer(mActivity));
-        }
     }
 
     // 设置 RecyclerView
@@ -641,10 +637,10 @@ public class VideoEditFragment extends VideoEditPreviewFragment implements View.
             et = videoDuration;
         }
         rangeSeekBar.initMaxWidth();
-        mTrimTime = new UMediaTrimTime(st * 1000, et * 1000);
+        mTrimTime = new UMediaTime(st * 1000, et * 1000);
     }
 
-    private void setVideoDuration(RecyclerAdapter.ViewHolder viewHolder, UMediaTrimTime trimTime) {
+    private void setVideoDuration(RecyclerAdapter.ViewHolder viewHolder, UMediaTime trimTime) {
         mVideoEditManager.setTrimTime(trimTime);
         ((TextView) viewHolder.findView(R.id.tv_select_tip)).setText(String.format(getString(R.string.select_clip_tip), trimTime.getDuration() / 1000));
     }

@@ -2,9 +2,11 @@ package video.movieous.media.demo;
 
 import android.app.Application;
 import android.content.Context;
+
 import androidx.multidex.MultiDex;
+
 import video.movieous.droid.player.MovieousPlayerEnv;
-import video.movieous.engine.base.utils.ULog;
+import video.movieous.media.ULog;
 import video.movieous.shortvideo.UShortVideoEnv;
 
 /**

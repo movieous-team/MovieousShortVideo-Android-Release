@@ -28,31 +28,30 @@ import java.util.List;
 import video.movieous.engine.UAVOptions;
 import video.movieous.engine.UAudioMixClip;
 import video.movieous.engine.UFilePath;
-import video.movieous.engine.UMediaTrimTime;
-import video.movieous.engine.UVideoSaveListener;
-import video.movieous.engine.base.callback.SingleCallback;
-import video.movieous.engine.base.utils.ULog;
 import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.media.util.MediaUtil;
 import video.movieous.engine.view.UFitViewHelper;
 import video.movieous.engine.view.UPaintView;
 import video.movieous.engine.view.UTextView;
 import video.movieous.engine.view.UTextureView;
+import video.movieous.media.ULog;
+import video.movieous.media.base.callback.SingleCallback;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
-import video.movieous.media.demo.player.MovieousPlayer;
 import video.movieous.media.demo.utils.UriUtil;
 import video.movieous.media.demo.view.StrokedTextView;
+import video.movieous.media.listener.UMediaPlayListener;
+import video.movieous.media.listener.UVideoSaveListener;
+import video.movieous.media.model.UMediaTime;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.UShortVideoEnv;
 import video.movieous.shortvideo.USticker;
 import video.movieous.shortvideo.UVideoEditManager;
-import video.movieous.shortvideo.UVideoPlayListener;
 
 /**
  * VideoEditActivity
  */
-public class VideoEditActivity extends BaseEditActivity implements UVideoSaveListener, UVideoPlayListener {
+public class VideoEditActivity extends BaseEditActivity implements UVideoSaveListener, UMediaPlayListener {
     private static final String TAG = "VideoEditActivity";
     private static final int REQUEST_CODE_CHOOSE_MUSIC = 2;
     public static final String VIDEO_PATH = "video_path";
@@ -89,7 +88,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     private int mPreviewWidth;
     private int mPreviewHeight;
 
-    private MovieousPlayer mMovieousPlayer;
     private int mGifIndex;
 
     protected enum VideoEditorState {
@@ -102,7 +100,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        mMovieousPlayer = new MovieousPlayer(this);
         mInputFile = getIntent().getStringExtra(VIDEO_PATH);
         if (TextUtils.isEmpty(mInputFile)) {
             startFileSelectActivity(this, false, 1);
@@ -254,7 +251,6 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
 
     private void initVideoEditManager() {
         mVideoEditManager = new UVideoEditManager()
-                .setMediaPlayer(mMovieousPlayer)
                 .setVideoFrameListener(this)
                 .setVideoPlayerListener(this, 500)
                 .setRecordEnabled(true, false)
@@ -593,7 +589,7 @@ public class VideoEditActivity extends BaseEditActivity implements UVideoSaveLis
         pausePlayback();
         mStartTime = System.currentTimeMillis();
         if (mVideoDuration > 30 * 1000) {
-            UMediaTrimTime trimTime = new UMediaTrimTime(0, 30 * 1000);
+            UMediaTime trimTime = new UMediaTime(0, 30 * 1000);
             mVideoEditManager.setTrimTime(trimTime);
         }
         mVideoEditManager.setVideoSaveListener(this);

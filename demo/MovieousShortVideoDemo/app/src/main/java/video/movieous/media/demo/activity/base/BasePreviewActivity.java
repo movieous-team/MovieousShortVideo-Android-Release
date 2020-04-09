@@ -1,8 +1,9 @@
 package video.movieous.media.demo.activity.base;
 
 import android.util.Log;
-import video.movieous.engine.UVideoFrameListener;
+
 import video.movieous.media.demo.R;
+import video.movieous.media.listener.UVideoFrameListener;
 
 public abstract class BasePreviewActivity extends BaseActivity implements UVideoFrameListener {
     private static final String TAG = "BasePreviewActivity";

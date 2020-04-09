@@ -13,9 +13,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import butterknife.BindView;
-import butterknife.OnClick;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.movieous.media.Constants;
@@ -28,10 +30,14 @@ import com.movieous.media.view.CameraFocusIndicator;
 import com.movieous.media.view.RecordTimer;
 import com.movieous.media.view.ShutterButton;
 import com.movieous.media.view.TimeDownView;
+
 import org.jetbrains.annotations.NotNull;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 import video.movieous.engine.UCameraFocusListener;
-import video.movieous.engine.URecordListener;
 import video.movieous.engine.view.UFitViewHelper;
+import video.movieous.media.listener.URecordListener;
 import video.movieous.shortvideo.UVideoRecordManager;
 
 import static com.movieous.media.ExtensionsKt.showToast;

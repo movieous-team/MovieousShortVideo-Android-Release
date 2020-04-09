@@ -1,23 +1,24 @@
 package video.movieous.media.demo.activity;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+
+import java.util.List;
+
 import video.movieous.engine.UAVOptions;
-import video.movieous.engine.UMediaTrimTime;
-import video.movieous.engine.UVideoSaveListener;
 import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
-import video.movieous.media.demo.player.MovieousPlayer;
+import video.movieous.media.listener.UVideoSaveListener;
+import video.movieous.media.model.UMediaTime;
 import video.movieous.shortvideo.UMediaUtil;
 import video.movieous.shortvideo.UVideoEditManager;
-
-import java.util.List;
 
 /**
  * VideoTrimActivity
@@ -56,7 +57,6 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
         mDuration = UMediaUtil.getMetadata(mInputFile).duration;
         //mEtTrimTime.setText(Long.toString(mDuration));
         mVideoEditManager.init(mRenderView, mInputFile)
-                .setMediaPlayer(new MovieousPlayer(this))
                 .setVideoFrameListener(this)
                 .start();
     }
@@ -98,7 +98,7 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
         $(R.id.priview_trim_video).setOnClickListener(v -> {
             int startTime = Integer.parseInt(mStTrimTime.getText().toString());
             int endTime = Integer.parseInt(mEtTrimTime.getText().toString());
-            UMediaTrimTime trimTime = (endTime <= 0 || endTime > mDuration) ? null : new UMediaTrimTime(startTime, endTime);
+            UMediaTime trimTime = (endTime <= 0 || endTime > mDuration) ? null : new UMediaTime(startTime, endTime);
             mVideoEditManager.setTrimTime(trimTime);
         });
     }
@@ -106,7 +106,7 @@ public class VideoTrimActivity extends BaseEditActivity implements UVideoSaveLis
     private void startTrimVideo() {
         int startTime = Integer.parseInt(mStTrimTime.getText().toString());
         int endTime = Integer.parseInt(mEtTrimTime.getText().toString());
-        UMediaTrimTime trimTime = (endTime <= 0 || endTime > mDuration) ? null : new UMediaTrimTime(startTime, endTime);
+        UMediaTime trimTime = (endTime <= 0 || endTime > mDuration) ? null : new UMediaTime(startTime, endTime);
         Log.i(TAG, "video path = " + mInputFile + ", trim time: " + (trimTime == null ? mDuration : trimTime.getDuration()));
         Log.i(TAG, "out file: " + mOutFile);
         mVideoEditManager.pause();

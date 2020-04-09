@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-import video.movieous.engine.UVideoFrameListener;
 import video.movieous.engine.core.env.FitViewHelper;
 import video.movieous.engine.view.UFitViewHelper;
 import video.movieous.engine.view.UPaintView;
@@ -24,6 +23,7 @@ import video.movieous.engine.view.UTextureView;
 import video.movieous.media.demo.R;
 import video.movieous.media.demo.activity.base.BaseEditActivity;
 import video.movieous.media.demo.view.StrokedTextView;
+import video.movieous.media.listener.UVideoFrameListener;
 import video.movieous.shortvideo.UImageEditManager;
 import video.movieous.shortvideo.USticker;
 
